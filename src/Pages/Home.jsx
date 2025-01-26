@@ -82,7 +82,7 @@ const WORDS = ["Politeknik Petrokimia", "#SobatPetro"];
 const TECH_STACK = ["BIOFOUR TEAM", "Arvin Rudolf K.S", "Fahmi Nabeel", "Chalista Balqis A", "Pandu Aryo D"];
 const SOCIAL_LINKS = [
   { icon: Github, link: "https://github.com/MigoVS" },
-  { icon: Linkedin, link: "https://www.linkedin.com/in/fahmi-nabeel-367341278//" },
+  { icon: Linkedin, link: "https://www.linkedin.com/in/fahmi-nabeel-367341278/" },
   { icon: Linkedin, link: "https://www.linkedin.com/in/arvin-situmorang/" },
   { icon: Linkedin, link: "https://www.linkedin.com/in/pandu-aryo-darpito-886949321/" },
   { icon: Photo, link: "https://drive.google.com/drive/folders/1xzHBxC0ZoKMd-3ZSvGS2fMm3XGAnnY2y?usp=sharing" },
