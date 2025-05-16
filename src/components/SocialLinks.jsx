@@ -21,18 +21,18 @@ const socialLinks = [
   {
     name: "Instagram",
     displayName: "Instagram",
-    subText: "@arvinrudolf.ks",
+    subText: "@rhapsozy",
     icon: Instagram,
-    url: "https://www.instagram.com/arvinrudolf.ks/",
+    url: "https://www.instagram.com/rhapsozy/",
     color: "#E4405F",
     gradient: "from-[#833AB4] via-[#E4405F] to-[#FCAF45]"
   },
   {
     name: "Instagram",
     displayName: "Instagram",
-    subText: "@fahminabeel",
+    subText: "@arvinrudolf.ks",
     icon: Instagram,
-    url: "https://www.instagram.com/fahminabeel/",
+    url: "https://www.instagram.com/arvinrudolf.ks/",
     color: "#E4405F",
     gradient: "from-[#833AB4] via-[#E4405F] to-[#FCAF45]"
   },

@@ -79,7 +79,7 @@ const Navbar = () => {
                 : "bg-transparent"
         }`}
     >
-        <div className="mx-auto px-4 sm:px-6 lg:px-[10%]">
+         <div className="mx-auto px-4 sm:px-6 lg:px-[10%]">
             <div className="flex items-center justify-between h-16">
                 {/* Logo */}
                 <div className="flex-shrink-0">
@@ -143,7 +143,7 @@ const Navbar = () => {
     
         {/* Mobile Menu Overlay */}
         <div
-            className={`md:hidden h-3/5 fixed inset-0 bg-[#030014] transition-all duration-300 ease-in-out ${
+            className={`md:hidden h-2/5 fixed inset-0 bg-[#030014] transition-all duration-300 ease-in-out ${
                 isOpen
                     ? "opacity-100 translate-y-0"
                     : "opacity-0 translate-y-[-100%] pointer-events-none"

@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Code2, Github, Globe, User } from 'lucide-react';
-import AOS from 'aos';
-import 'aos/dist/aos.css';
+import { Trophy, Crown, Medal, Star, Sparkles } from 'lucide-react';
 
 const TypewriterEffect = ({ text }) => {
   const [displayText, setDisplayText] = useState('');
@@ -31,17 +29,56 @@ const TypewriterEffect = ({ text }) => {
 
 const BackgroundEffect = () => (
   <div className="absolute inset-0 overflow-hidden">
-    <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 blur-3xl animate-pulse" />
-    <div className="absolute inset-0 bg-gradient-to-tr from-indigo-600/10 via-transparent to-purple-600/10 blur-2xl animate-float" />
+    <div className="absolute inset-0 bg-gradient-to-r from-yellow-600/20 to-red-600/20 blur-3xl animate-pulse" />
+    <div className="absolute inset-0 bg-gradient-to-tr from-yellow-600/10 via-transparent to-red-600/10 blur-2xl animate-float" />
+    
+    {/* Champion particles/confetti effect */}
+    <div className="absolute inset-0">
+      {[...Array(20)].map((_, i) => (
+        <div 
+          key={i}
+          className="absolute w-2 h-2 md:w-3 md:h-3 bg-yellow-500 rounded-full opacity-70"
+          style={{
+            top: `${Math.random() * 100}%`,
+            left: `${Math.random() * 100}%`,
+            animationDelay: `${Math.random() * 5}s`,
+            animation: `float ${5 + Math.random() * 10}s infinite ease-in-out, 
+                        twinkle ${3 + Math.random() * 4}s infinite ease-in-out`
+          }}
+        />
+      ))}
+    </div>
   </div>
 );
 
 const IconButton = ({ Icon }) => (
   <div className="relative group hover:scale-110 transition-transform duration-300">
-    <div className="absolute -inset-2 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full blur opacity-30 group-hover:opacity-75 transition duration-300" />
-    <div className="relative p-2 sm:p-3 bg-black/50 backdrop-blur-sm rounded-full border border-white/10">
-      <Icon className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-white" />
+    <div className="absolute -inset-2 bg-gradient-to-r from-yellow-600 to-red-600 rounded-full blur opacity-30 group-hover:opacity-75 transition duration-300" />
+    <div className="relative p-2 sm:p-3 bg-black/50 backdrop-blur-sm rounded-full border border-yellow-500/30">
+      <Icon className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-yellow-400" />
     </div>
+  </div>
+);
+
+// Animated trophy component - centered and positioned properly
+const AnimatedTrophy = () => (
+  <div className="relative flex justify-center w-full">
+    <motion.div
+      initial={{ scale: 0.8, opacity: 0 }}
+      animate={{ 
+        scale: [0.8, 1.1, 1],
+        opacity: 1,
+        y: [0, -10, 0]
+      }}
+      transition={{ 
+        duration: 2,
+        repeat: Infinity,
+        repeatType: "reverse"
+      }}
+      className="absolute top-0"
+    >
+      <Trophy className="w-16 h-16 md:w-24 md:h-24 text-yellow-400 drop-shadow-lg" />
+    </motion.div>
   </div>
 );
 
@@ -49,12 +86,7 @@ const WelcomeScreen = ({ onLoadingComplete }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    AOS.init({
-      duration: 1000,
-      once: false,
-      mirror: false,
-    });
-
+    // Initialize fade-in animations
     const timer = setTimeout(() => {
       setIsLoading(false);
       setTimeout(() => {
@@ -94,7 +126,7 @@ const WelcomeScreen = ({ onLoadingComplete }) => {
     <AnimatePresence>
       {isLoading && (
         <motion.div
-          className="fixed inset-0 bg-[#030014]"
+          className="fixed inset-0 bg-[#0a0014]"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit="exit"
@@ -103,69 +135,96 @@ const WelcomeScreen = ({ onLoadingComplete }) => {
           <BackgroundEffect />
           
           <div className="relative min-h-screen flex items-center justify-center px-4">
-            <div className="w-full max-w-4xl mx-auto">
-              {/* Icons */}
+            <div className="w-full max-w-4xl mx-auto text-center">
+              {/* Trophy at the top - centered */}
+              <motion.div 
+                className="mb-8 md:mb-12 pt-16 md:pt-20 relative h-24"
+                variants={childVariants}
+              >
+                <AnimatedTrophy />
+              </motion.div>
+              
+              {/* Champion Icons */}
               <motion.div 
                 className="flex justify-center gap-3 sm:gap-4 md:gap-8 mb-6 sm:mb-8 md:mb-12"
                 variants={childVariants}
               >
-                {[Code2, User, Github].map((Icon, index) => (
-                  <div key={index} data-aos="fade-down" data-aos-delay={index * 200}>
+                {[Crown, Medal, Star, Sparkles].map((Icon, index) => (
+                  <motion.div 
+                    key={index} 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.2 }}
+                  >
                     <IconButton Icon={Icon} />
-                  </div>
+                  </motion.div>
                 ))}
               </motion.div>
 
-              {/* Welcome Text */}
+              {/* Champion Text - made straight and responsive */}
               <motion.div 
-                className="text-center mb-6 sm:mb-8 md:mb-12"
+                className="text-center mb-6 sm:mb-8 md:mb-12 px-2"
                 variants={childVariants}
               >
-                <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold space-y-2 sm:space-y-4">
-                  <div className="mb-2 sm:mb-4">
-                    <span data-aos="fade-right" data-aos-delay="200" className="inline-block px-2 bg-gradient-to-r from-white via-blue-100 to-purple-200 bg-clip-text text-transparent">
-                      Welcome
+                <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold">
+                  <motion.div 
+                    className="mb-2 sm:mb-4 flex flex-col sm:flex-row justify-center"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    <span className="inline-block px-2 bg-gradient-to-r from-white via-yellow-100 to-orange-200 bg-clip-text text-transparent">
+                      Champions
                     </span>{' '}
-                    <span data-aos="fade-right" data-aos-delay="400" className="inline-block px-2 bg-gradient-to-r from-white via-blue-100 to-purple-200 bg-clip-text text-transparent">
-                      To
+                    <span className="inline-block px-2 bg-gradient-to-r from-white via-yellow-100 to-orange-200 bg-clip-text text-transparent">
+                      Of
                     </span>{' '}
-                    <span data-aos="fade-right" data-aos-delay="600" className="inline-block px-2 bg-gradient-to-r from-white via-blue-100 to-purple-200 bg-clip-text text-transparent">
-                      Our
+                    <span className="inline-block px-2 bg-gradient-to-r from-white via-yellow-100 to-orange-200 bg-clip-text text-transparent">
+                      Excellence
                     </span>
-                  </div>
-                  <div>
-                    <span data-aos="fade-up" data-aos-delay="800" className="inline-block px-2 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                  </motion.div>
+                  <motion.div 
+                    className="flex flex-col sm:flex-row justify-center"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.6 }}
+                  >
+                    <span className="inline-block px-2 bg-gradient-to-r from-yellow-500 to-red-500 bg-clip-text text-transparent">
                       Bioethanol
                     </span>{' '}
-                    <span data-aos="fade-up" data-aos-delay="1000" className="inline-block px-2 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                      Website
+                    <span className="inline-block px-2 bg-gradient-to-r from-yellow-500 to-red-500 bg-clip-text text-transparent">
+                      Champions
                     </span>
-                  </div>
+                  </motion.div>
                 </h1>
               </motion.div>
 
-              {/* Website Link */}
+              {/* Team Name */}
               <motion.div 
-                className="text-center"
+                className="text-center mt-8"
                 variants={childVariants}
-                data-aos="fade-up"
-                data-aos-delay="1200"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.2 }}
               >
                 <a
-                  href="BIOFOUR TEAM"
+                  href="#"
                   className="inline-flex items-center gap-2 px-4 py-2 sm:px-6 sm:py-3 rounded-full relative group hover:scale-105 transition-transform duration-300"
-                  target="_blank"
-                  rel="noopener noreferrer"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 rounded-full blur-md group-hover:blur-lg transition-all duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-600/20 to-red-600/20 rounded-full blur-md group-hover:blur-lg transition-all duration-300" />
                   <div className="relative flex items-center gap-2 text-lg sm:text-xl md:text-2xl">
-                    <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600" />
-                    <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                    <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-500" />
+                    <span className="bg-gradient-to-r from-yellow-500 to-red-500 bg-clip-text text-transparent">
                       <TypewriterEffect text="BIOFOUR TEAM" />
                     </span>
                   </div>
                 </a>
               </motion.div>
+              
+              {/* Victory laurel frame */}
+              <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 opacity-20">
+                <div className="w-32 h-32 md:w-48 md:h-48 border-8 border-yellow-500 rounded-full"></div>
+              </div>
             </div>
           </div>
         </motion.div>

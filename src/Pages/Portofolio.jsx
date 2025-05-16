@@ -14,7 +14,10 @@ import TechStackIcon from "../components/TechStackIcon";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import Certificate from "../components/Certificate";
+// Make sure you're importing lucide-react properly
 import { Code, Award, Boxes } from "lucide-react";
+// You may need to check if these icons are available in your version of lucide-react
+// If not available, we'll create fallback options
 
 // Separate ShowMore/ShowLess button component
 const ToggleButton = ({ onClick, isShowingMore }) => (
@@ -128,8 +131,6 @@ export default function FullWidthTabs() {
   const initialItems = isMobile ? 4 : 6;
 
   useEffect(() => {
-
-    
     // Initialize AOS once
     AOS.init({
       once: false, // This will make animations occur only once
@@ -184,14 +185,14 @@ export default function FullWidthTabs() {
   };
 
   const toggleShowMore = useCallback((type) => {
-    if (type === 'emisi') {
-      setShowAllProjects(prev => !prev);
-    } else {
-      setShowAllCertificates(prev => !prev);
-    } {
-      setShowAllEmisi(prev => !prev);
-    }
-  }, []);
+  if (type === 'projects') {
+    setShowAllProjects(prev => !prev);
+  } else if (type === 'certificates') {
+    setShowAllCertificates(prev => !prev);
+  } else if (type === 'emisi') {
+    setShowAllEmisi(prev => !prev);
+  }
+}, []);
 
   const displayedProjects = showAllProjects ? projects : projects.slice(0, initialItems);
   const displayedCertificates = showAllCertificates ? certificates : certificates.slice(0, initialItems);
@@ -213,104 +214,129 @@ export default function FullWidthTabs() {
           </span>
         </h2>
         <p className="text-slate-400 max-w-2xl mx-auto text-sm md:text-base mt-2">
-        Jelajahi kandungan proyek kami melalui Kadar  Glukosa, Kadar Etanol, dan Hasil uji  emisi gas buang kendaraan bermotor. 
+        Jelajahi kandungan proyek kami melalui Kadar Glukosa, Kadar Etanol, dan Hasil uji emisi gas buang kendaraan bermotor. 
         Setiap bagian mewakili tonggak sejarah dalam jalur pembelajaran berkelanjutan kami.
         </p>
       </div>
 
       <Box sx={{ width: "100%" }}>
-        {/* AppBar and Tabs section - unchanged */}
+        {/* AppBar and Tabs section - updated icons */}
         <AppBar
-          position="static"
-          elevation={0}
-          sx={{
-            bgcolor: "transparent",
-            border: "1px solid rgba(255, 255, 255, 0.1)",
-            borderRadius: "20px",
-            position: "relative",
-            overflow: "hidden",
-            "&::before": {
-              content: '""',
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: "linear-gradient(180deg, rgba(139, 92, 246, 0.03) 0%, rgba(59, 130, 246, 0.03) 100%)",
-              backdropFilter: "blur(10px)",
-              zIndex: 0,
-            },
-          }}
-          className="md:px-4"
-        >
-          {/* Tabs remain unchanged */}
-          <Tabs
-            value={value}
-            onChange={handleChange}
-            textColor="secondary"
-            indicatorColor="secondary"
-            variant="fullWidth"
-            sx={{
-              // Existing styles remain unchanged
-              minHeight: "70px",
-              "& .MuiTab-root": {
-                fontSize: { xs: "0.9rem", md: "1rem" },
-                fontWeight: "600",
-                color: "#94a3b8",
-                textTransform: "none",
-                transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-                padding: "20px 0",
-                zIndex: 1,
-                margin: "8px",
-                borderRadius: "12px",
-                "&:hover": {
-                  color: "#ffffff",
-                  backgroundColor: "rgba(139, 92, 246, 0.1)",
-                  transform: "translateY(-2px)",
-                  "& .lucide": {
-                    transform: "scale(1.1) rotate(5deg)",
-                  },
-                },
-                "&.Mui-selected": {
-                  color: "#fff",
-                  background: "linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(59, 130, 246, 0.2))",
-                  boxShadow: "0 4px 15px -3px rgba(139, 92, 246, 0.2)",
-                  "& .lucide": {
-                    color: "#a78bfa",
-                  },
-                },
-              },
-              "& .MuiTabs-indicator": {
-                height: 0,
-              },
-              "& .MuiTabs-flexContainer": {
-                gap: "8px",
-              },
-            }}
-          >
-            <Tab
-              icon={<Code className="mb-2 w-5 h-5 transition-all duration-300" />}
-              label="Glukosa"
-              
-              {...a11yProps(0)}
-            />
-            <Tab
-              icon={<Award className="mb-2 w-5 h-5 transition-all duration-300" />}
-              label="Kadar Etanol"
-              {...a11yProps(1)}
-              />
-               <Tab
-              icon={<Award className="mb-2 w-5 h-5 transition-all duration-300" />}
-              label="Hasil Uji Emisi Gas Buang"
-              {...a11yProps(2)}
-              />
-            <Tab
-              icon={<Boxes className="mb-2 w-5 h-5 transition-all duration-300" />}
-              label="Teknologi dalam Website"
-              {...a11yProps(3)}
-            />
-          </Tabs>
-        </AppBar>
+  position="static"
+  elevation={0}
+  sx={{
+    bgcolor: "transparent",
+    border: "1px solid rgba(255, 255, 255, 0.1)",
+    borderRadius: "20px",
+    position: "relative",
+    overflow: "hidden",
+    "&::before": {
+      content: '""',
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: "linear-gradient(180deg, rgba(139, 92, 246, 0.03) 0%, rgba(59, 130, 246, 0.03) 100%)",
+      backdropFilter: "blur(10px)",
+      zIndex: 0,
+    },
+  }}
+  className="md:px-4"
+>
+  <Tabs
+    value={value}
+    onChange={handleChange}
+    textColor="secondary"
+    indicatorColor="secondary"
+    variant="scrollable"
+    scrollButtons="auto"
+    allowScrollButtonsMobile
+    aria-label="scrollable tabs"
+    sx={{
+      minHeight: "70px",
+      "& .MuiTab-root": {
+        fontSize: { xs: "0.9rem", md: "1rem" },
+        fontWeight: "600",
+        color: "#94a3b8",
+        textTransform: "none",
+        transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+        padding: "20px 10px",
+        zIndex: 1,
+        margin: "8px",
+        borderRadius: "12px",
+        minWidth: "max-content",
+        "&:hover": {
+          color: "#ffffff",
+          backgroundColor: "rgba(139, 92, 246, 0.1)",
+          transform: "translateY(-2px)",
+          "& .lucide": {
+            transform: "scale(1.1) rotate(5deg)",
+          },
+        },
+        "&.Mui-selected": {
+          color: "#fff",
+          background: "linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(59, 130, 246, 0.2))",
+          boxShadow: "0 4px 15px -3px rgba(139, 92, 246, 0.2)",
+          "& .lucide": {
+            color: "#a78bfa",
+          },
+        },
+      },
+      "& .MuiTabs-indicator": {
+        height: 0,
+      },
+      "& .MuiTabs-scrollButtons": {
+        color: "#94a3b8",
+        "&.Mui-disabled": {
+          opacity: 0.3,
+        },
+      },
+    }}
+  >
+    <Tab
+      icon={<Code className="mb-2 w-5 h-5 transition-all duration-300" />}
+      label={isMobile ? "Glukosa" : "Glukosa"}
+      {...a11yProps(0)}
+    />
+    <Tab
+      icon={<Award className="mb-2 w-5 h-5 transition-all duration-300" />}
+      label={isMobile ? "Etanol" : "Kadar Etanol"}
+      {...a11yProps(1)}
+    />
+    <Tab
+      icon={<Award className="mb-2 w-5 h-5 transition-all duration-300" />}
+      label={isMobile ? "Emisi" : "Hasil Uji Emisi Gas Buang"}
+      {...a11yProps(2)}
+    />
+    <Tab
+      icon={<Boxes className="mb-2 w-5 h-5 transition-all duration-300" />}
+      label={isMobile ? "Tech" : "Teknologi dalam Website"}
+      {...a11yProps(3)}
+    />
+    <Tab
+      icon={<Award className="mb-2 w-5 h-5 transition-all duration-300" style={{ transform: "rotate(0deg)" }} />}
+      label={isMobile ? "Champ" : "Biofour Champion"}
+      {...a11yProps(4)}
+    />
+    <Tab
+      icon={<Award className="mb-2 w-5 h-5 transition-all duration-300" />}
+      label={isMobile ? "Certif" : "Certificate"}
+      {...a11yProps(5)}
+    />
+    <Tab
+      icon={<Award className="mb-2 w-5 h-5 transition-all duration-300" />}
+      label={isMobile ? "Photo" : "Photo"}
+      {...a11yProps(6)}
+    />
+  </Tabs>
+</AppBar>
+
+{isMobile && (
+  <div className="text-xs text-slate-400 text-center mt-2 mb-3">
+    <span>← Geser untuk melihat tab lainnya →</span>
+  </div>
+)}
 
         <SwipeableViews
           axis={theme.direction === "rtl" ? "x-reverse" : "x"}

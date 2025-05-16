@@ -5,7 +5,7 @@ import 'aos/dist/aos.css'
 
 // Memoized Components
 const Header = memo(() => (
-  <div className="text-center lg:mb-8 mb-2 px-[5%]">
+  <div className="text-center mb-8 px-4 sm:px-[5%]">
     <div className="inline-block relative group">
       <h2 
         className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#6366f1] to-[#a855f7]" 
@@ -28,7 +28,7 @@ const Header = memo(() => (
 ));
 
 const ProfileImage = memo(() => (
-  <div className="flex justify-end items-center sm:p-12 sm:py-0 sm:pb-0 p-0 py-2 pb-2">
+  <div className="flex justify-center sm:justify-end items-center sm:p-12 sm:py-0 sm:pb-0 p-0 py-2 pb-2">
     <div 
       className="relative group" 
       data-aos="fade-up"
@@ -69,16 +69,16 @@ const ProfileImage = memo(() => (
 ));
 
 const StatCard = memo(({ icon: Icon, color, value, label, description, animation }) => (
-  <div data-aos={animation} data-aos-duration={1300} className="relative group">
+  <div data-aos={animation} data-aos-duration={1300} className="relative group w-full">
     <div className="relative z-10 bg-gray-900/50 backdrop-blur-lg rounded-2xl p-6 border border-white/10 overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl h-full flex flex-col justify-between">
       <div className={`absolute -z-10 inset-0 bg-gradient-to-br ${color} opacity-10 group-hover:opacity-20 transition-opacity duration-300`}></div>
       
       <div className="flex items-center justify-between mb-4">
-        <div className="w-16 h-16 rounded-full flex items-center justify-center bg-white/10 transition-transform group-hover:rotate-6">
-          <Icon className="w-8 h-8 text-white" />
+        <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center bg-white/10 transition-transform group-hover:rotate-6">
+          <Icon className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
         </div>
         <span 
-          className="text-4xl font-bold text-white"
+          className="text-3xl sm:text-4xl font-bold text-white"
           data-aos="fade-up-left"
           data-aos-duration="1500"
           data-aos-anchor-placement="top-bottom"
@@ -108,6 +108,31 @@ const StatCard = memo(({ icon: Icon, color, value, label, description, animation
           <ArrowUpRight className="w-4 h-4 text-white/50 group-hover:text-white transition-colors" />
         </div>
       </div>
+    </div>
+  </div>
+));
+
+const DensitySection = memo(() => (
+  <div className="mt-20 mb-10">
+    <div className="text-center mb-10 px-4 sm:px-[5%]">
+      <div className="inline-block relative group">
+        <h2 
+          className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#6366f1] to-[#a855f7]" 
+          data-aos="zoom-in-up"
+          data-aos-duration="600"
+        >
+          Densitas 
+        </h2>
+      </div>
+      <p 
+        className="mt-2 text-gray-400 max-w-2xl mx-auto text-base sm:text-lg flex items-center justify-center gap-2"
+        data-aos="zoom-in-up"
+        data-aos-duration="800"
+      >
+        <Sparkles className="w-5 h-5 text-purple-400" />
+        Densitas Ampas Tebu hari ke-3 hingga 7
+        <Sparkles className="w-5 h-5 text-purple-400" />
+      </p>
     </div>
   </div>
 ));
@@ -159,48 +184,48 @@ const AboutPage = () => {
     {
       icon: Code,
       color: "from-[#6366f1] to-[#a855f7]",
-      value: "1,23302 gr/cm3",
-      label: "Densitas sampel hari ke-3",
-      description: "densitas adalah pengukuran massa setiap satuan volume benda. Semakin tinggi massa jenis suatu benda, maka semakin besar pula massa setiap volumenya.",
+      value: "1,23302",
+      label: "Densitas sampel hari ke-3 (gr/cm³)",
+      description: "Pengukuran massa per satuan volume",
       animation: "fade-right",
     },
     {
       icon: Code,
       color: "from-[#a855f7] to-[#6366f1]",
-      value: "1,17309 gr/cm3",
-      label: "Densitas sampel hari ke-4",
-      description: "densitas adalah pengukuran massa setiap satuan volume benda. Semakin tinggi massa jenis suatu benda, maka semakin besar pula massa setiap volumenya.",
+      value: "1,17309",
+      label: "Densitas sampel hari ke-4 (gr/cm³)",
+      description: "Pengukuran massa per satuan volume",
       animation: "fade-up",
     },
     {
       icon: Code,
       color: "from-[#a855f7] to-[#6366f1]",
-      value: "1,12903 gr/cm3",
-      label: "Densitas sampel hari ke-5",
-      description: "densitas adalah pengukuran massa setiap satuan volume benda. Semakin tinggi massa jenis suatu benda, maka semakin besar pula massa setiap volumenya.",
+      value: "1,12903",
+      label: "Densitas sampel hari ke-5 (gr/cm³)",
+      description: "Pengukuran massa per satuan volume",
       animation: "fade-up",
     },
     {
       icon: Code,
       color: "from-[#a855f7] to-[#6366f1]",
-      value: "1,23102 gr/cm3",
-      label: "Densitas sampel hari ke-6",
-      description: "densitas adalah pengukuran massa setiap satuan volume benda. Semakin tinggi massa jenis suatu benda, maka semakin besar pula massa setiap volumenya.",
+      value: "1,23102",
+      label: "Densitas sampel hari ke-6 (gr/cm³)",
+      description: "Pengukuran massa per satuan volume",
       animation: "fade-up",
     },
     {
       icon: Code,
       color: "from-[#6366f1] to-[#a855f7]",
-      value: "1,27302 gr/cm3",
-      label: "Densitas sampel hari ke-7",
-      description: "densitas adalah pengukuran massa setiap satuan volume benda. Semakin tinggi massa jenis suatu benda, maka semakin besar pula massa setiap volumenya.",
+      value: "1,27302",
+      label: "Densitas sampel hari ke-7 (gr/cm³)",
+      description: "Pengukuran massa per satuan volume",
       animation: "fade-left",
     },
-  ], [totalProjects, totalCertificates, YearExperience]);
+  ], []);
 
   return (
     <div
-      className="h-auto pb-[10%] text-white overflow-hidden px-[5%] sm:px-[5%] lg:px-[10%] mt-10 sm-mt-0" 
+      className="h-auto pb-[10%] text-white overflow-hidden px-4 sm:px-[5%] lg:px-[10%] mt-10 sm:mt-0" 
       id="About"
     >
       <Header />
@@ -235,22 +260,22 @@ const AboutPage = () => {
 
             <div className="flex flex-col lg:flex-row items-center lg:items-start gap-4 lg:gap-4 lg:px-0 w-full">
               <a href="https://www.accuweather.com/id/id/cilegon/202266/air-quality-index/202266" className="w-full">
-              <button 
-                data-aos="fade-up"
-                data-aos-duration="800"
-                className="w-full sm:w-auto sm:px-6 py-2 sm:py-3 rounded-lg bg-gradient-to-r from-[#6366f1] to-[#a855f7] text-white font-medium transition-all duration-300 hover:scale-105 flex items-center justify-center lg:justify-start gap-2 shadow-lg hover:shadow-xl animate-bounce-slow"
-              >
-                <FileText className="w-4 h-4 sm:w-5 sm:h-5" /> Kualitas Udara Kota Cilegon
-              </button>
+                <button 
+                  data-aos="fade-up"
+                  data-aos-duration="800"
+                  className="w-full sm:w-auto sm:px-6 py-2 sm:py-3 rounded-lg bg-gradient-to-r from-[#6366f1] to-[#a855f7] text-white font-medium transition-all duration-300 hover:scale-105 flex items-center justify-center lg:justify-start gap-2 shadow-lg hover:shadow-xl animate-bounce-slow"
+                >
+                  <FileText className="w-4 h-4 sm:w-5 sm:h-5" /> Kualitas Udara Kota Cilegon
+                </button>
               </a>
               <a href="#Portofolio" className="w-full">
-              <button 
-                data-aos="fade-up"
-                data-aos-duration="1000"
-                className="w-full sm:w-auto sm:px-6 py-2 sm:py-3 rounded-lg border border-[#a855f7]/50 text-[#a855f7] font-medium transition-all duration-300 hover:scale-105 flex items-center justify-center lg:justify-start gap-2 hover:bg-[#a855f7]/10 animate-bounce-slow delay-200"
-              >
-                <Code className="w-4 h-4 sm:w-5 sm:h-5" /> View Projects
-              </button>
+                <button 
+                  data-aos="fade-up"
+                  data-aos-duration="1000"
+                  className="w-full sm:w-auto sm:px-6 py-2 sm:py-3 rounded-lg border border-[#a855f7]/50 text-[#a855f7] font-medium transition-all duration-300 hover:scale-105 flex items-center justify-center lg:justify-start gap-2 hover:bg-[#a855f7]/10 animate-bounce-slow delay-200"
+                >
+                  <Code className="w-4 h-4 sm:w-5 sm:h-5" /> View Projects
+                </button>
               </a>
             </div>
           </div>
@@ -258,36 +283,18 @@ const AboutPage = () => {
           <ProfileImage />
         </div>
 
-   <div className="text-center lg:mb-8 mb-2 px-[5%]">
-      <div className="inline-block relative group">
-        <h2 
-          className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#6366f1] to-[#a855f7]" 
-          data-aos="zoom-in-up"
-          data-aos-duration="600"
-        >
-          Densitas 
-        </h2>
-        </div>
-      <p 
-        className="mt-2 text-gray-400 max-w-2xl mx-auto text-base sm:text-lg flex items-center justify-center gap-2"
-        data-aos="zoom-in-up"
-        data-aos-duration="800"
-      >
-        <Sparkles className="w-5 h-5 text-purple-400" />
-        Densitas Ampas Tebu hari ke-3 hingga 7
-        <Sparkles className="w-5 h-5 text-purple-400" />
-      </p>
-    </div>
+        {/* Density Section with dedicated component */}
+        <DensitySection />
 
-        <a href="#Portofolio">
-          <div className="grid flex justify-center items-center grid-cols-1 md:grid-cols-3 gap-6 mt-16 cursor-pointer grid-flex justify-center items-center">
-            {statsData.map((stat) => (
-              <StatCard key={stat.label} {...stat} />
+        {/* Density Cards in a consistent grid */}
+        <div className="w-full mx-auto mt-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
+            {statsData.map((stat, index) => (
+              <StatCard key={index} {...stat} />
             ))}
           </div>
-        </a>
+        </div>
       </div>
-      
 
       <style jsx>{`
         @keyframes float {

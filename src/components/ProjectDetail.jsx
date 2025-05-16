@@ -72,7 +72,7 @@ const ProjectStats = ({ emisi }) => {
         </div>
         <div className="flex-grow">
           <div className="text-lg md:text-xl font-semibold text-purple-200"></div>
-          <div className="text-[10px] md:text-xs text-gray-400">Environmentally Frienly Fuel</div>
+          <div className="text-[10px] md:text-xs text-gray-400">Environmentally Friendly Fuel</div>
         </div>
       </div>
     </div>
