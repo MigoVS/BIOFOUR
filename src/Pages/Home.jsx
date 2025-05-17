@@ -363,7 +363,7 @@ const Home = () => {
                 <p className="text-base md:text-lg text-gray-400 max-w-xl leading-relaxed font-light text-justify"
                   data-aos="fade-up"
                   data-aos-delay="1000">
-                  Selamat datang di Website Kami! Kami hadir untuk memperlihatkan kualitas etanol yang tim kami buat dan dapat diakses secara umum. Tujuan kami membuat Bioetanol sebagai bahan bakar kendaraan yang ramah lingkungan.
+                  Selamat datang di Website Kami! Kami adalah tim peneliti yang berfokus pada pengembangan bioetanol berkualitas tinggi. Tujuan penelitian kami adalah menciptakan bioetanol sebagai alternatif bahan bakar kendaraan yang ramah lingkungan untuk masa depan yang lebih berkelanjutan.
                 </p>
 
                 {/* Air Quality Card - Added here */}
