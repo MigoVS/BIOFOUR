@@ -13,40 +13,32 @@ import CardProject from "../components/CardProject";
 import TechStackIcon from "../components/TechStackIcon";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import Certificate from "../components/Certificate";
 // Import Lucide React icons
 import { Code, Award, Boxes, Atom, Fuel, Trophy, Medal, Image, Cpu } from "lucide-react";
 
-// Missing component definitions
-const Champion = ({ ImgSertif }) => (
-  <div className="rounded-xl overflow-hidden border border-white/10 transform transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/20">
-    <img src={ImgSertif} alt="Champion" className="w-full h-auto" />
+// Standardized certificate component that works for all certificate types
+const CertificateDisplay = ({ ImgSertif, id, alt }) => (
+  <div className="rounded-xl overflow-hidden border border-white/10 transform transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/20 group relative">
+    <img src={ImgSertif} alt={alt || `Certificate-${id}`} className="w-full h-auto" />
+    
+    {/* View Overlay - appears on hover */}
+    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+      <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg flex items-center space-x-2">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+          <circle cx="12" cy="12" r="2"></circle>
+          <path d="M2 12s3.5-5 10-5 10 5 10 5-3.5 5-10 5-10-5-10-5z"></path>
+        </svg>
+        <span className="text-white font-medium text-sm">View</span>
+      </div>
+    </div>
   </div>
 );
 
-const Certif = ({ ImgSertif }) => (
-  <div className="rounded-xl overflow-hidden border border-white/10 transform transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/20">
-    <img src={ImgSertif} alt="Certificate" className="w-full h-auto" />
-  </div>
-);
-
-const Photo = ({ ImgSertif }) => (
-  <div className="rounded-xl overflow-hidden border border-white/10 transform transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/20">
-    <img src={ImgSertif} alt="Photo" className="w-full h-auto" />
-  </div>
-);
-
-// Add PropTypes for the new components
-Champion.propTypes = {
+// Add PropTypes for the standardized component
+CertificateDisplay.propTypes = {
   ImgSertif: PropTypes.string.isRequired,
-};
-
-Certif.propTypes = {
-  ImgSertif: PropTypes.string.isRequired,
-};
-
-Photo.propTypes = {
-  ImgSertif: PropTypes.string.isRequired,
+  id: PropTypes.string,
+  alt: PropTypes.string
 };
 
 // Separate ShowMore/ShowLess button component
@@ -167,10 +159,14 @@ export default function FullWidthTabs() {
   const [showAllCertificates, setShowAllCertificates] = useState(false);
   const [showAllEmisi, setShowAllEmisi] = useState(false);
   const [showAllChampion, setShowAllChampion] = useState(false);
-  const [showAllCertif, setShowAllCertif] = useState(false); // Fixed typo here
+  const [showAllCertif, setShowAllCertif] = useState(false);
   const [showAllPhoto, setShowAllPhoto] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const initialItems = isMobile ? 4 : 6;
+
+  // Modal state for image viewing
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState("");
 
   // Check if it's mobile on mount and when window resizes
   useEffect(() => {
@@ -191,30 +187,46 @@ export default function FullWidthTabs() {
   useEffect(() => {
     // Initialize AOS once
     AOS.init({
-      once: false, // This will make animations occur only once
+      once: false, // This will make animations occur each time
     });
   }, []);
 
+  // Helper function to check if cache is valid (not older than 1 hour)
+  const isCacheValid = (timestamp) => {
+    if (!timestamp) return false;
+    const now = new Date().getTime();
+    const cacheTime = parseInt(timestamp);
+    // Cache valid for 1 hour (3600000 milliseconds)
+    return (now - cacheTime) < 3600000;
+  };
+
   const fetchData = useCallback(async () => {
     try {
-      // Check if we have cached data in localStorage
-      const cachedProjects = localStorage.getItem("projects");
-      const cachedCertificates = localStorage.getItem("certificates");
-      const cachedEmisi = localStorage.getItem("emisi");
-      const cachedChampion = localStorage.getItem("champion");
-      const cachedCertif = localStorage.getItem("certif");
-      const cachedPhoto = localStorage.getItem("photo");
+      // Check if we have valid cached data in localStorage
+      const cacheTimestamp = localStorage.getItem("bioetanolCacheTimestamp");
+      const isValid = isCacheValid(cacheTimestamp);
       
-      if (cachedProjects) {
-        setProjects(JSON.parse(cachedProjects));
-        setCertificates(JSON.parse(cachedCertificates || '[]'));
-        setEmisi(JSON.parse(cachedEmisi || '[]'));
-        setChampion(JSON.parse(cachedChampion || '[]'));
-        setCertif(JSON.parse(cachedCertif || '[]'));
-        setPhoto(JSON.parse(cachedPhoto || '[]'));
-        return;
+      if (isValid) {
+        const cachedProjects = localStorage.getItem("projects");
+        const cachedCertificates = localStorage.getItem("certificates");
+        const cachedEmisi = localStorage.getItem("emisi");
+        const cachedChampion = localStorage.getItem("champion");
+        const cachedCertif = localStorage.getItem("certif");
+        const cachedPhoto = localStorage.getItem("photo");
+        
+        if (cachedProjects && cachedCertificates && cachedEmisi && 
+            cachedChampion && cachedCertif && cachedPhoto) {
+          setProjects(JSON.parse(cachedProjects));
+          setCertificates(JSON.parse(cachedCertificates));
+          setEmisi(JSON.parse(cachedEmisi));
+          setChampion(JSON.parse(cachedChampion));
+          setCertif(JSON.parse(cachedCertif));
+          setPhoto(JSON.parse(cachedPhoto));
+          return;
+        }
       }
 
+      // Cache is invalid or doesn't exist, fetch fresh data
       const projectCollection = collection(db, "projects");
       const certificateCollection = collection(db, "certificates");
       const emisiCollection = collection(db, "emisi");
@@ -231,26 +243,46 @@ export default function FullWidthTabs() {
         getDocs(photoCollection),
       ]);
 
+      // Process the data with unique IDs to ensure proper image references
       const projectData = projectSnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
+        Img: doc.data().Img || '',
         TechStack: doc.data().TechStack || [],
       }));
 
-      const certificateData = certificateSnapshot.docs.map((doc) => doc.data());
+      const certificateData = certificateSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        Img: doc.data().Img || '',
+      }));
 
       const emisiData = emisiSnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
+        Img: doc.data().Img || '',
         TechStack: doc.data().TechStack || [],
       }));
 
-      const championData = championSnapshot.docs.map((doc) => doc.data());
+      const championData = championSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        Img: doc.data().Img || '',
+      }));
 
-      const certifData = certifSnapshot.docs.map((doc) => doc.data());
+      const certifData = certifSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        Img: doc.data().Img || '',
+      }));
 
-      const photoData = photoSnapshot.docs.map((doc) => doc.data());
+      const photoData = photoSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        Img: doc.data().Img || '',
+      }));
 
+      // Set state with the fresh data
       setProjects(projectData);
       setCertificates(certificateData);
       setEmisi(emisiData);
@@ -258,13 +290,21 @@ export default function FullWidthTabs() {
       setCertif(certifData);
       setPhoto(photoData);
 
-      // Store in localStorage
+      // Store fresh data in localStorage with timestamp
       localStorage.setItem("projects", JSON.stringify(projectData));
       localStorage.setItem("certificates", JSON.stringify(certificateData));
       localStorage.setItem("emisi", JSON.stringify(emisiData));
       localStorage.setItem("champion", JSON.stringify(championData));
       localStorage.setItem("certif", JSON.stringify(certifData));
       localStorage.setItem("photo", JSON.stringify(photoData));
+      localStorage.setItem("bioetanolCacheTimestamp", new Date().getTime().toString());
+      
+      // Output data to console for debugging
+      console.log("Fetched fresh data from Firebase");
+      console.log("Sample champion data:", championData.slice(0, 2));
+      console.log("Sample certif data:", certifData.slice(0, 2));
+      console.log("Sample photo data:", photoData.slice(0, 2));
+      
     } catch (error) {
       console.error("Error fetching data:", error);
       // Use empty arrays if fetching fails
@@ -285,6 +325,10 @@ export default function FullWidthTabs() {
     setValue(newValue);
   };
 
+  const handleChangeIndex = (index) => {
+    setValue(index);
+  };
+
   const toggleShowMore = useCallback((type) => {
     if (type === 'projects') {
       setShowAllProjects(prev => !prev);
@@ -295,19 +339,31 @@ export default function FullWidthTabs() {
     } else if (type === 'champion') {
       setShowAllChampion(prev => !prev);
     } else if (type === 'certif') {
-      setShowAllCertif(prev => !prev); // Fixed typo here
+      setShowAllCertif(prev => !prev);
     } else if (type === 'photo') {
       setShowAllPhoto(prev => !prev);
     }
   }, []);
 
+  // Function to open image in modal
+  const openImageModal = (imageUrl) => {
+    setSelectedImage(imageUrl);
+    setModalOpen(true);
+  };
+
+  // Function to close the modal
+  const closeModal = () => {
+    setModalOpen(false);
+    setSelectedImage("");
+  };
+
+  // Make sure we're displaying the correct number of items
   const displayedProjects = showAllProjects ? projects : projects.slice(0, initialItems);
   const displayedCertificates = showAllCertificates ? certificates : certificates.slice(0, initialItems);
   const displayedEmisi = showAllEmisi ? emisi : emisi.slice(0, initialItems);
   const displayedChampion = showAllChampion ? champion : champion.slice(0, initialItems);
   const displayedCertif = showAllCertif ? certif : certif.slice(0, initialItems);
   const displayedPhoto = showAllPhoto ? photo : photo.slice(0, initialItems);
-  
 
   return (
     <div className="md:px-[10%] px-[5%] w-full sm:mt-0 mt-[3rem] bg-[#030014] overflow-hidden" id="Portofolio">
@@ -329,6 +385,25 @@ export default function FullWidthTabs() {
         Setiap bagian mewakili tonggak sejarah dalam jalur pembelajaran berkelanjutan kami.
         </p>
       </div>
+
+      {/* Image Modal */}
+      {modalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80" onClick={closeModal}>
+          <div className="max-w-4xl max-h-[90vh] overflow-auto p-2 relative" onClick={(e) => e.stopPropagation()}>
+            <button 
+              className="absolute top-4 right-4 z-10 bg-black/50 text-white rounded-full w-8 h-8 flex items-center justify-center"
+              onClick={closeModal}
+            >
+              ✕
+            </button>
+            <img 
+              src={selectedImage} 
+              alt="Enlarged view" 
+              className="max-w-full max-h-[85vh] object-contain rounded-lg"
+            />
+          </div>
+        </div>
+      )}
 
       <Box sx={{ width: "100%" }}>
         {/* AppBar and Tabs section - updated icons */}
@@ -452,14 +527,14 @@ export default function FullWidthTabs() {
         <SwipeableViews
           axis={theme.direction === "rtl" ? "x-reverse" : "x"}
           index={value}
-          onChangeIndex={setValue}
+          onChangeIndex={handleChangeIndex}
         >
           <TabPanel value={value} index={0} dir={theme.direction}>
             <div className="container mx-auto flex justify-center items-center overflow-hidden">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-5">
                 {displayedProjects.map((project, index) => (
                   <div
-                    key={project.id || index}
+                    key={project.id || `project-${index}`}
                     data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
                     data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
                   >
@@ -489,11 +564,17 @@ export default function FullWidthTabs() {
               <div className="grid grid-cols-1 md:grid-cols-3 md:gap-5 gap-4">
                 {displayedCertificates.map((certificate, index) => (
                   <div
-                    key={index}
+                    key={certificate.id || `certificate-${index}`}
                     data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
                     data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
+                    onClick={() => openImageModal(certificate.Img)}
+                    className="cursor-pointer"
                   >
-                    <Certificate ImgSertif={certificate.Img} />
+                    <CertificateDisplay 
+                      ImgSertif={certificate.Img} 
+                      id={certificate.id || `certificate-${index}`}
+                      alt={`Certificate-${certificate.id || index}`}
+                    />
                   </div>
                 ))}
               </div>
@@ -511,18 +592,18 @@ export default function FullWidthTabs() {
           <TabPanel value={value} index={2} dir={theme.direction}>
             <div className="container mx-auto flex justify-center items-center overflow-hidden">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-5">
-                {displayedEmisi.map((emisi, index) => (
+                {displayedEmisi.map((emisiItem, index) => (
                   <div
-                    key={emisi.id || index}
+                    key={emisiItem.id || `emisi-${index}`}
                     data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
                     data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
                   >
                     <CardProject
-                      Img={emisi.Img}
-                      Title={emisi.Title}
-                      Description={emisi.Description}
-                      Link={emisi.Link}
-                      id={emisi.id}
+                      Img={emisiItem.Img}
+                      Title={emisiItem.Title}
+                      Description={emisiItem.Description}
+                      Link={emisiItem.Link}
+                      id={emisiItem.id}
                     />
                   </div>
                 ))}
@@ -541,13 +622,19 @@ export default function FullWidthTabs() {
           <TabPanel value={value} index={3} dir={theme.direction}>
             <div className="container mx-auto flex justify-center items-center overflow-hidden">
               <div className="grid grid-cols-1 md:grid-cols-3 md:gap-5 gap-4">
-                {displayedChampion.map((champion, index) => (
+                {displayedChampion.map((champItem, index) => (
                   <div
-                    key={index}
+                    key={champItem.id || `champion-${index}`}
                     data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
                     data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
+                    onClick={() => openImageModal(champItem.Img)}
+                    className="cursor-pointer"
                   >
-                    <Champion ImgSertif={champion.Img} />
+                    <CertificateDisplay 
+                      ImgSertif={champItem.Img} 
+                      id={champItem.id || `champion-${index}`}
+                      alt={`Champion-${champItem.id || index}`}
+                    />
                   </div>
                 ))}
               </div>
@@ -565,13 +652,19 @@ export default function FullWidthTabs() {
           <TabPanel value={value} index={4} dir={theme.direction}>
             <div className="container mx-auto flex justify-center items-center overflow-hidden">
               <div className="grid grid-cols-1 md:grid-cols-3 md:gap-5 gap-4">
-                {displayedCertif.map((certif, index) => (
+                {displayedCertif.map((certifItem, index) => (
                   <div
-                    key={index}
+                    key={certifItem.id || `certif-${index}`}
                     data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
                     data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
+                    onClick={() => openImageModal(certifItem.Img)}
+                    className="cursor-pointer"
                   >
-                    <Certif ImgSertif={certif.Img} />
+                    <CertificateDisplay 
+                      ImgSertif={certifItem.Img} 
+                      id={certifItem.id || `certif-${index}`}
+                      alt={`Certificate-${certifItem.id || index}`}
+                    />
                   </div>
                 ))}
               </div>
@@ -589,13 +682,19 @@ export default function FullWidthTabs() {
           <TabPanel value={value} index={5} dir={theme.direction}>
             <div className="container mx-auto flex justify-center items-center overflow-hidden">
               <div className="grid grid-cols-1 md:grid-cols-3 md:gap-5 gap-4">
-                {displayedPhoto.map((photo, index) => (
+                {displayedPhoto.map((photoItem, index) => (
                   <div
-                    key={index}
+                    key={photoItem.id || `photo-${index}`}
                     data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
                     data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
+                    onClick={() => openImageModal(photoItem.Img)}
+                    className="cursor-pointer"
                   >
-                    <Photo ImgSertif={photo.Img} />
+                    <CertificateDisplay 
+                      ImgSertif={photoItem.Img} 
+                      id={photoItem.id || `photo-${index}`}
+                      alt={`Photo-${photoItem.id || index}`}
+                    />
                   </div>
                 ))}
               </div>
@@ -615,7 +714,7 @@ export default function FullWidthTabs() {
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 lg:gap-8 gap-5">
                 {techStacks.map((stack, index) => (
                   <div
-                    key={index}
+                    key={`tech-${index}`}
                     data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
                     data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
                   >
