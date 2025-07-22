@@ -50,7 +50,7 @@ const LuxuriousTypewriter = ({ text, speed = 120, delay = 0 }) => {
       {displayText}
       {showCursor && (
         <motion.span
-          className="text-cyan-300 ml-0.5"
+          className="text-yellow-300 ml-0.5"
           animate={{ opacity: [0, 1, 0] }}
           transition={{ duration: 1, repeat: Infinity }}
         >
@@ -61,61 +61,63 @@ const LuxuriousTypewriter = ({ text, speed = 120, delay = 0 }) => {
   );
 };
 
-// Enhanced Industrial Background dengan lebih banyak efek visual
-const IndustrialPetrochemicalBackground = () => (
+// Luxurious Premium Background
+const LuxuriousPremiumBackground = () => (
   <div className="absolute inset-0 overflow-hidden">
-    {/* Enhanced gradient background */}
-    <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900/90 to-gray-900" />
-    <div className="absolute inset-0 bg-gradient-to-tl from-emerald-900/20 via-transparent to-cyan-900/30" />
+    {/* Enhanced gradient background with luxury colors */}
+    <div className="absolute inset-0 bg-gradient-to-br from-purple-950 via-amber-900/90 to-rose-950" />
+    <div className="absolute inset-0 bg-gradient-to-tl from-yellow-600/30 via-transparent to-purple-800/40" />
+    <div className="absolute inset-0 bg-gradient-to-r from-rose-900/20 via-amber-800/30 to-purple-900/25" />
 
-    {/* Enhanced chemical reaction effects */}
+    {/* Luxury light rays */}
     <div className="absolute top-0 left-0 w-full h-full">
       <motion.div
-        className="absolute top-1/4 left-1/4 w-48 h-48 sm:w-72 sm:h-72 lg:w-96 lg:h-96 bg-gradient-radial from-cyan-500/20 via-blue-600/10 to-transparent rounded-full blur-3xl"
+        className="absolute top-1/4 left-1/4 w-48 h-48 sm:w-72 sm:h-72 lg:w-96 lg:h-96 bg-gradient-radial from-amber-400/30 via-yellow-500/20 to-transparent rounded-full blur-3xl"
         animate={{
-          scale: [1, 1.2, 1],
-          opacity: [0.3, 0.6, 0.3],
+          scale: [1, 1.3, 1],
+          opacity: [0.4, 0.8, 0.4],
         }}
         transition={{ duration: 8, repeat: Infinity }}
       />
       <motion.div
-        className="absolute bottom-1/3 right-1/4 w-40 h-40 sm:w-60 sm:h-60 lg:w-80 lg:h-80 bg-gradient-radial from-orange-500/15 via-red-500/8 to-transparent rounded-full blur-3xl"
+        className="absolute bottom-1/3 right-1/4 w-40 h-40 sm:w-60 sm:h-60 lg:w-80 lg:h-80 bg-gradient-radial from-purple-500/25 via-rose-500/15 to-transparent rounded-full blur-3xl"
         animate={{
-          scale: [1, 1.3, 1],
-          opacity: [0.2, 0.5, 0.2],
+          scale: [1, 1.4, 1],
+          opacity: [0.3, 0.7, 0.3],
         }}
         transition={{ duration: 10, repeat: Infinity, delay: 2 }}
       />
       <motion.div
-        className="absolute top-1/2 left-1/2 w-36 h-36 sm:w-56 sm:h-56 lg:w-72 lg:h-72 bg-gradient-radial from-emerald-500/12 via-green-500/6 to-transparent rounded-full blur-3xl"
+        className="absolute top-1/2 left-1/2 w-36 h-36 sm:w-56 sm:h-56 lg:w-72 lg:h-72 bg-gradient-radial from-rose-400/20 via-pink-500/12 to-transparent rounded-full blur-3xl"
         animate={{
-          scale: [1, 1.4, 1],
-          opacity: [0.15, 0.4, 0.15],
+          scale: [1, 1.5, 1],
+          opacity: [0.2, 0.6, 0.2],
         }}
         transition={{ duration: 12, repeat: Infinity, delay: 4 }}
       />
     </div>
 
-    {/* Enhanced industrial structures */}
-    <div className="absolute inset-0 opacity-25">
-      {/* Animated horizontal pipes */}
+    {/* Luxury golden structures */}
+    <div className="absolute inset-0 opacity-35">
+      {/* Animated luxury bars */}
       {[...Array(8)].map((_, i) => (
         <motion.div
-          key={`h-pipe-${i}`}
-          className="absolute h-2 sm:h-3 lg:h-4 bg-gradient-to-r from-gray-500 via-gray-400 to-gray-500 opacity-50"
+          key={`luxury-bar-${i}`}
+          className="absolute h-2 sm:h-3 lg:h-4 bg-gradient-to-r from-amber-600 via-yellow-400 to-amber-600 opacity-60"
           style={{
             width: `${30 + Math.random() * 40}%`,
             top: `${15 + i * 10}%`,
             left: `${Math.random() * 50}%`,
             transform: `rotate(${-3 + Math.random() * 6}deg)`,
-            boxShadow: "0 0 8px rgba(59, 130, 246, 0.4)",
+            boxShadow:
+              "0 0 15px rgba(251, 191, 36, 0.8), 0 0 30px rgba(251, 191, 36, 0.4)",
           }}
           animate={{
-            opacity: [0.3, 0.6, 0.3],
+            opacity: [0.4, 0.8, 0.4],
             boxShadow: [
-              "0 0 8px rgba(59, 130, 246, 0.4)",
-              "0 0 15px rgba(59, 130, 246, 0.6)",
-              "0 0 8px rgba(59, 130, 246, 0.4)",
+              "0 0 15px rgba(251, 191, 36, 0.8), 0 0 30px rgba(251, 191, 36, 0.4)",
+              "0 0 25px rgba(251, 191, 36, 1), 0 0 50px rgba(251, 191, 36, 0.6)",
+              "0 0 15px rgba(251, 191, 36, 0.8), 0 0 30px rgba(251, 191, 36, 0.4)",
             ],
           }}
           transition={{
@@ -126,23 +128,24 @@ const IndustrialPetrochemicalBackground = () => (
         />
       ))}
 
-      {/* Animated vertical pipes */}
+      {/* Luxury vertical elements */}
       {[...Array(6)].map((_, i) => (
         <motion.div
-          key={`v-pipe-${i}`}
-          className="absolute w-2 sm:w-3 lg:w-4 bg-gradient-to-b from-gray-500 via-gray-400 to-gray-500 opacity-40"
+          key={`luxury-pillar-${i}`}
+          className="absolute w-2 sm:w-3 lg:w-4 bg-gradient-to-b from-purple-600 via-rose-500 to-purple-600 opacity-50"
           style={{
             height: `${25 + Math.random() * 30}%`,
             left: `${20 + i * 15}%`,
             top: `${Math.random() * 40}%`,
-            boxShadow: "0 0 8px rgba(34, 197, 94, 0.4)",
+            boxShadow:
+              "0 0 15px rgba(147, 51, 234, 0.6), 0 0 30px rgba(147, 51, 234, 0.3)",
           }}
           animate={{
-            opacity: [0.2, 0.5, 0.2],
+            opacity: [0.3, 0.7, 0.3],
             boxShadow: [
-              "0 0 8px rgba(34, 197, 94, 0.4)",
-              "0 0 15px rgba(34, 197, 94, 0.6)",
-              "0 0 8px rgba(34, 197, 94, 0.4)",
+              "0 0 15px rgba(147, 51, 234, 0.6), 0 0 30px rgba(147, 51, 234, 0.3)",
+              "0 0 25px rgba(147, 51, 234, 0.8), 0 0 50px rgba(147, 51, 234, 0.5)",
+              "0 0 15px rgba(147, 51, 234, 0.6), 0 0 30px rgba(147, 51, 234, 0.3)",
             ],
           }}
           transition={{
@@ -154,168 +157,178 @@ const IndustrialPetrochemicalBackground = () => (
       ))}
     </div>
 
-    {/* Enhanced floating particles */}
+    {/* Luxury floating diamonds */}
     <div className="absolute inset-0">
-      {[...Array(25)].map((_, i) => (
+      {[...Array(30)].map((_, i) => (
         <motion.div
-          key={`particle-${i}`}
-          className="absolute rounded-full"
+          key={`diamond-${i}`}
+          className="absolute"
           style={{
-            width: `${Math.random() * 4 + 2}px`,
-            height: `${Math.random() * 4 + 2}px`,
-            backgroundColor:
-              i % 5 === 0
-                ? "#06b6d4"
-                : i % 5 === 1
-                ? "#10b981"
-                : i % 5 === 2
-                ? "#f59e0b"
-                : i % 5 === 3
-                ? "#ef4444"
-                : "#8b5cf6",
+            width: `${Math.random() * 6 + 3}px`,
+            height: `${Math.random() * 6 + 3}px`,
+            background:
+              i % 6 === 0
+                ? "linear-gradient(45deg, #fbbf24, #f59e0b)"
+                : i % 6 === 1
+                ? "linear-gradient(45deg, #a855f7, #9333ea)"
+                : i % 6 === 2
+                ? "linear-gradient(45deg, #ec4899, #be185d)"
+                : i % 6 === 3
+                ? "linear-gradient(45deg, #f97316, #ea580c)"
+                : i % 6 === 4
+                ? "linear-gradient(45deg, #dc2626, #b91c1c)"
+                : "linear-gradient(45deg, #0891b2, #0e7490)",
             top: `${Math.random() * 100}%`,
             left: `${Math.random() * 100}%`,
-            boxShadow: `0 0 8px currentColor`,
+            borderRadius: "50%",
+            boxShadow: `0 0 15px currentColor, 0 0 30px currentColor`,
+            transform: "rotate(45deg)",
           }}
           animate={{
-            y: [0, -20, 0],
-            x: [0, Math.random() * 15 - 7, 0],
-            opacity: [0.3, 0.8, 0.3],
-            scale: [0.8, 1.2, 0.8],
+            y: [0, -30, 0],
+            x: [0, Math.random() * 20 - 10, 0],
+            opacity: [0.4, 1, 0.4],
+            scale: [0.8, 1.4, 0.8],
+            rotate: [45, 225, 405],
           }}
           transition={{
-            duration: 6 + Math.random() * 8,
+            duration: 8 + Math.random() * 12,
             repeat: Infinity,
-            delay: Math.random() * 4,
+            delay: Math.random() * 6,
             ease: "easeInOut",
           }}
         />
       ))}
     </div>
 
-    {/* Enhanced industrial machinery */}
-    <div className="absolute bottom-0 left-0 w-full h-24 sm:h-32 lg:h-40 opacity-20">
+    {/* Luxury architectural elements */}
+    <div className="absolute bottom-0 left-0 w-full h-24 sm:h-32 lg:h-40 opacity-25">
       <motion.div
-        className="absolute bottom-0 left-4 sm:left-8 lg:left-10 w-12 h-20 sm:w-16 sm:h-24 lg:w-20 lg:h-32 bg-gradient-to-t from-gray-600 to-gray-700 transform skew-x-3"
-        animate={{ opacity: [0.15, 0.3, 0.15] }}
+        className="absolute bottom-0 left-4 sm:left-8 lg:left-10 w-12 h-20 sm:w-16 sm:h-24 lg:w-20 lg:h-32 bg-gradient-to-t from-amber-700 to-yellow-500 transform skew-x-3"
+        style={{ boxShadow: "0 0 20px rgba(251, 191, 36, 0.6)" }}
+        animate={{ opacity: [0.2, 0.4, 0.2] }}
         transition={{ duration: 6, repeat: Infinity }}
       />
       <motion.div
-        className="absolute bottom-0 left-20 sm:left-28 lg:left-36 w-16 h-18 sm:w-20 sm:h-22 lg:w-24 lg:h-28 bg-gradient-to-t from-gray-600 to-gray-700 rounded-t-full"
-        animate={{ opacity: [0.2, 0.4, 0.2] }}
+        className="absolute bottom-0 left-20 sm:left-28 lg:left-36 w-16 h-18 sm:w-20 sm:h-22 lg:w-24 lg:h-28 bg-gradient-to-t from-purple-700 to-rose-500 rounded-t-full"
+        style={{ boxShadow: "0 0 20px rgba(147, 51, 234, 0.6)" }}
+        animate={{ opacity: [0.25, 0.5, 0.25] }}
         transition={{ duration: 8, repeat: Infinity, delay: 1 }}
       />
       <motion.div
-        className="absolute bottom-0 right-16 sm:right-20 lg:right-24 w-10 h-22 sm:w-12 sm:h-28 lg:w-16 lg:h-36 bg-gradient-to-t from-gray-600 to-gray-700"
-        animate={{ opacity: [0.1, 0.25, 0.1] }}
+        className="absolute bottom-0 right-16 sm:right-20 lg:right-24 w-10 h-22 sm:w-12 sm:h-28 lg:w-16 lg:h-36 bg-gradient-to-t from-rose-700 to-pink-500"
+        style={{ boxShadow: "0 0 20px rgba(236, 72, 153, 0.6)" }}
+        animate={{ opacity: [0.15, 0.35, 0.15] }}
         transition={{ duration: 7, repeat: Infinity, delay: 2 }}
-      />
-      <motion.div
-        className="absolute bottom-0 right-32 sm:right-40 lg:right-48 w-18 h-14 sm:w-22 sm:h-16 lg:w-28 lg:h-20 bg-gradient-to-t from-gray-600 to-gray-700 transform -skew-x-2"
-        animate={{ opacity: [0.18, 0.35, 0.18] }}
-        transition={{ duration: 9, repeat: Infinity, delay: 3 }}
       />
     </div>
 
-    {/* Enhanced energy flow */}
-    <div className="absolute inset-0 opacity-30">
-      {[...Array(8)].map((_, i) => (
+    {/* Luxury energy streams */}
+    <div className="absolute inset-0 opacity-40">
+      {[...Array(10)].map((_, i) => (
         <motion.div
           key={`energy-${i}`}
           className="absolute"
           style={{
-            width: "2px",
-            height: `${15 + Math.random() * 25}%`,
+            width: "3px",
+            height: `${20 + Math.random() * 35}%`,
             background: `linear-gradient(to bottom, transparent, ${
-              i % 4 === 0
-                ? "#06b6d4"
-                : i % 4 === 1
-                ? "#10b981"
-                : i % 4 === 2
-                ? "#f59e0b"
-                : "#ef4444"
+              i % 5 === 0
+                ? "#fbbf24"
+                : i % 5 === 1
+                ? "#a855f7"
+                : i % 5 === 2
+                ? "#ec4899"
+                : i % 5 === 3
+                ? "#f97316"
+                : "#dc2626"
             }, transparent)`,
             left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 70}%`,
+            top: `${Math.random() * 60}%`,
           }}
           animate={{
             opacity: [0, 1, 0],
-            scaleY: [1, 1.5, 1],
+            scaleY: [1, 1.8, 1],
+            boxShadow: [
+              "0 0 10px currentColor",
+              "0 0 25px currentColor",
+              "0 0 10px currentColor",
+            ],
           }}
           transition={{
-            duration: 2 + Math.random() * 3,
+            duration: 3 + Math.random() * 4,
             repeat: Infinity,
-            delay: Math.random() * 4,
+            delay: Math.random() * 5,
             ease: "easeInOut",
           }}
         />
       ))}
     </div>
 
-    {/* Tech grid overlay */}
-    <div className="absolute inset-0 opacity-5">
+    {/* Luxury grid overlay */}
+    <div className="absolute inset-0 opacity-8">
       <div
         className="w-full h-full"
         style={{
           backgroundImage:
-            "linear-gradient(rgba(6,182,212,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(6,182,212,0.4) 1px, transparent 1px)",
-          backgroundSize: "30px 30px",
+            "linear-gradient(rgba(251,191,36,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(251,191,36,0.3) 1px, transparent 1px)",
+          backgroundSize: "40px 40px",
         }}
       />
     </div>
   </div>
 );
 
-// Enhanced icon button with better hover effects
-const IndustrialIconButton = ({ Icon }) => (
+// Enhanced luxury icon button
+const LuxuryIconButton = ({ Icon }) => (
   <motion.div
     className="relative group"
-    whileHover={{ scale: 1.15 }}
-    whileTap={{ scale: 0.95 }}
+    whileHover={{ scale: 1.2 }}
+    whileTap={{ scale: 0.9 }}
     transition={{ type: "spring", stiffness: 400, damping: 17 }}
   >
     <motion.div
-      className="absolute -inset-1 sm:-inset-2 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 rounded-full blur opacity-0 group-hover:opacity-100"
+      className="absolute -inset-1 sm:-inset-2 bg-gradient-to-r from-amber-400 via-yellow-500 to-orange-500 rounded-full blur opacity-0 group-hover:opacity-100"
       animate={{
         rotate: [0, 360],
-        scale: [1, 1.1, 1],
+        scale: [1, 1.15, 1],
       }}
       transition={{
-        rotate: { duration: 8, repeat: Infinity, ease: "linear" },
+        rotate: { duration: 6, repeat: Infinity, ease: "linear" },
         scale: { duration: 2, repeat: Infinity },
       }}
     />
-    <div className="relative p-1.5 sm:p-2 lg:p-3 bg-slate-900/90 backdrop-blur-md rounded-full border border-cyan-500/60 shadow-2xl shadow-cyan-500/30 group-hover:border-cyan-400/80 transition-all duration-300">
-      <Icon className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-cyan-300 group-hover:text-cyan-200" />
+    <div className="relative p-1.5 sm:p-2 lg:p-3 bg-gradient-to-br from-purple-900/95 to-rose-900/95 backdrop-blur-md rounded-full border-2 border-amber-400/70 shadow-2xl shadow-amber-500/40 group-hover:border-yellow-300/90 group-hover:shadow-yellow-400/60 transition-all duration-300">
+      <Icon className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-amber-300 group-hover:text-yellow-200 drop-shadow-lg filter drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
     </div>
   </motion.div>
 );
 
-// Enhanced trophy with complex animations
-const IndustrialTrophy = () => (
+// Enhanced luxury trophy
+const LuxuryTrophy = () => (
   <div className="relative flex justify-center w-full">
     <motion.div
-      className="absolute w-24 h-24 sm:w-32 sm:h-32 lg:w-48 lg:h-48 bg-cyan-500/15 rounded-full blur-3xl"
+      className="absolute w-32 h-32 sm:w-40 sm:h-40 lg:w-56 lg:h-56 bg-gradient-radial from-amber-400/25 via-yellow-500/15 to-transparent rounded-full blur-3xl"
       animate={{
-        scale: [1, 1.3, 1],
-        opacity: [0.3, 0.7, 0.3],
+        scale: [1, 1.4, 1],
+        opacity: [0.4, 0.9, 0.4],
       }}
       transition={{ duration: 4, repeat: Infinity }}
     />
     <motion.div
-      initial={{ scale: 0.5, opacity: 0, rotateY: -180 }}
+      initial={{ scale: 0.3, opacity: 0, rotateY: -180 }}
       animate={{
         scale: 1,
         opacity: 1,
         rotateY: 0,
-        y: [0, -8, 0],
+        y: [0, -12, 0],
       }}
       transition={{
-        scale: { duration: 1.5, ease: "easeOut" },
-        opacity: { duration: 1.5, ease: "easeOut" },
-        rotateY: { duration: 1.5, ease: "easeOut" },
+        scale: { duration: 2, ease: "easeOut" },
+        opacity: { duration: 2, ease: "easeOut" },
+        rotateY: { duration: 2, ease: "easeOut" },
         y: {
-          duration: 5,
+          duration: 6,
           repeat: Infinity,
           repeatType: "reverse",
           ease: "easeInOut",
@@ -324,23 +337,36 @@ const IndustrialTrophy = () => (
       className="relative"
     >
       <motion.div
-        className="absolute -inset-2 sm:-inset-3 lg:-inset-4 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full blur-2xl opacity-40"
+        className="absolute -inset-3 sm:-inset-4 lg:-inset-6 bg-gradient-to-r from-amber-400 via-yellow-400 to-orange-400 rounded-full blur-2xl opacity-50"
         animate={{
-          scale: [1, 1.2, 1],
+          scale: [1, 1.3, 1],
           rotate: [0, 360],
         }}
         transition={{
           scale: { duration: 3, repeat: Infinity },
-          rotate: { duration: 15, repeat: Infinity, ease: "linear" },
+          rotate: { duration: 12, repeat: Infinity, ease: "linear" },
         }}
       />
-      <Trophy className="w-12 h-12 sm:w-16 sm:h-16 lg:w-24 lg:h-24 text-cyan-300 drop-shadow-2xl filter drop-shadow-[0_0_15px_rgba(6,182,212,0.8)]" />
+      <Trophy className="w-16 h-16 sm:w-20 sm:h-20 lg:w-28 lg:h-28 text-amber-300 drop-shadow-2xl filter drop-shadow-[0_0_25px_rgba(251,191,36,1)]" />
+      <motion.div
+        className="absolute -top-2 -right-2 sm:-top-3 sm:-right-3"
+        animate={{
+          rotate: [0, 360],
+          scale: [1, 1.2, 1],
+        }}
+        transition={{
+          rotate: { duration: 4, repeat: Infinity, ease: "linear" },
+          scale: { duration: 2, repeat: Infinity },
+        }}
+      >
+        <Crown className="w-6 h-6 sm:w-8 sm:h-8 lg:w-12 lg:h-12 text-yellow-400 filter drop-shadow-[0_0_15px_rgba(251,191,36,0.8)]" />
+      </motion.div>
     </motion.div>
   </div>
 );
 
-// Enhanced spinning atom
-const SpinningAtom = () => (
+// Enhanced luxury spinning element
+const LuxurySpinningElement = () => (
   <motion.div
     initial={{ scale: 0, rotate: 0 }}
     animate={{
@@ -348,20 +374,20 @@ const SpinningAtom = () => (
       rotate: [0, 360],
     }}
     transition={{
-      scale: { duration: 1, delay: 0.5 },
-      rotate: { duration: 15, repeat: Infinity, ease: "linear" },
+      scale: { duration: 1.5, delay: 0.5 },
+      rotate: { duration: 20, repeat: Infinity, ease: "linear" },
     }}
     className="relative"
   >
     <motion.div
-      className="absolute -inset-1 sm:-inset-2 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full blur-lg opacity-60"
+      className="absolute -inset-2 sm:-inset-3 bg-gradient-to-r from-purple-400 via-pink-500 to-rose-400 rounded-full blur-lg opacity-70"
       animate={{
-        scale: [1, 1.3, 1],
-        opacity: [0.4, 0.8, 0.4],
+        scale: [1, 1.4, 1],
+        opacity: [0.5, 0.9, 0.5],
       }}
       transition={{ duration: 3, repeat: Infinity }}
     />
-    <Atom className="w-8 h-8 sm:w-10 sm:h-10 lg:w-14 lg:h-14 text-emerald-300 drop-shadow-lg filter drop-shadow-[0_0_12px_rgba(16,185,129,0.8)]" />
+    <Diamond className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 text-pink-300 drop-shadow-lg filter drop-shadow-[0_0_20px_rgba(236,72,153,1)]" />
   </motion.div>
 );
 
@@ -374,7 +400,7 @@ const VictoryScreen = ({ onLoadingComplete }) => {
       setTimeout(() => {
         onLoadingComplete?.();
       }, 1500);
-    }, 10000); // Extended to 10 seconds for better experience
+    }, 12000); // Extended to 12 seconds for luxury experience
 
     return () => clearTimeout(timer);
   }, [onLoadingComplete]);
@@ -385,7 +411,7 @@ const VictoryScreen = ({ onLoadingComplete }) => {
       scale: 1.1,
       filter: "blur(10px)",
       transition: {
-        duration: 1,
+        duration: 1.2,
         ease: "easeInOut",
         when: "beforeChildren",
         staggerChildren: 0.1,
@@ -395,58 +421,58 @@ const VictoryScreen = ({ onLoadingComplete }) => {
 
   const childVariants = {
     exit: {
-      y: -30,
+      y: -40,
       opacity: 0,
       transition: {
-        duration: 0.6,
+        duration: 0.8,
         ease: "easeInOut",
       },
     },
   };
 
-  const industrialIcons = [
+  const luxuryIcons = [
+    Diamond,
+    Crown,
+    Award,
+    Sparkles,
+    Star,
+    Medal,
+    Gift,
+    Trophy,
     Atom,
-    Zap,
-    Flame,
-    Droplet,
-    Factory,
-    Cpu,
-    Database,
-    Layers,
-    Building2,
   ];
 
   return (
     <AnimatePresence>
       {isLoading && (
         <motion.div
-          className="fixed inset-0 bg-slate-900 overflow-hidden"
+          className="fixed inset-0 bg-gradient-to-br from-purple-950 via-rose-950 to-amber-950 overflow-hidden"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit="exit"
           variants={containerVariants}
         >
-          <IndustrialPetrochemicalBackground />
+          <LuxuriousPremiumBackground />
 
           <div className="relative min-h-screen flex items-center justify-center py-4 px-3 sm:py-8 sm:px-6 lg:py-16 lg:px-8">
             <div className="w-full max-w-6xl mx-auto text-center py-4 sm:py-6 lg:py-10">
-              {/* Enhanced border frame with corner animations */}
+              {/* Enhanced luxury border frame */}
               <motion.div
-                className="absolute inset-2 sm:inset-4 lg:inset-12 border-2 sm:border-4 lg:border-6 border-cyan-500/40 rounded-2xl lg:rounded-3xl"
+                className="absolute inset-2 sm:inset-4 lg:inset-12 border-4 sm:border-6 lg:border-8 border-amber-400/60 rounded-3xl lg:rounded-4xl"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.5, duration: 2 }}
+                transition={{ delay: 0.5, duration: 2.5 }}
                 style={{
                   boxShadow:
-                    "0 0 60px rgba(6,182,212,0.4), inset 0 0 60px rgba(6,182,212,0.15)",
+                    "0 0 80px rgba(251,191,36,0.6), inset 0 0 80px rgba(251,191,36,0.2), 0 0 120px rgba(147,51,234,0.3)",
                 }}
               />
 
-              {/* Enhanced corner energy nodes */}
+              {/* Enhanced luxury corner jewels */}
               {[0, 1, 2, 3].map((i) => (
                 <motion.div
                   key={i}
-                  className="absolute w-8 h-8 sm:w-12 sm:h-12 lg:w-20 lg:h-20"
+                  className="absolute w-10 h-10 sm:w-14 sm:h-14 lg:w-24 lg:h-24"
                   style={{
                     top: i < 2 ? "0.5rem" : "auto",
                     bottom: i >= 2 ? "0.5rem" : "auto",
@@ -455,112 +481,119 @@ const VictoryScreen = ({ onLoadingComplete }) => {
                   }}
                   initial={{ opacity: 0, scale: 0 }}
                   animate={{
-                    opacity: [0.6, 1, 0.6],
-                    scale: [0.8, 1.2, 0.8],
+                    opacity: [0.7, 1, 0.7],
+                    scale: [0.8, 1.3, 0.8],
                     rotate: [0, 180, 360],
                   }}
                   transition={{
-                    delay: 1 + i * 0.3,
-                    duration: 4,
+                    delay: 1 + i * 0.4,
+                    duration: 5,
                     repeat: Infinity,
                     repeatType: "reverse",
                   }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full blur-xl animate-pulse" />
-                  <div className="relative h-full w-full border-2 sm:border-3 border-cyan-300/80 rounded-full flex items-center justify-center bg-slate-900/60 backdrop-blur-sm">
+                  <div className="absolute inset-0 bg-gradient-to-r from-amber-400 via-yellow-400 to-orange-400 rounded-full blur-xl animate-pulse" />
+                  <div className="relative h-full w-full border-3 sm:border-4 border-amber-300/90 rounded-full flex items-center justify-center bg-gradient-to-br from-purple-900/80 to-rose-900/80 backdrop-blur-sm">
                     <motion.div
-                      className="w-2 h-2 sm:w-3 sm:h-3 lg:w-5 lg:h-5 bg-cyan-300 rounded-full"
-                      animate={{ scale: [1, 1.5, 1] }}
-                      transition={{ duration: 2, repeat: Infinity }}
+                      className="w-3 h-3 sm:w-4 sm:h-4 lg:w-6 lg:h-6 bg-gradient-to-br from-yellow-300 to-amber-400 rounded-full"
+                      animate={{
+                        scale: [1, 1.8, 1],
+                        boxShadow: [
+                          "0 0 10px rgba(251,191,36,0.8)",
+                          "0 0 25px rgba(251,191,36,1)",
+                          "0 0 10px rgba(251,191,36,0.8)",
+                        ],
+                      }}
+                      transition={{ duration: 3, repeat: Infinity }}
                     />
                   </div>
                 </motion.div>
               ))}
 
-              {/* Enhanced Trophy */}
+              {/* Enhanced Luxury Trophy */}
               <motion.div
-                className="mb-3 sm:mb-4 lg:mb-8 pt-6 sm:pt-8 lg:pt-16 relative h-16 sm:h-20 lg:h-28"
+                className="mb-4 sm:mb-6 lg:mb-10 pt-8 sm:pt-10 lg:pt-20 relative h-20 sm:h-24 lg:h-32"
                 variants={childVariants}
               >
-                <IndustrialTrophy />
+                <LuxuryTrophy />
               </motion.div>
 
-              {/* Spinning Atom */}
+              {/* Luxury Spinning Diamond */}
               <motion.div
-                className="flex justify-center mb-2 sm:mb-3 lg:mb-6"
+                className="flex justify-center mb-3 sm:mb-4 lg:mb-8"
                 initial={{ opacity: 0, y: -30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.5, duration: 1 }}
+                transition={{ delay: 1.8, duration: 1.2 }}
               >
-                <SpinningAtom />
+                <LuxurySpinningElement />
               </motion.div>
 
-              {/* Enhanced Industrial Icons */}
+              {/* Enhanced Luxury Icons */}
               <motion.div
-                className="flex flex-wrap justify-center gap-1.5 sm:gap-2 lg:gap-4 mb-4 sm:mb-6 lg:mb-10"
+                className="flex flex-wrap justify-center gap-2 sm:gap-3 lg:gap-5 mb-5 sm:mb-8 lg:mb-12"
                 variants={childVariants}
               >
-                {industrialIcons.map((Icon, index) => (
+                {luxuryIcons.map((Icon, index) => (
                   <motion.div
                     key={index}
-                    initial={{ opacity: 0, y: 30, scale: 0.5 }}
+                    initial={{ opacity: 0, y: 40, scale: 0.5 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     transition={{
-                      delay: 1.2 + index * 0.1,
-                      duration: 0.8,
+                      delay: 1.5 + index * 0.15,
+                      duration: 1,
                       type: "spring",
                       stiffness: 200,
                     }}
                   >
-                    <IndustrialIconButton Icon={Icon} />
+                    <LuxuryIconButton Icon={Icon} />
                   </motion.div>
                 ))}
               </motion.div>
 
-              {/* Enhanced Main Title */}
+              {/* Enhanced Luxury Main Title */}
               <motion.div
-                className="text-center mb-3 sm:mb-4 lg:mb-8 px-2 sm:px-4"
+                className="text-center mb-4 sm:mb-6 lg:mb-10 px-2 sm:px-4"
                 variants={childVariants}
               >
-                <h1 className="text-xl sm:text-3xl lg:text-5xl xl:text-6xl font-bold tracking-tight">
+                <h1 className="text-xl sm:text-3xl lg:text-5xl xl:text-7xl font-bold tracking-tight">
                   <motion.div
-                    className="mb-1 sm:mb-2 lg:mb-3 flex flex-col justify-center items-center"
-                    initial={{ opacity: 0, y: -20 }}
+                    className="mb-2 sm:mb-3 lg:mb-4 flex flex-col justify-center items-center"
+                    initial={{ opacity: 0, y: -30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.8, duration: 1 }}
+                    transition={{ delay: 1, duration: 1.5 }}
                   >
-                    <span className="inline-block px-1 sm:px-2 bg-gradient-to-r from-white via-cyan-100 to-blue-200 bg-clip-text text-transparent drop-shadow-lg filter drop-shadow-[0_0_20px_rgba(6,182,212,1)]">
-                      PETROCHEMICAL PIONEERS
+                    <span className="inline-block px-2 sm:px-3 bg-gradient-to-r from-amber-200 via-yellow-300 to-orange-400 bg-clip-text text-transparent drop-shadow-2xl filter drop-shadow-[0_0_30px_rgba(251,191,36,1)]">
+                      PETROCHEMICAL LEGENDS
                     </span>
                   </motion.div>
                   <motion.div
                     className="flex justify-center items-center"
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.2, duration: 1 }}
+                    transition={{ delay: 1.5, duration: 1.5 }}
                   >
-                    <span className="inline-block px-1 sm:px-2 bg-gradient-to-r from-cyan-300 via-blue-400 to-indigo-500 bg-clip-text text-transparent drop-shadow-lg filter drop-shadow-[0_0_20px_rgba(59,130,246,1)]">
-                      OF INNOVATION
+                    <span className="inline-block px-2 sm:px-3 bg-gradient-to-r from-purple-300 via-pink-400 to-rose-500 bg-clip-text text-transparent drop-shadow-2xl filter drop-shadow-[0_0_30px_rgba(147,51,234,1)]">
+                      OF EXCELLENCE
                     </span>
                   </motion.div>
                 </h1>
               </motion.div>
 
-              {/* Enhanced Subtitle */}
+              {/* Enhanced Luxury Subtitle */}
               <motion.div
-                className="mb-4 sm:mb-6 lg:mb-10"
-                initial={{ opacity: 0, scale: 0.9 }}
+                className="mb-5 sm:mb-8 lg:mb-12"
+                initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 1.8, duration: 1 }}
+                transition={{ delay: 2.2, duration: 1.5 }}
               >
-                <h2 className="text-sm sm:text-xl lg:text-3xl xl:text-4xl bg-gradient-to-r from-emerald-200 via-green-300 to-cyan-400 bg-clip-text text-transparent font-bold filter drop-shadow-[0_0_20px_rgba(16,185,129,0.8)] mb-2 sm:mb-3">
-                  BIOETHANOL ENVIRONMENTALLY FRIENDLY FUEL
+                <h2 className="text-sm sm:text-xl lg:text-3xl xl:text-4xl bg-gradient-to-r from-rose-300 via-pink-400 to-purple-500 bg-clip-text text-transparent font-bold filter drop-shadow-[0_0_25px_rgba(236,72,153,1)] mb-3 sm:mb-4">
+                  BIOETHANOL PREMIUM INNOVATION
                 </h2>
                 <motion.p
-                  className="text-xs sm:text-base lg:text-xl text-slate-200 opacity-90 font-medium"
+                  className="text-xs sm:text-base lg:text-xl text-amber-200 opacity-95 font-semibold filter drop-shadow-[0_0_15px_rgba(251,191,36,0.6)]"
                   initial={{ opacity: 0 }}
-                  animate={{ opacity: 0.9 }}
-                  transition={{ delay: 2.2, duration: 1 }}
+                  animate={{ opacity: 0.95 }}
+                  transition={{ delay: 2.8, duration: 1.5 }}
                 >
                   Revolutionizing Sustainable Energy Solutions
                 </motion.p>
@@ -587,7 +620,7 @@ const VictoryScreen = ({ onLoadingComplete }) => {
                     transition={{ duration: 3, repeat: Infinity }}
                   >
                     <LuxuriousTypewriter
-                      text="BIOFOURTEAM GOES TO PT PUPUK KUJANG"
+                      text="BIOFOURTEAM"
                       speed={80}
                       delay={3000}
                     />
