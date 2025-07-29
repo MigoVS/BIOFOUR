@@ -1,5 +1,5 @@
 import React, { useEffect, memo, useMemo } from "react"
-import { FileText, Code, Award, Globe, ArrowUpRight, Sparkles, UserCheck } from "lucide-react"
+import { FileText, Code, Award, Globe, ArrowUpRight, Sparkles, UserCheck, TrendingUp, Beaker, Activity } from "lucide-react"
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 
@@ -68,80 +68,223 @@ const ProfileImage = memo(() => (
   </div>
 ));
 
-const StatCard = memo(({ icon: Icon, color, value, label, description, animation }) => (
-  <div data-aos={animation} data-aos-duration={1300} className="relative group w-full">
-    <div className="relative z-10 bg-gray-900/50 backdrop-blur-lg rounded-2xl p-6 border border-white/10 overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl h-full flex flex-col justify-between">
-      <div className={`absolute -z-10 inset-0 bg-gradient-to-br ${color} opacity-10 group-hover:opacity-20 transition-opacity duration-300`}></div>
-      
-      <div className="flex items-center justify-between mb-4">
-        <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center bg-white/10 transition-transform group-hover:rotate-6">
-          <Icon className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
-        </div>
-        <span 
-          className="text-3xl sm:text-4xl font-bold text-white"
-          data-aos="fade-up-left"
-          data-aos-duration="1500"
-          data-aos-anchor-placement="top-bottom"
-        >
-          {value}
-        </span>
+const DensityCard = memo(({ day, value, index, isHighest, isLowest }) => {
+  const cardColor = isHighest 
+    ? "from-emerald-500/20 via-green-500/10 to-teal-500/20" 
+    : isLowest 
+    ? "from-amber-500/20 via-orange-500/10 to-red-500/20"
+    : "from-purple-500/20 via-indigo-500/10 to-blue-500/20";
+
+  const glowColor = isHighest 
+    ? "shadow-[0_0_30px_rgba(16,185,129,0.3)]" 
+    : isLowest 
+    ? "shadow-[0_0_30px_rgba(245,158,11,0.3)]"
+    : "shadow-[0_0_30px_rgba(139,92,246,0.3)]";
+
+  const iconColor = isHighest 
+    ? "text-emerald-400" 
+    : isLowest 
+    ? "text-amber-400"
+    : "text-purple-400";
+
+  return (
+    <div 
+      data-aos="fade-up" 
+      data-aos-duration={800 + index * 100}
+      data-aos-delay={index * 50}
+      className="relative group"
+    >
+      {/* Luxury background effects */}
+      <div className="absolute -inset-2 opacity-0 group-hover:opacity-100 transition-all duration-700">
+        <div className={`absolute inset-0 bg-gradient-to-r ${cardColor} rounded-3xl blur-xl`} />
+        <div className="absolute inset-0 bg-gradient-to-l from-white/5 to-transparent rounded-3xl" />
       </div>
 
-      <div>
-        <p 
-          className="text-sm uppercase tracking-wider text-gray-300 mb-2"
-          data-aos="fade-up"
-          data-aos-duration="800"
-          data-aos-anchor-placement="top-bottom"
-        >
-          {label}
-        </p>
-        <div className="flex items-center justify-between">
+      <div className={`relative z-10 bg-gray-900/60 backdrop-blur-xl rounded-3xl p-4 lg:p-6 xl:p-8 border border-white/10 overflow-hidden transition-all duration-500 hover:scale-105 hover:border-white/20 ${glowColor} hover:shadow-2xl group-hover:bg-gray-800/60`}>
+        {/* Animated background pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-white/20 to-transparent rounded-full transform translate-x-16 -translate-y-16 group-hover:scale-150 transition-transform duration-700" />
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-white/10 to-transparent rounded-full transform -translate-x-12 translate-y-12 group-hover:scale-125 transition-transform duration-700" />
+        </div>
+
+        {/* Header with day indicator */}
+        <div className="flex flex-col gap-3 mb-4 lg:mb-6">
+          <div className="flex items-center gap-2 lg:gap-3">
+            <div className={`w-8 h-8 lg:w-10 lg:h-10 rounded-xl bg-gradient-to-br from-white/10 to-white/5 flex items-center justify-center group-hover:rotate-6 transition-transform duration-300 flex-shrink-0`}>
+              <Beaker className={`w-4 h-4 lg:w-5 lg:h-5 ${iconColor}`} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs lg:text-sm font-medium text-gray-300 uppercase tracking-wider truncate">Hari Ke-{day}</p>
+              <p className="text-xs text-gray-500 hidden lg:block">Pengukuran Densitas</p>
+            </div>
+          </div>
+          
+          {(isHighest || isLowest) && (
+            <div className="flex justify-center">
+              {isHighest && (
+                <div className="flex items-center gap-1 px-3 py-1 bg-emerald-500/20 rounded-full border border-emerald-500/30">
+                  <TrendingUp className="w-3 h-3 text-emerald-400 flex-shrink-0" />
+                  <span className="text-xs font-medium text-emerald-400">Tertinggi</span>
+                </div>
+              )}
+              
+              {isLowest && (
+                <div className="flex items-center gap-1 px-3 py-1 bg-amber-500/20 rounded-full border border-amber-500/30">
+                  <Activity className="w-3 h-3 text-amber-400 flex-shrink-0" />
+                  <span className="text-xs font-medium text-amber-400">Terendah</span>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Main value display */}
+        <div className="text-center mb-4 lg:mb-6">
+          <div className="relative px-2">
+            <span className="text-xl sm:text-2xl lg:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300 group-hover:from-purple-200 group-hover:to-purple-400 transition-all duration-300 leading-tight block">
+              {value}
+            </span>
+            <div className="absolute -inset-2 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg" />
+          </div>
+          <p className="text-xs lg:text-sm text-gray-400 mt-1 lg:mt-2 font-medium">gr/cm³</p>
+        </div>
+
+        {/* Progress bar indicator */}
+        <div className="mb-3 lg:mb-4">
+          <div className="w-full bg-gray-800/50 rounded-full h-1.5 lg:h-2 overflow-hidden">
+            <div 
+              className={`h-full bg-gradient-to-r ${isHighest ? 'from-emerald-400 to-green-500' : isLowest ? 'from-amber-400 to-orange-500' : 'from-purple-400 to-indigo-500'} rounded-full transition-all duration-1000 group-hover:animate-pulse`}
+              style={{ width: `${((parseFloat(value) - 1.1) / 0.2) * 100}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Footer description */}
+        <div className="flex items-center justify-between text-xs text-gray-500">
+          <span className="text-xs lg:text-sm">Massa per volume</span>
+          <ArrowUpRight className="w-3 h-3 lg:w-4 lg:h-4 opacity-50 group-hover:opacity-100 group-hover:text-purple-400 transition-all duration-300 transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+        </div>
+
+        {/* Luxury shine effect */}
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+        </div>
+      </div>
+    </div>
+  );
+});
+
+const DensitySection = memo(() => {
+  const densityData = [
+    { day: 3, value: "1,23302" },
+    { day: 4, value: "1,17309" },
+    { day: 5, value: "1,12903" },
+    { day: 6, value: "1,23102" },
+    { day: 7, value: "1,27302" }
+  ];
+
+  // Find highest and lowest values
+  const values = densityData.map(d => parseFloat(d.value.replace(',', '.')));
+  const maxValue = Math.max(...values);
+  const minValue = Math.min(...values);
+
+  return (
+    <div className="mt-20 mb-10 relative">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-to-r from-purple-500/5 to-indigo-500/5 rounded-full blur-3xl animate-float" />
+        <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-gradient-to-l from-blue-500/5 to-cyan-500/5 rounded-full blur-3xl animate-float-delayed" />
+      </div>
+
+              <div className="text-center mb-10 px-4 sm:px-[5%]">
+        <div className="inline-block relative group">
+          {/* Title with enhanced styling */}
+          <div className="absolute -inset-4 bg-gradient-to-r from-purple-500/20 via-transparent to-indigo-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+          <h2 
+            className="relative text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#6366f1] via-[#8b5cf6] to-[#a855f7]" 
+            data-aos="zoom-in-up"
+            data-aos-duration="600"
+          >
+            Analisis Densitas
+          </h2>
+        </div>
+        
+        <div className="mt-6 space-y-2">
           <p 
-            className="text-xs text-gray-400"
+            className="text-gray-400 max-w-3xl mx-auto text-lg sm:text-xl flex items-center justify-center gap-3"
+            data-aos="zoom-in-up"
+            data-aos-duration="800"
+          >
+            <Sparkles className="w-6 h-6 text-purple-400 animate-pulse" />
+            Pengukuran Densitas Ampas Tebu Selama 5 Hari Berturut-turut
+            <Sparkles className="w-6 h-6 text-purple-400 animate-pulse" />
+          </p>
+          <p 
+            className="text-gray-500 text-sm max-w-2xl mx-auto"
             data-aos="fade-up"
             data-aos-duration="1000"
-            data-aos-anchor-placement="top-bottom"
           >
-            {description}
+            Monitoring perubahan massa jenis material dalam proses fermentasi bioetanol
           </p>
-          <ArrowUpRight className="w-4 h-4 text-white/50 group-hover:text-white transition-colors" />
+        </div>
+
+        {/* Summary stats */}
+        <div 
+          className="mt-8 flex flex-wrap justify-center gap-6"
+          data-aos="fade-up"
+          data-aos-duration="1200"
+        >
+          <div className="bg-gray-900/40 backdrop-blur-sm rounded-2xl px-6 py-3 border border-gray-700/50">
+            <p className="text-xs text-gray-400 uppercase tracking-wider">Rata-rata</p>
+            <p className="text-lg font-bold text-purple-300">{(values.reduce((a, b) => a + b, 0) / values.length).toFixed(5).replace('.', ',')} gr/cm³</p>
+          </div>
+          <div className="bg-gray-900/40 backdrop-blur-sm rounded-2xl px-6 py-3 border border-gray-700/50">
+            <p className="text-xs text-gray-400 uppercase tracking-wider">Range</p>
+            <p className="text-lg font-bold text-indigo-300">{(maxValue - minValue).toFixed(5).replace('.', ',')} gr/cm³</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Enhanced density cards grid */}
+      <div className="w-full mx-auto relative z-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
+          {densityData.map((data, index) => {
+            const currentValue = parseFloat(data.value.replace(',', '.'));
+            return (
+              <DensityCard
+                key={index}
+                day={data.day}
+                value={data.value}
+                index={index}
+                isHighest={currentValue === maxValue}
+                isLowest={currentValue === minValue}
+              />
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Optional: Trend visualization hint */}
+      <div 
+        className="mt-12 text-center"
+        data-aos="fade-up"
+        data-aos-duration="1000"
+      >
+        <div className="inline-flex items-center gap-2 bg-gray-900/30 backdrop-blur-sm rounded-full px-6 py-3 border border-gray-700/30">
+          <Activity className="w-5 h-5 text-purple-400" />
+          <span className="text-sm text-gray-400">Tren densitas menunjukkan variasi selama proses fermentasi</span>
         </div>
       </div>
     </div>
-  </div>
-));
-
-const DensitySection = memo(() => (
-  <div className="mt-20 mb-10">
-    <div className="text-center mb-10 px-4 sm:px-[5%]">
-      <div className="inline-block relative group">
-        <h2 
-          className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#6366f1] to-[#a855f7]" 
-          data-aos="zoom-in-up"
-          data-aos-duration="600"
-        >
-          Densitas 
-        </h2>
-      </div>
-      <p 
-        className="mt-2 text-gray-400 max-w-2xl mx-auto text-base sm:text-lg flex items-center justify-center gap-2"
-        data-aos="zoom-in-up"
-        data-aos-duration="800"
-      >
-        <Sparkles className="w-5 h-5 text-purple-400" />
-        Densitas Ampas Tebu hari ke-3 hingga 7
-        <Sparkles className="w-5 h-5 text-purple-400" />
-      </p>
-    </div>
-  </div>
-));
+  );
+});
 
 const AboutPage = () => {
   // Memoized calculations
   const { totalProjects, totalCertificates, YearExperience } = useMemo(() => {
-    const storedProjects = JSON.parse(localStorage.getItem("projects") || "[]");
-    const storedCertificates = JSON.parse(localStorage.getItem("certificates") || "[]");
+    // Using placeholder data instead of localStorage for demo
+    const storedProjects = [1, 2, 3]; // Simulated data
+    const storedCertificates = [1, 2]; // Simulated data
     
     const startDate = new Date("2021-11-06");
     const today = new Date();
@@ -178,50 +321,6 @@ const AboutPage = () => {
       clearTimeout(resizeTimer);
     };
   }, []);
-
-  // Memoized stats data
-  const statsData = useMemo(() => [
-    {
-      icon: Code,
-      color: "from-[#6366f1] to-[#a855f7]",
-      value: "1,23302",
-      label: "Densitas sampel hari ke-3 (gr/cm³)",
-      description: "Pengukuran massa per satuan volume",
-      animation: "fade-right",
-    },
-    {
-      icon: Code,
-      color: "from-[#a855f7] to-[#6366f1]",
-      value: "1,17309",
-      label: "Densitas sampel hari ke-4 (gr/cm³)",
-      description: "Pengukuran massa per satuan volume",
-      animation: "fade-up",
-    },
-    {
-      icon: Code,
-      color: "from-[#a855f7] to-[#6366f1]",
-      value: "1,12903",
-      label: "Densitas sampel hari ke-5 (gr/cm³)",
-      description: "Pengukuran massa per satuan volume",
-      animation: "fade-up",
-    },
-    {
-      icon: Code,
-      color: "from-[#a855f7] to-[#6366f1]",
-      value: "1,23102",
-      label: "Densitas sampel hari ke-6 (gr/cm³)",
-      description: "Pengukuran massa per satuan volume",
-      animation: "fade-up",
-    },
-    {
-      icon: Code,
-      color: "from-[#6366f1] to-[#a855f7]",
-      value: "1,27302",
-      label: "Densitas sampel hari ke-7 (gr/cm³)",
-      description: "Pengukuran massa per satuan volume",
-      animation: "fade-left",
-    },
-  ], []);
 
   return (
     <div
@@ -283,23 +382,18 @@ const AboutPage = () => {
           <ProfileImage />
         </div>
 
-        {/* Density Section with dedicated component */}
+        {/* Enhanced Density Section */}
         <DensitySection />
-
-        {/* Density Cards in a consistent grid */}
-        <div className="w-full mx-auto mt-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
-            {statsData.map((stat, index) => (
-              <StatCard key={index} {...stat} />
-            ))}
-          </div>
-        </div>
       </div>
 
       <style jsx>{`
         @keyframes float {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-20px); }
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-20px) rotate(2deg); }
+        }
+        @keyframes float-delayed {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-15px) rotate(-2deg); }
         }
         @keyframes spin-slower {
           to { transform: rotate(360deg); }
@@ -312,6 +406,12 @@ const AboutPage = () => {
         }
         .animate-spin-slower {
           animation: spin-slower 8s linear infinite;
+        }
+        .animate-float {
+          animation: float 6s ease-in-out infinite;
+        }
+        .animate-float-delayed {
+          animation: float-delayed 8s ease-in-out infinite;
         }
       `}</style>
     </div>

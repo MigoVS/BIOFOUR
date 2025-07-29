@@ -10,6 +10,12 @@ import {
   AlertTriangle,
   Leaf,
   Factory,
+  TrendingUp,
+  TrendingDown,
+  Activity,
+  Eye,
+  Thermometer,
+  Droplets,
 } from "lucide-react";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import AOS from "aos";
@@ -95,7 +101,7 @@ const SocialLink = memo(({ icon: Icon, link }) => (
   </a>
 ));
 
-// Enhanced Air Quality Component with Real Data Simulation
+// Enhanced Air Quality Component with Better Animations
 const AirQualityCard = memo(() => {
   const [aqiLevel, setAqiLevel] = useState("Tidak Sehat");
   const [aqiValue, setAqiValue] = useState(125);
@@ -107,16 +113,22 @@ const AirQualityCard = memo(() => {
   const [o3Value, setO3Value] = useState(89.4);
   const [selectedPollutant, setSelectedPollutant] = useState("pm25");
   const [lastUpdated, setLastUpdated] = useState(new Date());
+  const [trend, setTrend] = useState("stable");
+  const [isCardHovered, setIsCardHovered] = useState(false);
+  const [animateUpdate, setAnimateUpdate] = useState(false);
 
-  // Realistic AQI data simulation based on Cilegon industrial area
+  // Enhanced data simulation with trends
   useEffect(() => {
     const interval = setInterval(() => {
-      // Simulate realistic fluctuations for industrial area
+      setAnimateUpdate(true);
+      
       const time = new Date().getHours();
       const isRushHour = (time >= 6 && time <= 9) || (time >= 17 && time <= 20);
       const baseMultiplier = isRushHour ? 1.2 : 1.0;
 
-      // More realistic AQI values for industrial area like Cilegon
+      // Calculate previous value for trend
+      const prevAqi = aqiValue;
+      
       const newAqi = Math.max(
         110,
         Math.min(160, 125 + (Math.random() * 20 - 10) * baseMultiplier)
@@ -146,6 +158,11 @@ const AirQualityCard = memo(() => {
         Math.min(120, 89.4 + (Math.random() * 10 - 5) * baseMultiplier)
       );
 
+      // Set trend
+      if (newAqi > prevAqi + 2) setTrend("up");
+      else if (newAqi < prevAqi - 2) setTrend("down");
+      else setTrend("stable");
+
       setAqiValue(Math.round(newAqi));
       setPm25Value(Math.round(newPm25 * 10) / 10);
       setPm10Value(Math.round(newPm10 * 10) / 10);
@@ -154,7 +171,7 @@ const AirQualityCard = memo(() => {
       setCoValue(Math.round(newCo * 10) / 10);
       setO3Value(Math.round(newO3 * 10) / 10);
 
-      // Update AQI level based on value
+      // Update AQI level
       if (newAqi <= 50) setAqiLevel("Baik");
       else if (newAqi <= 100) setAqiLevel("Sedang");
       else if (newAqi <= 150) setAqiLevel("Tidak Sehat");
@@ -162,10 +179,12 @@ const AirQualityCard = memo(() => {
       else setAqiLevel("Berbahaya");
 
       setLastUpdated(new Date());
+      
+      setTimeout(() => setAnimateUpdate(false), 1000);
     }, 8000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [aqiValue]);
 
   // Enhanced AQI color system
   const getAqiColor = () => {
@@ -174,49 +193,52 @@ const AirQualityCard = memo(() => {
         gradient: "from-emerald-400 to-green-500",
         bg: "bg-emerald-500/10",
         text: "text-emerald-400",
+        shadow: "shadow-emerald-500/20",
+        glow: "from-emerald-400/20 to-green-500/20"
       };
     if (aqiValue <= 100)
       return {
         gradient: "from-yellow-400 to-amber-500",
         bg: "bg-yellow-500/10",
         text: "text-yellow-400",
+        shadow: "shadow-yellow-500/20",
+        glow: "from-yellow-400/20 to-amber-500/20"
       };
     if (aqiValue <= 150)
       return {
         gradient: "from-orange-400 to-red-500",
         bg: "bg-orange-500/10",
         text: "text-orange-400",
+        shadow: "shadow-orange-500/20",
+        glow: "from-orange-400/20 to-red-500/20"
       };
     if (aqiValue <= 200)
       return {
         gradient: "from-red-500 to-red-600",
         bg: "bg-red-500/10",
         text: "text-red-400",
+        shadow: "shadow-red-500/20",
+        glow: "from-red-500/20 to-red-600/20"
       };
     return {
       gradient: "from-purple-500 to-red-600",
       bg: "bg-purple-500/10",
       text: "text-purple-400",
+      shadow: "shadow-purple-500/20",
+      glow: "from-purple-500/20 to-red-600/20"
     };
   };
 
   // Get pollutant value based on selection
   const getPollutantValue = () => {
     switch (selectedPollutant) {
-      case "pm25":
-        return pm25Value;
-      case "pm10":
-        return pm10Value;
-      case "no2":
-        return no2Value;
-      case "so2":
-        return so2Value;
-      case "co":
-        return coValue;
-      case "o3":
-        return o3Value;
-      default:
-        return pm25Value;
+      case "pm25": return pm25Value;
+      case "pm10": return pm10Value;
+      case "no2": return no2Value;
+      case "so2": return so2Value;
+      case "co": return coValue;
+      case "o3": return o3Value;
+      default: return pm25Value;
     }
   };
 
@@ -225,27 +247,19 @@ const AirQualityCard = memo(() => {
     return selectedPollutant === "co" ? "mg/m³" : "μg/m³";
   };
 
-  // Get pollutant name and description
+  // Get pollutant info
   const getPollutantInfo = () => {
     switch (selectedPollutant) {
-      case "pm25":
-        return { name: "PM2.5", desc: "Partikel Halus", danger: "Tinggi" };
-      case "pm10":
-        return { name: "PM10", desc: "Partikel Kasar", danger: "Sedang" };
-      case "no2":
-        return { name: "NO₂", desc: "Nitrogen Dioksida", danger: "Tinggi" };
-      case "so2":
-        return { name: "SO₂", desc: "Sulfur Dioksida", danger: "Tinggi" };
-      case "co":
-        return { name: "CO", desc: "Karbon Monoksida", danger: "Sedang" };
-      case "o3":
-        return { name: "O₃", desc: "Ozon Troposfer", danger: "Tinggi" };
-      default:
-        return { name: "PM2.5", desc: "Partikel Halus", danger: "Tinggi" };
+      case "pm25": return { name: "PM2.5", desc: "Partikel Halus", danger: "Tinggi", icon: Wind };
+      case "pm10": return { name: "PM10", desc: "Partikel Kasar", danger: "Sedang", icon: Wind };
+      case "no2": return { name: "NO₂", desc: "Nitrogen Dioksida", danger: "Tinggi", icon: Factory };
+      case "so2": return { name: "SO₂", desc: "Sulfur Dioksida", danger: "Tinggi", icon: Factory };
+      case "co": return { name: "CO", desc: "Karbon Monoksida", danger: "Sedang", icon: Activity };
+      case "o3": return { name: "O₃", desc: "Ozon Troposfer", danger: "Tinggi", icon: Eye };
+      default: return { name: "PM2.5", desc: "Partikel Halus", danger: "Tinggi", icon: Wind };
     }
   };
 
-  // Enhanced pollutant selection
   const pollutants = [
     { id: "pm25", label: "PM2.5", critical: true },
     { id: "pm10", label: "PM10", critical: false },
@@ -257,180 +271,222 @@ const AirQualityCard = memo(() => {
 
   const colors = getAqiColor();
   const pollutantInfo = getPollutantInfo();
+  const PollutantIcon = pollutantInfo.icon;
 
   return (
     <div className="relative group" data-aos="fade-up" data-aos-delay="1300">
-      <div className="absolute -inset-0.5 bg-gradient-to-r from-[#6366f1] to-[#a855f7] rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-700"></div>
-      <div className="relative px-5 py-5 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 group-hover:border-white/20 transition-all duration-300">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-3">
-            <div className="relative">
-              <Factory className="w-6 h-6 text-blue-400" />
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-            </div>
-            <div>
-              <h3 className="text-base font-semibold text-gray-200">
-                Kualitas Udara Cilegon
-              </h3>
-              <p className="text-xs text-gray-400">Kawasan Industri Banten</p>
-            </div>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div
-              className={`h-2 w-2 rounded-full bg-gradient-to-r ${colors.gradient} animate-pulse`}
-            ></div>
-            <span className="text-xs text-gray-400">Live Data</span>
-          </div>
+      {/* Enhanced outer glow */}
+      <div className={`absolute -inset-1 bg-gradient-to-r ${colors.glow} rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition-all duration-700 ${animateUpdate ? 'animate-pulse' : ''}`}></div>
+      
+      <div 
+        className={`relative rounded-2xl bg-gradient-to-br from-black/60 via-black/50 to-black/40 backdrop-blur-xl border border-white/10 group-hover:border-white/20 transition-all duration-500 overflow-hidden ${colors.shadow} ${isCardHovered ? 'scale-[1.02] shadow-2xl' : ''}`}
+        onMouseEnter={() => setIsCardHovered(true)}
+        onMouseLeave={() => setIsCardHovered(false)}
+      >
+        {/* Animated background pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-purple-500/10"></div>
+          <div className={`absolute inset-0 bg-gradient-to-r ${colors.gradient} opacity-5 ${animateUpdate ? 'animate-pulse' : ''}`}></div>
         </div>
 
-        {/* Main AQI Display */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex flex-col">
-            <div className="flex items-baseline space-x-2">
-              <span className="text-4xl font-bold bg-gradient-to-r from-gray-100 to-white bg-clip-text text-transparent">
-                {aqiValue}
+        <div className="relative p-6">
+          {/* Enhanced Header */}
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-4">
+              <div className="relative">
+                <div className={`absolute -inset-2 bg-gradient-to-r ${colors.gradient} rounded-full blur-md opacity-30 ${animateUpdate ? 'animate-ping' : ''}`}></div>
+                <div className="relative p-2 rounded-full bg-black/30 backdrop-blur-sm border border-white/10">
+                  <Factory className={`w-6 h-6 ${colors.text} ${animateUpdate ? 'animate-bounce' : ''}`} />
+                </div>
+                <div className={`absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full ${animateUpdate ? 'animate-ping' : 'animate-pulse'}`}></div>
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-white mb-1">
+                  Kualitas Udara Cilegon
+                </h3>
+                <p className="text-sm text-gray-400 flex items-center gap-2">
+                  <span>Kawasan Industri Banten</span>
+                  <span className="flex items-center gap-1">
+                    {trend === "up" && <TrendingUp className="w-3 h-3 text-red-400" />}
+                    {trend === "down" && <TrendingDown className="w-3 h-3 text-green-400" />}
+                    {trend === "stable" && <Activity className="w-3 h-3 text-gray-400" />}
+                  </span>
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex flex-col items-end">
+              <div className="flex items-center space-x-2 mb-1">
+                <div className={`h-2 w-2 rounded-full bg-gradient-to-r ${colors.gradient} ${animateUpdate ? 'animate-ping' : 'animate-pulse'}`}></div>
+                <span className="text-xs text-gray-300 font-medium">Live Data</span>
+              </div>
+              <span className="text-xs text-gray-500">
+                {lastUpdated.toLocaleTimeString("id-ID", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
               </span>
-              <AlertTriangle
-                className={`w-5 h-5 ${colors.text} animate-pulse`}
-              />
-            </div>
-            <span className="text-xs text-gray-400 mt-1">
-              Air Quality Index
-            </span>
-          </div>
-
-          <div className="flex flex-col items-end">
-            <div
-              className={`px-3 py-1 rounded-full ${colors.bg} border border-white/10`}
-            >
-              <span className={`text-sm font-medium ${colors.text}`}>
-                {aqiLevel}
-              </span>
-            </div>
-            <span className="text-xs text-gray-400 mt-1">Status Udara</span>
-          </div>
-        </div>
-
-        {/* Enhanced Progress Bar */}
-        <div className="mb-4">
-          <div className="w-full bg-gray-700/30 rounded-full h-3 overflow-hidden">
-            <div
-              className={`h-3 rounded-full bg-gradient-to-r ${colors.gradient} relative overflow-hidden`}
-              style={{ width: `${Math.min(100, (aqiValue / 200) * 100)}%` }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
             </div>
           </div>
-          <div className="flex justify-between text-xs text-gray-500 mt-1">
-            <span>0</span>
-            <span>50</span>
-            <span>100</span>
-            <span>150</span>
-            <span>200+</span>
-          </div>
-        </div>
 
-        {/* Pollutant Details */}
-        <div className="border-t border-gray-700/30 pt-4">
-          <div className="flex items-center justify-between mb-3">
-            <h4 className="text-sm font-medium text-gray-300">
-              Detail Polutan
-            </h4>
-            <span className="text-xs text-gray-500">
-              Update:{" "}
-              {lastUpdated.toLocaleTimeString("id-ID", {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </span>
-          </div>
-
-          {/* Enhanced Pollutant Selector */}
-          <div className="grid grid-cols-3 gap-2 mb-4">
-            {pollutants.map((pollutant) => (
-              <button
-                key={pollutant.id}
-                onClick={() => setSelectedPollutant(pollutant.id)}
-                className={`relative px-3 py-2 text-xs rounded-lg transition-all duration-200 ${
-                  selectedPollutant === pollutant.id
-                    ? "bg-blue-500/20 text-blue-300 border border-blue-500/30"
-                    : "bg-gray-700/20 text-gray-400 hover:bg-gray-700/30 border border-transparent"
-                }`}
-              >
-                <span className="font-medium">{pollutant.label}</span>
-                {pollutant.critical && (
-                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                )}
-              </button>
-            ))}
-          </div>
-
-          {/* Selected Pollutant Display */}
-          <div className="bg-gray-800/30 rounded-lg p-4 mb-4">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex flex-col">
-                <span className="text-2xl font-bold bg-gradient-to-r from-gray-100 to-white bg-clip-text text-transparent">
-                  {getPollutantValue()}
+          {/* Enhanced Main AQI Display */}
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col">
+              <div className="flex items-center space-x-3">
+                <span className={`text-5xl font-bold bg-gradient-to-r ${colors.gradient} bg-clip-text text-transparent transition-all duration-500 ${animateUpdate ? 'scale-110' : ''}`}>
+                  {aqiValue}
                 </span>
-                <span className="text-xs text-gray-400">
-                  {getPollutantUnit()}
+                <div className="flex flex-col items-center">
+                  <AlertTriangle className={`w-6 h-6 ${colors.text} ${animateUpdate ? 'animate-bounce' : 'animate-pulse'}`} />
+                  {trend === "up" && <TrendingUp className="w-4 h-4 text-red-400 mt-1" />}
+                  {trend === "down" && <TrendingDown className="w-4 h-4 text-green-400 mt-1" />}
+                </div>
+              </div>
+              <span className="text-sm text-gray-400 mt-2 font-medium">
+                Air Quality Index
+              </span>
+            </div>
+
+            <div className="flex flex-col items-end">
+              <div className={`px-4 py-2 rounded-full ${colors.bg} border border-white/20 backdrop-blur-sm ${animateUpdate ? 'animate-pulse' : ''}`}>
+                <span className={`text-base font-bold ${colors.text}`}>
+                  {aqiLevel}
                 </span>
               </div>
+              <span className="text-sm text-gray-400 mt-2">Status Udara</span>
+            </div>
+          </div>
 
-              <div className="flex flex-col items-end">
-                <div className="flex items-center space-x-2">
-                  <span className="text-lg text-gray-200 font-semibold">
-                    {pollutantInfo.name}
-                  </span>
-                  <div
-                    className={`px-2 py-1 rounded-md text-xs ${
-                      pollutantInfo.danger === "Tinggi"
-                        ? "bg-red-500/20 text-red-400"
-                        : "bg-yellow-500/20 text-yellow-400"
-                    }`}
-                  >
-                    {pollutantInfo.danger}
+          {/* Enhanced Progress Bar */}
+          <div className="mb-6">
+            <div className="w-full bg-gray-800/50 rounded-full h-4 overflow-hidden border border-white/10">
+              <div
+                className={`h-4 rounded-full bg-gradient-to-r ${colors.gradient} relative overflow-hidden transition-all duration-1000 ease-out ${animateUpdate ? 'animate-pulse' : ''}`}
+                style={{ width: `${Math.min(100, (aqiValue / 200) * 100)}%` }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"></div>
+              </div>
+            </div>
+            <div className="flex justify-between text-xs text-gray-400 mt-2 font-medium">
+              <span>0</span>
+              <span>50</span>
+              <span>100</span>
+              <span>150</span>
+              <span>200+</span>
+            </div>
+          </div>
+
+          {/* Enhanced Pollutant Details */}
+          <div className="border-t border-gray-700/30 pt-6">
+            <div className="flex items-center justify-between mb-4">
+              <h4 className="text-base font-bold text-gray-200 flex items-center gap-2">
+                <Wind className="w-4 h-4 text-blue-400" />
+                Detail Polutan
+              </h4>
+            </div>
+
+            {/* Enhanced Pollutant Selector */}
+            <div className="grid grid-cols-3 gap-3 mb-6">
+              {pollutants.map((pollutant) => (
+                <button
+                  key={pollutant.id}
+                  onClick={() => setSelectedPollutant(pollutant.id)}
+                  className={`relative px-3 py-3 text-sm rounded-xl transition-all duration-300 transform hover:scale-105 ${
+                    selectedPollutant === pollutant.id
+                      ? `bg-gradient-to-r ${colors.gradient} text-white shadow-lg ${colors.shadow}`
+                      : "bg-gray-800/40 text-gray-300 hover:bg-gray-700/50 border border-gray-700/50 hover:border-gray-600/50"
+                  }`}
+                >
+                  <span className="font-semibold">{pollutant.label}</span>
+                  {pollutant.critical && (
+                    <div className={`absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full ${animateUpdate ? 'animate-ping' : 'animate-pulse'}`}></div>
+                  )}
+                </button>
+              ))}
+            </div>
+
+            {/* Enhanced Selected Pollutant Display */}
+            <div className={`bg-gradient-to-br from-gray-800/60 to-gray-900/60 rounded-xl p-5 mb-6 border border-white/10 backdrop-blur-sm ${animateUpdate ? 'animate-pulse' : ''}`}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className={`p-3 rounded-full bg-gradient-to-r ${colors.gradient} shadow-lg`}>
+                    <PollutantIcon className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className={`text-3xl font-bold bg-gradient-to-r ${colors.gradient} bg-clip-text text-transparent`}>
+                      {getPollutantValue()}
+                    </span>
+                    <span className="text-sm text-gray-400 font-medium">
+                      {getPollutantUnit()}
+                    </span>
                   </div>
                 </div>
-                <span className="text-xs text-gray-400 text-right">
-                  {pollutantInfo.desc}
-                </span>
-              </div>
-            </div>
-          </div>
 
-          {/* Impact Info */}
-          <div className="space-y-3">
-            <div className="flex items-start space-x-3 p-3 bg-amber-500/5 border border-amber-500/20 rounded-lg">
-              <AlertTriangle className="w-4 h-4 text-amber-400 mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="text-xs text-amber-300 font-medium mb-1">
-                  Dampak Kesehatan
-                </p>
-                <p className="text-xs text-gray-400">
-                  Kualitas udara saat ini dapat menyebabkan iritasi mata,
-                  hidung, dan tenggorokan. Hindari aktivitas outdoor yang
-                  intens.
-                </p>
+                <div className="flex flex-col items-end">
+                  <div className="flex items-center space-x-3 mb-2">
+                    <span className="text-xl text-white font-bold">
+                      {pollutantInfo.name}
+                    </span>
+                    <div className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                      pollutantInfo.danger === "Tinggi"
+                        ? "bg-red-500/20 text-red-300 border border-red-500/30"
+                        : "bg-yellow-500/20 text-yellow-300 border border-yellow-500/30"
+                    }`}>
+                      {pollutantInfo.danger}
+                    </div>
+                  </div>
+                  <span className="text-sm text-gray-400">
+                    {pollutantInfo.desc}
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div className="flex items-start space-x-3 p-3 bg-green-500/5 border border-green-500/20 rounded-lg">
-              <Leaf className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="text-xs text-green-300 font-medium mb-1">
-                  Solusi Bioetanol
-                </p>
-                <p className="text-xs text-gray-400">
-                  Bioetanol dapat mengurangi emisi CO, NOx, dan partikulat
-                  hingga 80% dibanding bahan bakar fosil konvensional.
-                </p>
+            {/* Enhanced Impact Info */}
+            <div className="space-y-4">
+              <div className="flex items-start space-x-4 p-4 bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 rounded-xl backdrop-blur-sm">
+                <div className="p-2 rounded-full bg-amber-500/20 border border-amber-500/30">
+                  <AlertTriangle className="w-5 h-5 text-amber-300" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm text-amber-200 font-semibold mb-2">
+                    Dampak Kesehatan
+                  </p>
+                  <p className="text-sm text-gray-300 leading-relaxed">
+                    Kualitas udara saat ini dapat menyebabkan iritasi mata, hidung, dan tenggorokan. 
+                    Hindari aktivitas outdoor yang intens dan gunakan masker saat beraktivitas di luar ruangan.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-4 p-4 bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-xl backdrop-blur-sm">
+                <div className="p-2 rounded-full bg-green-500/20 border border-green-500/30">
+                  <Leaf className="w-5 h-5 text-green-300" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm text-green-200 font-semibold mb-2">
+                    Solusi Bioetanol
+                  </p>
+                  <p className="text-sm text-gray-300 leading-relaxed">
+                    Bioetanol dapat mengurangi emisi CO, NOx, dan partikulat hingga 80% 
+                    dibanding bahan bakar fosil konvensional, membantu meningkatkan kualitas udara.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes shimmer {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+        .animate-shimmer {
+          animation: shimmer 2s infinite;
+        }
+      `}</style>
     </div>
   );
 });

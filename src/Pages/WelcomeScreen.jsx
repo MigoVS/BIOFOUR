@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+
+import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Trophy,
@@ -12,16 +13,12 @@ import {
   Zap,
   Atom,
   Flame,
-  Droplet,
-  Factory,
-  Cpu,
-  Database,
-  Layers,
   Building2,
   ArrowRight,
+  Gem,
 } from "lucide-react";
 
-// Enhanced typewriter dengan smooth cursor dan sound-like effect
+// Enhanced typewriter with luxury cursor
 const LuxuriousTypewriter = ({ text, speed = 120, delay = 0 }) => {
   const [displayText, setDisplayText] = useState("");
   const [showCursor, setShowCursor] = useState(true);
@@ -35,7 +32,6 @@ const LuxuriousTypewriter = ({ text, speed = 120, delay = 0 }) => {
           index++;
         } else {
           clearInterval(typeTimer);
-          // Hide cursor after typing is complete
           setTimeout(() => setShowCursor(false), 2000);
         }
       }, speed);
@@ -50,345 +46,530 @@ const LuxuriousTypewriter = ({ text, speed = 120, delay = 0 }) => {
       {displayText}
       {showCursor && (
         <motion.span
-          className="text-yellow-300 ml-0.5"
-          animate={{ opacity: [0, 1, 0] }}
-          transition={{ duration: 1, repeat: Infinity }}
+          className="text-yellow-300 ml-0.5 inline-block"
+          animate={{ 
+            opacity: [0, 1, 0],
+            scale: [0.8, 1.2, 0.8]
+          }}
+          transition={{ 
+            duration: 1.2, 
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
         >
-          |
+          <Diamond className="w-3 h-3 sm:w-4 sm:h-4" />
         </motion.span>
       )}
     </span>
   );
 };
 
-// Luxurious Premium Background
-const LuxuriousPremiumBackground = () => (
-  <div className="absolute inset-0 overflow-hidden">
-    {/* Enhanced gradient background with luxury colors */}
-    <div className="absolute inset-0 bg-gradient-to-br from-purple-950 via-amber-900/90 to-rose-950" />
-    <div className="absolute inset-0 bg-gradient-to-tl from-yellow-600/30 via-transparent to-purple-800/40" />
-    <div className="absolute inset-0 bg-gradient-to-r from-rose-900/20 via-amber-800/30 to-purple-900/25" />
+// Premium particle system
+const PremiumParticles = () => {
+  const particles = useMemo(() => {
+    return Array.from({ length: 12 }, (_, i) => ({
+      id: i,
+      size: Math.random() * 6 + 4,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      delay: Math.random() * 3,
+      duration: 4 + Math.random() * 4,
+      color: i % 4 === 0 ? "from-amber-400 to-yellow-300" :
+             i % 4 === 1 ? "from-purple-400 to-pink-300" :
+             i % 4 === 2 ? "from-cyan-400 to-blue-300" :
+             "from-rose-400 to-orange-300"
+    }));
+  }, []);
 
-    {/* Luxury light rays */}
-    <div className="absolute top-0 left-0 w-full h-full">
-      <motion.div
-        className="absolute top-1/4 left-1/4 w-48 h-48 sm:w-72 sm:h-72 lg:w-96 lg:h-96 bg-gradient-radial from-amber-400/30 via-yellow-500/20 to-transparent rounded-full blur-3xl"
-        animate={{
-          scale: [1, 1.3, 1],
-          opacity: [0.4, 0.8, 0.4],
-        }}
-        transition={{ duration: 8, repeat: Infinity }}
-      />
-      <motion.div
-        className="absolute bottom-1/3 right-1/4 w-40 h-40 sm:w-60 sm:h-60 lg:w-80 lg:h-80 bg-gradient-radial from-purple-500/25 via-rose-500/15 to-transparent rounded-full blur-3xl"
-        animate={{
-          scale: [1, 1.4, 1],
-          opacity: [0.3, 0.7, 0.3],
-        }}
-        transition={{ duration: 10, repeat: Infinity, delay: 2 }}
-      />
-      <motion.div
-        className="absolute top-1/2 left-1/2 w-36 h-36 sm:w-56 sm:h-56 lg:w-72 lg:h-72 bg-gradient-radial from-rose-400/20 via-pink-500/12 to-transparent rounded-full blur-3xl"
-        animate={{
-          scale: [1, 1.5, 1],
-          opacity: [0.2, 0.6, 0.2],
-        }}
-        transition={{ duration: 12, repeat: Infinity, delay: 4 }}
-      />
-    </div>
-
-    {/* Luxury golden structures */}
-    <div className="absolute inset-0 opacity-35">
-      {/* Animated luxury bars */}
-      {[...Array(8)].map((_, i) => (
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {particles.map((particle) => (
         <motion.div
-          key={`luxury-bar-${i}`}
-          className="absolute h-2 sm:h-3 lg:h-4 bg-gradient-to-r from-amber-600 via-yellow-400 to-amber-600 opacity-60"
+          key={particle.id}
+          className={`absolute rounded-full bg-gradient-to-br ${particle.color} blur-sm`}
           style={{
-            width: `${30 + Math.random() * 40}%`,
-            top: `${15 + i * 10}%`,
-            left: `${Math.random() * 50}%`,
-            transform: `rotate(${-3 + Math.random() * 6}deg)`,
-            boxShadow:
-              "0 0 15px rgba(251, 191, 36, 0.8), 0 0 30px rgba(251, 191, 36, 0.4)",
+            width: particle.size,
+            height: particle.size,
+            left: `${particle.x}%`,
+            top: `${particle.y}%`,
+            boxShadow: "0 0 20px currentColor",
           }}
           animate={{
-            opacity: [0.4, 0.8, 0.4],
-            boxShadow: [
-              "0 0 15px rgba(251, 191, 36, 0.8), 0 0 30px rgba(251, 191, 36, 0.4)",
-              "0 0 25px rgba(251, 191, 36, 1), 0 0 50px rgba(251, 191, 36, 0.6)",
-              "0 0 15px rgba(251, 191, 36, 0.8), 0 0 30px rgba(251, 191, 36, 0.4)",
-            ],
+            y: [-20, -100, -20],
+            x: [-10, 10, -10],
+            opacity: [0, 1, 0.8, 0],
+            scale: [0.5, 1.2, 0.8, 0.3],
+            rotate: [0, 180, 360],
           }}
           transition={{
-            duration: 6 + Math.random() * 4,
+            duration: particle.duration,
             repeat: Infinity,
-            delay: Math.random() * 3,
-          }}
-        />
-      ))}
-
-      {/* Luxury vertical elements */}
-      {[...Array(6)].map((_, i) => (
-        <motion.div
-          key={`luxury-pillar-${i}`}
-          className="absolute w-2 sm:w-3 lg:w-4 bg-gradient-to-b from-purple-600 via-rose-500 to-purple-600 opacity-50"
-          style={{
-            height: `${25 + Math.random() * 30}%`,
-            left: `${20 + i * 15}%`,
-            top: `${Math.random() * 40}%`,
-            boxShadow:
-              "0 0 15px rgba(147, 51, 234, 0.6), 0 0 30px rgba(147, 51, 234, 0.3)",
-          }}
-          animate={{
-            opacity: [0.3, 0.7, 0.3],
-            boxShadow: [
-              "0 0 15px rgba(147, 51, 234, 0.6), 0 0 30px rgba(147, 51, 234, 0.3)",
-              "0 0 25px rgba(147, 51, 234, 0.8), 0 0 50px rgba(147, 51, 234, 0.5)",
-              "0 0 15px rgba(147, 51, 234, 0.6), 0 0 30px rgba(147, 51, 234, 0.3)",
-            ],
-          }}
-          transition={{
-            duration: 8 + Math.random() * 4,
-            repeat: Infinity,
-            delay: Math.random() * 2,
+            delay: particle.delay,
+            ease: "easeInOut",
           }}
         />
       ))}
     </div>
+  );
+};
 
-    {/* Luxury floating diamonds */}
-    <div className="absolute inset-0">
-      {[...Array(30)].map((_, i) => (
+// Luxury light beams
+const LuxuryLightBeams = () => {
+  const beams = useMemo(() => {
+    return Array.from({ length: 6 }, (_, i) => ({
+      id: i,
+      rotation: i * 60,
+      delay: i * 0.3,
+      opacity: 0.15 + Math.random() * 0.1
+    }));
+  }, []);
+
+  return (
+    <div className="absolute inset-0 overflow-hidden">
+      {beams.map((beam) => (
         <motion.div
-          key={`diamond-${i}`}
+          key={beam.id}
+          className="absolute top-1/2 left-1/2 origin-bottom"
+          style={{
+            width: "2px",
+            height: "50vh",
+            background: "linear-gradient(to top, rgba(251,191,36,0.8), rgba(251,191,36,0.1), transparent)",
+            transform: `translate(-50%, -100%) rotate(${beam.rotation}deg)`,
+          }}
+          animate={{
+            opacity: [0, beam.opacity, 0],
+            scaleY: [0.5, 1.2, 0.8],
+          }}
+          transition={{
+            duration: 6,
+            repeat: Infinity,
+            delay: beam.delay,
+            ease: "easeInOut",
+          }}
+        />
+      ))}
+    </div>
+  );
+};
+
+// Enhanced background with premium effects
+const EnhancedLuxuryBackground = () => {
+  const backgroundElements = useMemo(() => {
+    const elements = [];
+    
+    // Floating luxury gems
+    for (let i = 0; i < 10; i++) {
+      elements.push(
+        <motion.div
+          key={`gem-${i}`}
           className="absolute"
           style={{
-            width: `${Math.random() * 6 + 3}px`,
-            height: `${Math.random() * 6 + 3}px`,
-            background:
-              i % 6 === 0
-                ? "linear-gradient(45deg, #fbbf24, #f59e0b)"
-                : i % 6 === 1
-                ? "linear-gradient(45deg, #a855f7, #9333ea)"
-                : i % 6 === 2
-                ? "linear-gradient(45deg, #ec4899, #be185d)"
-                : i % 6 === 3
-                ? "linear-gradient(45deg, #f97316, #ea580c)"
-                : i % 6 === 4
-                ? "linear-gradient(45deg, #dc2626, #b91c1c)"
-                : "linear-gradient(45deg, #0891b2, #0e7490)",
             top: `${Math.random() * 100}%`,
             left: `${Math.random() * 100}%`,
-            borderRadius: "50%",
-            boxShadow: `0 0 15px currentColor, 0 0 30px currentColor`,
-            transform: "rotate(45deg)",
           }}
           animate={{
             y: [0, -30, 0],
             x: [0, Math.random() * 20 - 10, 0],
-            opacity: [0.4, 1, 0.4],
-            scale: [0.8, 1.4, 0.8],
-            rotate: [45, 225, 405],
+            rotate: [0, 360],
+            opacity: [0.3, 0.8, 0.3],
+            scale: [0.8, 1.3, 0.8],
           }}
           transition={{
-            duration: 8 + Math.random() * 12,
+            duration: 8 + Math.random() * 4,
             repeat: Infinity,
-            delay: Math.random() * 6,
+            delay: Math.random() * 4,
             ease: "easeInOut",
           }}
-        />
-      ))}
-    </div>
+        >
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-yellow-300 rounded-full blur-lg opacity-60" />
+            <Gem className="w-4 h-4 text-amber-300 relative z-10" />
+          </div>
+        </motion.div>
+      );
+    }
+    
+    return elements;
+  }, []);
 
-    {/* Luxury architectural elements */}
-    <div className="absolute bottom-0 left-0 w-full h-24 sm:h-32 lg:h-40 opacity-25">
-      <motion.div
-        className="absolute bottom-0 left-4 sm:left-8 lg:left-10 w-12 h-20 sm:w-16 sm:h-24 lg:w-20 lg:h-32 bg-gradient-to-t from-amber-700 to-yellow-500 transform skew-x-3"
-        style={{ boxShadow: "0 0 20px rgba(251, 191, 36, 0.6)" }}
-        animate={{ opacity: [0.2, 0.4, 0.2] }}
-        transition={{ duration: 6, repeat: Infinity }}
-      />
-      <motion.div
-        className="absolute bottom-0 left-20 sm:left-28 lg:left-36 w-16 h-18 sm:w-20 sm:h-22 lg:w-24 lg:h-28 bg-gradient-to-t from-purple-700 to-rose-500 rounded-t-full"
-        style={{ boxShadow: "0 0 20px rgba(147, 51, 234, 0.6)" }}
-        animate={{ opacity: [0.25, 0.5, 0.25] }}
-        transition={{ duration: 8, repeat: Infinity, delay: 1 }}
-      />
-      <motion.div
-        className="absolute bottom-0 right-16 sm:right-20 lg:right-24 w-10 h-22 sm:w-12 sm:h-28 lg:w-16 lg:h-36 bg-gradient-to-t from-rose-700 to-pink-500"
-        style={{ boxShadow: "0 0 20px rgba(236, 72, 153, 0.6)" }}
-        animate={{ opacity: [0.15, 0.35, 0.15] }}
-        transition={{ duration: 7, repeat: Infinity, delay: 2 }}
-      />
-    </div>
-
-    {/* Luxury energy streams */}
-    <div className="absolute inset-0 opacity-40">
-      {[...Array(10)].map((_, i) => (
-        <motion.div
-          key={`energy-${i}`}
-          className="absolute"
-          style={{
-            width: "3px",
-            height: `${20 + Math.random() * 35}%`,
-            background: `linear-gradient(to bottom, transparent, ${
-              i % 5 === 0
-                ? "#fbbf24"
-                : i % 5 === 1
-                ? "#a855f7"
-                : i % 5 === 2
-                ? "#ec4899"
-                : i % 5 === 3
-                ? "#f97316"
-                : "#dc2626"
-            }, transparent)`,
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 60}%`,
-          }}
-          animate={{
-            opacity: [0, 1, 0],
-            scaleY: [1, 1.8, 1],
-            boxShadow: [
-              "0 0 10px currentColor",
-              "0 0 25px currentColor",
-              "0 0 10px currentColor",
-            ],
-          }}
-          transition={{
-            duration: 3 + Math.random() * 4,
-            repeat: Infinity,
-            delay: Math.random() * 5,
-            ease: "easeInOut",
-          }}
-        />
-      ))}
-    </div>
-
-    {/* Luxury grid overlay */}
-    <div className="absolute inset-0 opacity-8">
-      <div
-        className="w-full h-full"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(251,191,36,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(251,191,36,0.3) 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
+  return (
+    <div className="absolute inset-0 overflow-hidden">
+      {/* Premium gradient layers */}
+      <motion.div 
+        className="absolute inset-0 bg-gradient-to-br from-purple-950 via-amber-900/90 to-rose-950"
+        animate={{
+          opacity: [0.8, 1, 0.8],
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          ease: "easeInOut",
         }}
       />
-    </div>
-  </div>
-);
+      
+      <motion.div 
+        className="absolute inset-0 bg-gradient-to-tl from-yellow-600/30 via-transparent to-purple-800/40"
+        animate={{
+          opacity: [0.5, 0.8, 0.5],
+        }}
+        transition={{
+          duration: 10,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 2,
+        }}
+      />
 
-// Enhanced luxury icon button
-const LuxuryIconButton = ({ Icon }) => (
+      {/* Luxury light beams */}
+      <LuxuryLightBeams />
+
+      {/* Premium aurora effects */}
+      <motion.div
+        className="absolute top-0 left-0 w-full h-full"
+        animate={{
+          background: [
+            "radial-gradient(ellipse at 20% 30%, rgba(251,191,36,0.15) 0%, transparent 50%)",
+            "radial-gradient(ellipse at 80% 70%, rgba(147,51,234,0.15) 0%, transparent 50%)",
+            "radial-gradient(ellipse at 50% 20%, rgba(236,72,153,0.15) 0%, transparent 50%)",
+            "radial-gradient(ellipse at 20% 30%, rgba(251,191,36,0.15) 0%, transparent 50%)",
+          ],
+        }}
+        transition={{
+          duration: 12,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      />
+
+      {/* Floating luxury elements */}
+      <div className="absolute inset-0">
+        {backgroundElements}
+      </div>
+
+      {/* Premium particle system */}
+      <PremiumParticles />
+
+      {/* Luxury grid with shimmer effect */}
+      <motion.div 
+        className="absolute inset-0 opacity-10"
+        animate={{
+          opacity: [0.05, 0.15, 0.05],
+        }}
+        transition={{
+          duration: 6,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      >
+        <div
+          className="w-full h-full"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(251,191,36,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(251,191,36,0.3) 1px, transparent 1px)",
+            backgroundSize: "80px 80px",
+          }}
+        />
+      </motion.div>
+    </div>
+  );
+};
+
+// Premium icon with luxury hover effects
+const PremiumIconButton = ({ Icon, index }) => (
   <motion.div
-    className="relative group"
-    whileHover={{ scale: 1.2 }}
-    whileTap={{ scale: 0.9 }}
-    transition={{ type: "spring", stiffness: 400, damping: 17 }}
+    className="relative group cursor-pointer"
+    initial={{ opacity: 0, scale: 0, rotate: -180 }}
+    animate={{ opacity: 1, scale: 1, rotate: 0 }}
+    transition={{
+      delay: 1 + index * 0.1,
+      duration: 0.8,
+      type: "spring",
+      stiffness: 200,
+    }}
+    whileHover={{ 
+      scale: 1.2,
+      rotate: [0, -5, 5, 0],
+      transition: { duration: 0.3 }
+    }}
+    whileTap={{ scale: 0.95 }}
   >
+    {/* Luxury glow effect */}
     <motion.div
-      className="absolute -inset-1 sm:-inset-2 bg-gradient-to-r from-amber-400 via-yellow-500 to-orange-500 rounded-full blur opacity-0 group-hover:opacity-100"
+      className="absolute -inset-2 bg-gradient-to-r from-amber-400/20 via-purple-500/20 to-pink-500/20 rounded-full blur-lg"
       animate={{
-        rotate: [0, 360],
-        scale: [1, 1.15, 1],
+        opacity: [0.3, 0.7, 0.3],
+        scale: [0.8, 1.2, 0.8],
       }}
       transition={{
-        rotate: { duration: 6, repeat: Infinity, ease: "linear" },
-        scale: { duration: 2, repeat: Infinity },
+        duration: 3,
+        repeat: Infinity,
+        delay: index * 0.2,
       }}
     />
-    <div className="relative p-1.5 sm:p-2 lg:p-3 bg-gradient-to-br from-purple-900/95 to-rose-900/95 backdrop-blur-md rounded-full border-2 border-amber-400/70 shadow-2xl shadow-amber-500/40 group-hover:border-yellow-300/90 group-hover:shadow-yellow-400/60 transition-all duration-300">
-      <Icon className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-amber-300 group-hover:text-yellow-200 drop-shadow-lg filter drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
+    
+    <div className="relative p-2 sm:p-3 bg-gradient-to-br from-purple-900/95 to-rose-900/95 backdrop-blur-md rounded-full border-2 border-amber-400/70 shadow-2xl shadow-amber-500/40 group-hover:border-yellow-300/90 group-hover:shadow-yellow-400/50 transition-all duration-300">
+      <Icon className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-amber-300 group-hover:text-yellow-200 transition-colors duration-300" />
+      
+      {/* Sparkle effects on hover */}
+      <motion.div
+        className="absolute -top-1 -right-1 opacity-0 group-hover:opacity-100"
+        animate={{
+          rotate: [0, 360],
+        }}
+        transition={{
+          duration: 2,
+          repeat: Infinity,
+          ease: "linear",
+        }}
+      >
+        <Sparkles className="w-3 h-3 text-yellow-300" />
+      </motion.div>
     </div>
   </motion.div>
 );
 
-// Enhanced luxury trophy
-const LuxuryTrophy = () => (
+// Premium trophy with enhanced animations
+const PremiumTrophy = () => (
   <div className="relative flex justify-center w-full">
+    {/* Multiple layered glows */}
     <motion.div
-      className="absolute w-32 h-32 sm:w-40 sm:h-40 lg:w-56 lg:h-56 bg-gradient-radial from-amber-400/25 via-yellow-500/15 to-transparent rounded-full blur-3xl"
+      className="absolute w-40 h-40 sm:w-48 sm:h-48 rounded-full blur-3xl"
+      style={{
+        background: "radial-gradient(circle, rgba(251,191,36,0.3) 0%, rgba(245,158,11,0.2) 50%, transparent 100%)"
+      }}
       animate={{
         scale: [1, 1.4, 1],
-        opacity: [0.4, 0.9, 0.4],
+        opacity: [0.3, 0.8, 0.3],
+        rotate: [0, 180, 360],
       }}
-      transition={{ duration: 4, repeat: Infinity }}
+      transition={{ duration: 6, repeat: Infinity }}
     />
+    
     <motion.div
-      initial={{ scale: 0.3, opacity: 0, rotateY: -180 }}
+      className="absolute w-32 h-32 sm:w-40 sm:h-40 rounded-full blur-2xl"
+      style={{
+        background: "radial-gradient(circle, rgba(147,51,234,0.2) 0%, rgba(236,72,153,0.1) 50%, transparent 100%)"
+      }}
+      animate={{
+        scale: [1.2, 0.8, 1.2],
+        opacity: [0.2, 0.6, 0.2],
+        rotate: [360, 180, 0],
+      }}
+      transition={{ duration: 8, repeat: Infinity }}
+    />
+
+    <motion.div
+      initial={{ scale: 0.3, opacity: 0, rotate: -180 }}
       animate={{
         scale: 1,
         opacity: 1,
-        rotateY: 0,
+        rotate: 0,
         y: [0, -12, 0],
       }}
       transition={{
-        scale: { duration: 2, ease: "easeOut" },
+        scale: { duration: 2, ease: "easeOut", type: "spring", stiffness: 100 },
         opacity: { duration: 2, ease: "easeOut" },
-        rotateY: { duration: 2, ease: "easeOut" },
+        rotate: { duration: 2, ease: "easeOut" },
         y: {
-          duration: 6,
+          duration: 4,
           repeat: Infinity,
           repeatType: "reverse",
           ease: "easeInOut",
         },
       }}
-      className="relative"
+      className="relative z-10"
+      whileHover={{
+        scale: 1.1,
+        rotate: [0, -5, 5, 0],
+        transition: { duration: 0.5 }
+      }}
     >
+      <Trophy className="w-16 h-16 sm:w-20 sm:h-20 lg:w-32 lg:h-32 text-amber-300 drop-shadow-2xl filter" />
+      
+      {/* Floating crown with enhanced animation */}
       <motion.div
-        className="absolute -inset-3 sm:-inset-4 lg:-inset-6 bg-gradient-to-r from-amber-400 via-yellow-400 to-orange-400 rounded-full blur-2xl opacity-50"
-        animate={{
-          scale: [1, 1.3, 1],
-          rotate: [0, 360],
-        }}
-        transition={{
-          scale: { duration: 3, repeat: Infinity },
-          rotate: { duration: 12, repeat: Infinity, ease: "linear" },
-        }}
-      />
-      <Trophy className="w-16 h-16 sm:w-20 sm:h-20 lg:w-28 lg:h-28 text-amber-300 drop-shadow-2xl filter drop-shadow-[0_0_25px_rgba(251,191,36,1)]" />
-      <motion.div
-        className="absolute -top-2 -right-2 sm:-top-3 sm:-right-3"
+        className="absolute -top-3 -right-3 sm:-top-4 sm:-right-4"
         animate={{
           rotate: [0, 360],
-          scale: [1, 1.2, 1],
+          y: [0, -5, 0],
+          scale: [1, 1.1, 1],
         }}
         transition={{
-          rotate: { duration: 4, repeat: Infinity, ease: "linear" },
-          scale: { duration: 2, repeat: Infinity },
+          rotate: { duration: 10, repeat: Infinity, ease: "linear" },
+          y: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+          scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
         }}
       >
-        <Crown className="w-6 h-6 sm:w-8 sm:h-8 lg:w-12 lg:h-12 text-yellow-400 filter drop-shadow-[0_0_15px_rgba(251,191,36,0.8)]" />
+        <Crown className="w-6 h-6 sm:w-8 sm:h-8 lg:w-14 lg:h-14 text-yellow-400 drop-shadow-lg" />
       </motion.div>
+
+      {/* Orbiting stars */}
+      {[0, 1, 2].map((i) => (
+        <motion.div
+          key={i}
+          className="absolute"
+          style={{
+            top: "50%",
+            left: "50%",
+          }}
+          animate={{
+            rotate: [0, 360],
+            scale: [0.5, 1, 0.5],
+          }}
+          transition={{
+            rotate: { duration: 4 + i, repeat: Infinity, ease: "linear" },
+            scale: { duration: 2, repeat: Infinity, delay: i * 0.5 },
+          }}
+        >
+          <div
+            className="absolute"
+            style={{
+              transform: `translate(-50%, -50%) translateX(${40 + i * 15}px)`,
+            }}
+          >
+            <Star className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-300" />
+          </div>
+        </motion.div>
+      ))}
     </motion.div>
   </div>
 );
 
-// Enhanced luxury spinning element
-const LuxurySpinningElement = () => (
+// Enhanced spinning diamond with premium effects
+const EnhancedSpinningElement = () => (
   <motion.div
-    initial={{ scale: 0, rotate: 0 }}
+    initial={{ scale: 0, rotate: 0, opacity: 0 }}
     animate={{
       scale: 1,
       rotate: [0, 360],
+      opacity: 1,
     }}
     transition={{
-      scale: { duration: 1.5, delay: 0.5 },
+      scale: { duration: 1.5, delay: 0.3, type: "spring", stiffness: 150 },
+      opacity: { duration: 1.5, delay: 0.3 },
       rotate: { duration: 20, repeat: Infinity, ease: "linear" },
     }}
     className="relative"
+    whileHover={{
+      scale: 1.2,
+      transition: { duration: 0.3 }
+    }}
   >
+    {/* Multiple glow layers */}
     <motion.div
-      className="absolute -inset-2 sm:-inset-3 bg-gradient-to-r from-purple-400 via-pink-500 to-rose-400 rounded-full blur-lg opacity-70"
+      className="absolute -inset-4 bg-gradient-to-r from-purple-400 via-pink-500 to-rose-400 rounded-full blur-xl opacity-60"
       animate={{
-        scale: [1, 1.4, 1],
-        opacity: [0.5, 0.9, 0.5],
+        scale: [1, 1.5, 1],
+        opacity: [0.4, 0.9, 0.4],
       }}
-      transition={{ duration: 3, repeat: Infinity }}
+      transition={{ duration: 4, repeat: Infinity }}
     />
-    <Diamond className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 text-pink-300 drop-shadow-lg filter drop-shadow-[0_0_20px_rgba(236,72,153,1)]" />
+    
+    <motion.div
+      className="absolute -inset-2 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-400 rounded-full blur-lg opacity-40"
+      animate={{
+        scale: [1.2, 0.8, 1.2],
+        opacity: [0.2, 0.6, 0.2],
+        rotate: [0, -360],
+      }}
+      transition={{ duration: 6, repeat: Infinity }}
+    />
+
+    <Diamond className="w-10 h-10 sm:w-12 sm:h-12 lg:w-18 lg:h-18 text-pink-300 relative z-10 drop-shadow-lg" />
+    
+    {/* Orbiting mini gems */}
+    {[0, 1].map((i) => (
+      <motion.div
+        key={i}
+        className="absolute top-1/2 left-1/2"
+        animate={{
+          rotate: [0, 360],
+        }}
+        transition={{
+          duration: 3 + i,
+          repeat: Infinity,
+          ease: "linear",
+        }}
+      >
+        <div
+          className="absolute"
+          style={{
+            transform: `translate(-50%, -50%) translateX(${25 + i * 10}px)`,
+          }}
+        >
+          <Gem className="w-2 h-2 text-cyan-300" />
+        </div>
+      </motion.div>
+    ))}
   </motion.div>
+);
+
+// Premium border frame with animated corners
+const PremiumBorderFrame = () => (
+  <>
+    <motion.div
+      className="absolute inset-4 sm:inset-8 lg:inset-16 border-4 sm:border-6 lg:border-8 border-amber-400/60 rounded-3xl lg:rounded-4xl"
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ 
+        opacity: 1, 
+        scale: 1,
+        borderColor: [
+          "rgba(251,191,36,0.6)",
+          "rgba(147,51,234,0.6)", 
+          "rgba(236,72,153,0.6)",
+          "rgba(251,191,36,0.6)"
+        ]
+      }}
+      transition={{ 
+        scale: { delay: 0.3, duration: 2 },
+        opacity: { delay: 0.3, duration: 2 },
+        borderColor: { duration: 8, repeat: Infinity }
+      }}
+      style={{
+        boxShadow: "0 0 80px rgba(251,191,36,0.5), inset 0 0 80px rgba(251,191,36,0.15)",
+      }}
+    />
+
+    {/* Animated corner jewels */}
+    {[
+      { top: "1rem", left: "1rem" },
+      { top: "1rem", right: "1rem" },
+      { bottom: "1rem", left: "1rem" },
+      { bottom: "1rem", right: "1rem" }
+    ].map((position, i) => (
+      <motion.div
+        key={i}
+        className="absolute w-10 h-10 sm:w-14 sm:h-14"
+        style={position}
+        initial={{ opacity: 0, scale: 0, rotate: -180 }}
+        animate={{
+          opacity: [0.6, 1, 0.6],
+          scale: [0.8, 1.3, 0.8],
+          rotate: [0, 360],
+        }}
+        transition={{
+          opacity: { delay: 0.5 + i * 0.2, duration: 4, repeat: Infinity },
+          scale: { delay: 0.5 + i * 0.2, duration: 4, repeat: Infinity },
+          rotate: { delay: 0.5 + i * 0.2, duration: 8, repeat: Infinity, ease: "linear" },
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange-400 rounded-full blur-xl" />
+        <div className="relative h-full w-full border-3 border-amber-300/90 rounded-full flex items-center justify-center bg-gradient-to-br from-purple-900/80 to-rose-900/80 backdrop-blur-sm">
+          <motion.div
+            className="w-3 h-3 sm:w-4 sm:h-4 bg-gradient-to-br from-yellow-300 to-amber-400 rounded-full"
+            animate={{
+              scale: [1, 1.5, 1],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              delay: i * 0.3,
+            }}
+          />
+        </div>
+      </motion.div>
+    ))}
+  </>
 );
 
 const VictoryScreen = ({ onLoadingComplete }) => {
@@ -399,8 +580,8 @@ const VictoryScreen = ({ onLoadingComplete }) => {
       setIsLoading(false);
       setTimeout(() => {
         onLoadingComplete?.();
-      }, 1500);
-    }, 12000); // Extended to 12 seconds for luxury experience
+      }, 1000);
+    }, 10000);
 
     return () => clearTimeout(timer);
   }, [onLoadingComplete]);
@@ -408,39 +589,17 @@ const VictoryScreen = ({ onLoadingComplete }) => {
   const containerVariants = {
     exit: {
       opacity: 0,
-      scale: 1.1,
-      filter: "blur(10px)",
+      scale: 1.05,
       transition: {
-        duration: 1.2,
-        ease: "easeInOut",
-        when: "beforeChildren",
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const childVariants = {
-    exit: {
-      y: -40,
-      opacity: 0,
-      transition: {
-        duration: 0.8,
+        duration: 1.5,
         ease: "easeInOut",
       },
     },
   };
 
-  const luxuryIcons = [
-    Diamond,
-    Crown,
-    Award,
-    Sparkles,
-    Star,
-    Medal,
-    Gift,
-    Trophy,
-    Atom,
-  ];
+  const luxuryIcons = useMemo(() => [
+    Diamond, Crown, Award, Sparkles, Star, Medal, Gift, Trophy, Atom, Gem,
+  ], []);
 
   return (
     <AnimatePresence>
@@ -452,301 +611,189 @@ const VictoryScreen = ({ onLoadingComplete }) => {
           exit="exit"
           variants={containerVariants}
         >
-          <LuxuriousPremiumBackground />
+          <EnhancedLuxuryBackground />
 
           <div className="relative min-h-screen flex items-center justify-center py-4 px-3 sm:py-8 sm:px-6 lg:py-16 lg:px-8">
             <div className="w-full max-w-6xl mx-auto text-center py-4 sm:py-6 lg:py-10">
-              {/* Enhanced luxury border frame */}
-              <motion.div
-                className="absolute inset-2 sm:inset-4 lg:inset-12 border-4 sm:border-6 lg:border-8 border-amber-400/60 rounded-3xl lg:rounded-4xl"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.5, duration: 2.5 }}
-                style={{
-                  boxShadow:
-                    "0 0 80px rgba(251,191,36,0.6), inset 0 0 80px rgba(251,191,36,0.2), 0 0 120px rgba(147,51,234,0.3)",
-                }}
-              />
+              
+              <PremiumBorderFrame />
 
-              {/* Enhanced luxury corner jewels */}
-              {[0, 1, 2, 3].map((i) => (
-                <motion.div
-                  key={i}
-                  className="absolute w-10 h-10 sm:w-14 sm:h-14 lg:w-24 lg:h-24"
-                  style={{
-                    top: i < 2 ? "0.5rem" : "auto",
-                    bottom: i >= 2 ? "0.5rem" : "auto",
-                    left: i % 2 === 0 ? "0.5rem" : "auto",
-                    right: i % 2 === 1 ? "0.5rem" : "auto",
-                  }}
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={{
-                    opacity: [0.7, 1, 0.7],
-                    scale: [0.8, 1.3, 0.8],
-                    rotate: [0, 180, 360],
-                  }}
-                  transition={{
-                    delay: 1 + i * 0.4,
-                    duration: 5,
-                    repeat: Infinity,
-                    repeatType: "reverse",
-                  }}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-amber-400 via-yellow-400 to-orange-400 rounded-full blur-xl animate-pulse" />
-                  <div className="relative h-full w-full border-3 sm:border-4 border-amber-300/90 rounded-full flex items-center justify-center bg-gradient-to-br from-purple-900/80 to-rose-900/80 backdrop-blur-sm">
-                    <motion.div
-                      className="w-3 h-3 sm:w-4 sm:h-4 lg:w-6 lg:h-6 bg-gradient-to-br from-yellow-300 to-amber-400 rounded-full"
-                      animate={{
-                        scale: [1, 1.8, 1],
-                        boxShadow: [
-                          "0 0 10px rgba(251,191,36,0.8)",
-                          "0 0 25px rgba(251,191,36,1)",
-                          "0 0 10px rgba(251,191,36,0.8)",
-                        ],
-                      }}
-                      transition={{ duration: 3, repeat: Infinity }}
-                    />
-                  </div>
-                </motion.div>
-              ))}
-
-              {/* Enhanced Luxury Trophy */}
-              <motion.div
-                className="mb-4 sm:mb-6 lg:mb-10 pt-8 sm:pt-10 lg:pt-20 relative h-20 sm:h-24 lg:h-32"
-                variants={childVariants}
-              >
-                <LuxuryTrophy />
+              {/* Premium Trophy Section */}
+              <motion.div className="mb-6 sm:mb-8 lg:mb-12 pt-8 sm:pt-12 lg:pt-24 relative h-24 sm:h-28 lg:h-40">
+                <PremiumTrophy />
               </motion.div>
 
-              {/* Luxury Spinning Diamond */}
+              {/* Enhanced Spinning Diamond */}
               <motion.div
-                className="flex justify-center mb-3 sm:mb-4 lg:mb-8"
+                className="flex justify-center mb-4 sm:mb-6 lg:mb-10"
                 initial={{ opacity: 0, y: -30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.8, duration: 1.2 }}
+                transition={{ delay: 1.5, duration: 1.5 }}
               >
-                <LuxurySpinningElement />
+                <EnhancedSpinningElement />
               </motion.div>
 
-              {/* Enhanced Luxury Icons */}
-              <motion.div
-                className="flex flex-wrap justify-center gap-2 sm:gap-3 lg:gap-5 mb-5 sm:mb-8 lg:mb-12"
-                variants={childVariants}
-              >
+              {/* Premium Icons Grid */}
+              <motion.div className="flex flex-wrap justify-center gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-10 lg:mb-16">
                 {luxuryIcons.map((Icon, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 40, scale: 0.5 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{
-                      delay: 1.5 + index * 0.15,
-                      duration: 1,
-                      type: "spring",
-                      stiffness: 200,
-                    }}
-                  >
-                    <LuxuryIconButton Icon={Icon} />
-                  </motion.div>
+                  <PremiumIconButton key={index} Icon={Icon} index={index} />
                 ))}
               </motion.div>
 
-              {/* Enhanced Luxury Main Title */}
-              <motion.div
-                className="text-center mb-4 sm:mb-6 lg:mb-10 px-2 sm:px-4"
-                variants={childVariants}
-              >
-                <h1 className="text-xl sm:text-3xl lg:text-5xl xl:text-7xl font-bold tracking-tight">
+              {/* Enhanced Main Title */}
+              <motion.div className="text-center mb-6 sm:mb-8 lg:mb-14 px-2 sm:px-4">
+                <motion.h1 
+                  className="text-xl sm:text-3xl lg:text-5xl xl:text-7xl font-bold tracking-tight"
+                  whileHover={{
+                    scale: 1.02,
+                    transition: { duration: 0.3 }
+                  }}
+                >
                   <motion.div
-                    className="mb-2 sm:mb-3 lg:mb-4 flex flex-col justify-center items-center"
-                    initial={{ opacity: 0, y: -30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1, duration: 1.5 }}
+                    className="mb-3 sm:mb-4 lg:mb-6"
+                    initial={{ opacity: 0, y: -30, scale: 0.9 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ delay: 0.8, duration: 1.5, type: "spring", stiffness: 100 }}
                   >
-                    <span className="inline-block px-2 sm:px-3 bg-gradient-to-r from-amber-200 via-yellow-300 to-orange-400 bg-clip-text text-transparent drop-shadow-2xl filter drop-shadow-[0_0_30px_rgba(251,191,36,1)]">
+                    <motion.span 
+                      className="bg-gradient-to-r from-amber-200 via-yellow-300 to-orange-400 bg-clip-text text-transparent"
+                      animate={{
+                        backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                      }}
+                      transition={{
+                        duration: 6,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    >
                       PETROCHEMICAL LEGENDS
-                    </span>
+                    </motion.span>
                   </motion.div>
                   <motion.div
-                    className="flex justify-center items-center"
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.5, duration: 1.5 }}
+                    initial={{ opacity: 0, y: 30, scale: 0.9 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ delay: 1.2, duration: 1.5, type: "spring", stiffness: 100 }}
                   >
-                    <span className="inline-block px-2 sm:px-3 bg-gradient-to-r from-purple-300 via-pink-400 to-rose-500 bg-clip-text text-transparent drop-shadow-2xl filter drop-shadow-[0_0_30px_rgba(147,51,234,1)]">
+                    <motion.span 
+                      className="bg-gradient-to-r from-purple-300 via-pink-400 to-rose-500 bg-clip-text text-transparent"
+                      animate={{
+                        backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                      }}
+                      transition={{
+                        duration: 8,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    >
                       OF EXCELLENCE
-                    </span>
+                    </motion.span>
                   </motion.div>
-                </h1>
+                </motion.h1>
               </motion.div>
 
-              {/* Enhanced Luxury Subtitle */}
+              {/* Enhanced Subtitle */}
               <motion.div
-                className="mb-5 sm:mb-8 lg:mb-12"
-                initial={{ opacity: 0, scale: 0.8 }}
+                className="mb-6 sm:mb-10 lg:mb-16"
+                initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 2.2, duration: 1.5 }}
+                transition={{ delay: 2, duration: 1.5 }}
               >
-                <h2 className="text-sm sm:text-xl lg:text-3xl xl:text-4xl bg-gradient-to-r from-rose-300 via-pink-400 to-purple-500 bg-clip-text text-transparent font-bold filter drop-shadow-[0_0_25px_rgba(236,72,153,1)] mb-3 sm:mb-4">
+                <motion.h2 
+                  className="text-sm sm:text-xl lg:text-3xl xl:text-4xl bg-gradient-to-r from-rose-300 via-pink-400 to-purple-500 bg-clip-text text-transparent font-bold mb-4 sm:mb-6"
+                  animate={{
+                    backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                  }}
+                  transition={{
+                    duration: 10,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                >
                   BIOETHANOL PREMIUM INNOVATION
-                </h2>
-                <motion.p
-                  className="text-xs sm:text-base lg:text-xl text-amber-200 opacity-95 font-semibold filter drop-shadow-[0_0_15px_rgba(251,191,36,0.6)]"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 0.95 }}
-                  transition={{ delay: 2.8, duration: 1.5 }}
+                </motion.h2>
+                <motion.p 
+                  className="text-xs sm:text-base lg:text-xl text-amber-200 opacity-90 font-semibold"
+                  animate={{
+                    opacity: [0.7, 1, 0.7],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
                 >
                   Revolutionizing Sustainable Energy Solutions
                 </motion.p>
               </motion.div>
 
-              {/* New Company Visit Section */}
+              {/* Company Visit Section */}
               <motion.div
                 className="mb-4 sm:mb-6 lg:mb-10"
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 2.5, duration: 1 }}
+                transition={{ delay: 2, duration: 1 }}
               >
-                <div className="inline-flex items-center gap-1 sm:gap-2 lg:gap-3 px-3 py-2 sm:px-6 sm:py-3 lg:px-8 lg:py-4 rounded-full bg-gradient-to-r from-emerald-600/20 via-green-600/30 to-cyan-600/20 border border-emerald-400/40 backdrop-blur-md">
-                  <Building2 className="w-3 h-3 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-emerald-300 animate-pulse" />
-                  <motion.span
-                    className="text-xs sm:text-lg lg:text-2xl font-bold bg-gradient-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent"
-                    animate={{
-                      textShadow: [
-                        "0 0 8px rgba(16,185,129,0.5)",
-                        "0 0 15px rgba(16,185,129,0.8)",
-                        "0 0 8px rgba(16,185,129,0.5)",
-                      ],
-                    }}
-                    transition={{ duration: 3, repeat: Infinity }}
-                  >
-                    <LuxuriousTypewriter
-                      text="BIOFOURTEAM"
-                      speed={80}
-                      delay={3000}
-                    />
-                  </motion.span>
-                  <ArrowRight className="w-3 h-3 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-cyan-300 animate-bounce" />
+                <div className="inline-flex items-center gap-1 sm:gap-2 lg:gap-3 px-3 py-2 sm:px-6 sm:py-3 lg:px-8 lg:py-4 rounded-full bg-gradient-to-r from-emerald-600/20 via-green-600/30 to-cyan-600/20 border border-emerald-400/40 backdrop-blur-sm">
+                  <Building2 className="w-3 h-3 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-emerald-300" />
+                  <span className="text-xs sm:text-lg lg:text-2xl font-bold bg-gradient-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent">
+                    <LuxuriousTypewriter text="BIOFOURTEAM" speed={80} delay={2500} />
+                  </span>
+                  <ArrowRight className="w-3 h-3 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-cyan-300" />
                 </div>
               </motion.div>
 
-              {/* Enhanced Team Name */}
+              {/* Team Name */}
               <motion.div
                 className="text-center mt-3 sm:mt-4 lg:mt-8 mb-4 sm:mb-6 lg:mb-10"
-                variants={childVariants}
-                initial={{ opacity: 0, y: 30, scale: 0.9 }}
+                initial={{ opacity: 0, y: 20, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ delay: 2.8, duration: 1 }}
+                transition={{ delay: 2.3, duration: 1 }}
               >
                 <motion.div
-                  className="inline-flex items-center gap-1 sm:gap-2 lg:gap-3 px-4 py-2 sm:px-6 sm:py-3 lg:px-10 lg:py-5 rounded-full relative group"
-                  whileHover={{ scale: 1.05 }}
+                  className="inline-flex items-center gap-1 sm:gap-2 lg:gap-3 px-4 py-2 sm:px-6 sm:py-3 lg:px-10 lg:py-5 rounded-full relative"
+                  whileHover={{ scale: 1.03 }}
                   transition={{ type: "spring", stiffness: 300 }}
                 >
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-slate-800/60 via-cyan-600/40 to-blue-800/60 rounded-full blur-lg"
-                    animate={{
-                      scale: [1, 1.1, 1],
-                      opacity: [0.6, 0.9, 0.6],
-                    }}
-                    transition={{ duration: 4, repeat: Infinity }}
-                  />
-                  <div className="absolute inset-0 border-2 border-cyan-400/50 rounded-full group-hover:border-cyan-300/80 transition-all duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-slate-800/50 via-cyan-600/30 to-blue-800/50 rounded-full blur-lg" />
+                  <div className="absolute inset-0 border-2 border-cyan-400/40 rounded-full" />
                   <div className="relative flex items-center gap-1 sm:gap-2 lg:gap-3 text-sm sm:text-xl lg:text-3xl font-bold">
                     <motion.div
-                      animate={{
-                        rotate: [0, 360],
-                        scale: [1, 1.2, 1],
-                      }}
-                      transition={{
-                        rotate: {
-                          duration: 8,
-                          repeat: Infinity,
-                          ease: "linear",
-                        },
-                        scale: { duration: 2, repeat: Infinity },
-                      }}
+                      animate={{ rotate: [0, 360] }}
+                      transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
                     >
-                      <Flame className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-orange-400" />
+                      <Flame className="w-5 h-5 sm:w-6 sm:h-6 text-orange-400" />
                     </motion.div>
-                    <span className="bg-gradient-to-r from-cyan-200 via-blue-300 to-cyan-400 bg-clip-text text-transparent filter drop-shadow-[0_0_15px_rgba(6,182,212,0.8)]">
-                      <LuxuriousTypewriter
-                        text="BIOFOUR CHAMPIONS"
-                        speed={120}
-                        delay={4000}
-                      />
+                    <span className="bg-gradient-to-r from-cyan-200 via-blue-300 to-cyan-400 bg-clip-text text-transparent">
+                      <LuxuriousTypewriter text="BIOFOUR CHAMPIONS" speed={120} delay={3200} />
                     </span>
-                    <motion.div
-                      animate={{
-                        y: [0, -8, 0],
-                        rotate: [0, 10, -10, 0],
-                      }}
-                      transition={{
-                        y: { duration: 2, repeat: Infinity },
-                        rotate: { duration: 3, repeat: Infinity },
-                      }}
-                    >
-                      <Zap className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-yellow-400" />
-                    </motion.div>
+                    <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400" />
                   </div>
                 </motion.div>
               </motion.div>
 
-              {/* Enhanced achievement ring */}
+              {/* Simplified achievement ring */}
               <motion.div
-                className="absolute -bottom-4 sm:-bottom-2 md:bottom-0 left-1/2 transform -translate-x-1/2"
-                initial={{ opacity: 0, scale: 0.5, rotate: 0 }}
+                className="absolute -bottom-4 sm:-bottom-2 left-1/2 transform -translate-x-1/2"
+                initial={{ opacity: 0, scale: 0.5 }}
                 animate={{
-                  opacity: 0.5,
+                  opacity: 0.4,
                   scale: 1,
                   rotate: [0, 360],
                 }}
                 transition={{
-                  opacity: { delay: 3, duration: 2 },
-                  scale: { delay: 3, duration: 2 },
-                  rotate: {
-                    delay: 3.5,
-                    duration: 25,
-                    repeat: Infinity,
-                    ease: "linear",
-                  },
+                  opacity: { delay: 2.5, duration: 1.5 },
+                  scale: { delay: 2.5, duration: 1.5 },
+                  rotate: { delay: 3, duration: 20, repeat: Infinity, ease: "linear" },
                 }}
               >
-                <div className="w-32 h-32 sm:w-36 sm:h-36 md:w-44 md:h-44 border-3 sm:border-4 md:border-5 border-cyan-400/70 rounded-full flex items-center justify-center relative">
-                  <motion.div
-                    className="w-24 h-24 sm:w-28 sm:h-28 md:w-36 md:h-36 border-2 sm:border-3 md:border-4 border-green-400/60 rounded-full"
-                    animate={{
-                      rotate: [0, -360],
-                      borderColor: [
-                        "rgba(34, 197, 94, 0.6)",
-                        "rgba(6, 182, 212, 0.6)",
-                        "rgba(34, 197, 94, 0.6)",
-                      ],
-                    }}
-                    transition={{
-                      rotate: {
-                        duration: 20,
-                        repeat: Infinity,
-                        ease: "linear",
-                      },
-                      borderColor: { duration: 5, repeat: Infinity },
-                    }}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/15 to-blue-500/15 rounded-full blur-2xl animate-pulse" />
+                <div className="w-28 h-28 sm:w-32 sm:h-32 border-2 sm:border-3 border-cyan-400/60 rounded-full flex items-center justify-center relative">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 border-2 border-green-400/50 rounded-full" />
                 </div>
               </motion.div>
             </div>
           </div>
 
           <style jsx>{`
-            @keyframes float {
-              0%,
-              100% {
-                transform: translateY(0px);
-              }
-              50% {
-                transform: translateY(-20px);
-              }
-            }
             .bg-gradient-radial {
               background: radial-gradient(circle, var(--tw-gradient-stops));
             }
