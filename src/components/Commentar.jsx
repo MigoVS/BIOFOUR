@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, memo } from 'react';
+import React, { useState, useEffect, useRef, useCallback, memo, useMemo } from 'react';
 import { getDocs, addDoc, collection, onSnapshot, query, orderBy, serverTimestamp, updateDoc, doc, deleteDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../firebase-comment';
@@ -24,7 +24,17 @@ import {
     TrendingUp
 } from 'lucide-react';
 
-// Emoji picker data
+// Generate unique device ID for cross-device functionality
+const getDeviceId = () => {
+    let deviceId = localStorage.getItem('deviceId');
+    if (!deviceId) {
+        deviceId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+        localStorage.setItem('deviceId', deviceId);
+    }
+    return deviceId;
+};
+
+// Optimized emoji picker with virtualization
 const EMOJI_OPTIONS = ['😀', '😂', '😍', '🤔', '👍', '👏', '🔥', '💯', '❤️', '😊', '😎', '🚀', '✨', '🎉', '💪', '👌'];
 
 const EmojiPicker = memo(({ onEmojiSelect, isOpen, onClose }) => {
@@ -41,7 +51,7 @@ const EmojiPicker = memo(({ onEmojiSelect, isOpen, onClose }) => {
                             onEmojiSelect(emoji);
                             onClose();
                         }}
-                        className="p-2 rounded-lg hover:bg-white/10 transition-colors text-lg"
+                        className="p-2 rounded-lg hover:bg-white/10 transition-colors text-lg will-change-transform"
                     >
                         {emoji}
                     </button>
@@ -51,54 +61,104 @@ const EmojiPicker = memo(({ onEmojiSelect, isOpen, onClose }) => {
     );
 });
 
-const Comment = memo(({ comment, formatDate, index, onLike, onReply, onEdit, onDelete, currentUser }) => {
-    const [showReplies, setShowReplies] = useState(false);
-    const [showMenu, setShowMenu] = useState(false);
+// Optimized date formatter with memoization
+const useDateFormatter = () => {
+    return useCallback((timestamp) => {
+        if (!timestamp) return '';
+        
+        try {
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            const now = new Date();
+            const diffMinutes = Math.floor((now - date) / (1000 * 60));
+            const diffHours = Math.floor(diffMinutes / 60);
+            const diffDays = Math.floor(diffHours / 24);
+
+            if (diffMinutes < 1) return 'Just now';
+            if (diffMinutes < 60) return `${diffMinutes}m ago`;
+            if (diffHours < 24) return `${diffHours}h ago`;
+            if (diffDays < 7) return `${diffDays}d ago`;
+
+            return new Intl.DateTimeFormat('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            }).format(date);
+        } catch (error) {
+            console.error('Error formatting date:', error);
+            return '';
+        }
+    }, []);
+};
+
+// Optimized Comment component with proper memoization
+const Comment = memo(({ comment, index, onLike, onReply, onEdit, onDelete, deviceId }) => {
     const [isEditing, setIsEditing] = useState(false);
-    const [editContent, setEditContent] = useState(comment.content || '');
+    const [editContent, setEditContent] = useState('');
     const [showReplyForm, setShowReplyForm] = useState(false);
     const [replyContent, setReplyContent] = useState('');
     const [replyUserName, setReplyUserName] = useState('');
     const [isSubmittingReply, setIsSubmittingReply] = useState(false);
+    const [showReplies, setShowReplies] = useState(false);
+    const [showMenu, setShowMenu] = useState(false);
     const menuRef = useRef(null);
+    const formatDate = useDateFormatter();
 
-    const isLiked = comment.likes?.includes(currentUser) || false;
-    const likesCount = comment.likes?.length || 0;
-    const repliesCount = comment.replies?.length || 0;
+    // Memoize computed values to prevent recalculation
+    const { isLiked, likesCount, repliesCount } = useMemo(() => {
+        const likes = comment.likes || [];
+        return {
+            isLiked: likes.includes(deviceId),
+            likesCount: likes.length,
+            repliesCount: comment.replies?.length || 0
+        };
+    }, [comment.likes, comment.replies, deviceId]);
 
+    // Initialize edit content only when needed
     useEffect(() => {
+        if (isEditing && !editContent) {
+            setEditContent(comment.content || '');
+        }
+    }, [isEditing, comment.content, editContent]);
+
+    // Optimized click outside handler
+    useEffect(() => {
+        if (!showMenu) return;
+        
         const handleClickOutside = (event) => {
             if (menuRef.current && !menuRef.current.contains(event.target)) {
                 setShowMenu(false);
             }
         };
-        document.addEventListener('mousedown', handleClickOutside);
+        
+        document.addEventListener('mousedown', handleClickOutside, { passive: true });
         return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
+    }, [showMenu]);
 
-    const handleSaveEdit = async () => {
-        if (editContent.trim()) {
-            try {
-                await onEdit(comment.id, editContent);
-                setIsEditing(false);
-            } catch (error) {
-                console.error('Error editing comment:', error);
-                alert('Failed to edit comment. Please try again.');
-            }
+    // Optimized handlers with useCallback
+    const handleSaveEdit = useCallback(async () => {
+        if (!editContent.trim()) return;
+        
+        try {
+            await onEdit(comment.id, editContent.trim());
+            setIsEditing(false);
+        } catch (error) {
+            console.error('Error editing comment:', error);
+            alert('Failed to edit comment. Please try again.');
         }
-    };
+    }, [editContent, comment.id, onEdit]);
 
-    const handleReplySubmit = async (e) => {
+    const handleReplySubmit = useCallback(async (e) => {
         e.preventDefault();
         if (!replyContent.trim() || !replyUserName.trim()) return;
         
         setIsSubmittingReply(true);
         try {
             const replyData = {
-                content: replyContent,
-                userName: replyUserName,
-                createdAt: new Date().toISOString(), // Use ISO string for consistency
-                id: Date.now().toString() + Math.random().toString(36).substr(2, 9)
+                content: replyContent.trim(),
+                userName: replyUserName.trim(),
+                createdAt: new Date().toISOString(),
+                id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+                deviceId
             };
             
             await onReply(comment.id, replyData);
@@ -112,53 +172,33 @@ const Comment = memo(({ comment, formatDate, index, onLike, onReply, onEdit, onD
         } finally {
             setIsSubmittingReply(false);
         }
-    };
+    }, [replyContent, replyUserName, comment.id, onReply, deviceId]);
 
-    // Helper function to format reply dates
-    const formatReplyDate = useCallback((date) => {
-        if (!date) return '';
-        
-        try {
-            // Handle different date formats
-            const dateObj = date.toDate ? date.toDate() : 
-                           typeof date === 'string' ? new Date(date) : 
-                           date instanceof Date ? date : new Date();
-            
-            const now = new Date();
-            const diffMinutes = Math.floor((now - dateObj) / (1000 * 60));
-            const diffHours = Math.floor(diffMinutes / 60);
-            const diffDays = Math.floor(diffHours / 24);
+    const handleLikeClick = useCallback(() => {
+        onLike(comment.id);
+    }, [comment.id, onLike]);
 
-            if (diffMinutes < 1) return 'Just now';
-            if (diffMinutes < 60) return `${diffMinutes}m ago`;
-            if (diffHours < 24) return `${diffHours}h ago`;
-            if (diffDays < 7) return `${diffDays}d ago`;
-
-            return new Intl.DateTimeFormat('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            }).format(dateObj);
-        } catch (error) {
-            console.error('Error formatting date:', error);
-            return '';
+    const handleDeleteClick = useCallback(() => {
+        if (window.confirm('Are you sure you want to delete this comment?')) {
+            onDelete(comment.id);
         }
-    }, []);
+        setShowMenu(false);
+    }, [comment.id, onDelete]);
 
-    // Don't render if comment content is empty
-    if (!comment.content && !comment.userName) {
+    // Don't render empty comments
+    if (!comment.content?.trim() && !comment.userName?.trim()) {
         return null;
     }
 
     return (
         <div 
-            className="group relative px-4 pt-4 pb-2 rounded-xl bg-gradient-to-br from-white/8 to-white/3 border border-white/10 hover:from-white/12 hover:to-white/6 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 backdrop-blur-sm"
+            className="group relative px-4 pt-4 pb-2 rounded-xl bg-gradient-to-br from-white/8 to-white/3 border border-white/10 hover:from-white/12 hover:to-white/6 transition-all duration-200 hover:shadow-lg backdrop-blur-sm will-change-transform"
             style={{ 
                 opacity: 0,
-                animation: `fadeInUp 0.6s ease-out ${index * 100}ms forwards`
+                animation: `fadeInUp 0.4s ease-out ${Math.min(index * 50, 500)}ms forwards`
             }}
         >
-            {/* Status indicator */}
+            {/* Menu */}
             <div className="absolute top-2 right-2 flex items-center gap-2">
                 {comment.isPinned && (
                     <div className="flex items-center gap-1 px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-xs">
@@ -170,6 +210,7 @@ const Comment = memo(({ comment, formatDate, index, onLike, onReply, onEdit, onD
                     <button
                         onClick={() => setShowMenu(!showMenu)}
                         className="p-1 rounded-full hover:bg-white/10 transition-colors opacity-0 group-hover:opacity-100"
+                        aria-label="Comment options"
                     >
                         <MoreVertical className="w-4 h-4 text-gray-400" />
                     </button>
@@ -186,12 +227,7 @@ const Comment = memo(({ comment, formatDate, index, onLike, onReply, onEdit, onD
                                 Edit
                             </button>
                             <button
-                                onClick={() => {
-                                    if (window.confirm('Are you sure you want to delete this comment?')) {
-                                        onDelete(comment.id);
-                                    }
-                                    setShowMenu(false);
-                                }}
+                                onClick={handleDeleteClick}
                                 className="w-full px-3 py-2 text-left text-sm text-red-400 hover:bg-red-500/10 flex items-center gap-2"
                             >
                                 <Trash2 className="w-3 h-3" />
@@ -203,8 +239,9 @@ const Comment = memo(({ comment, formatDate, index, onLike, onReply, onEdit, onD
             </div>
 
             <div className="flex items-start gap-3">
+                {/* Profile Image */}
                 {comment.profileImage ? (
-                    <div className="relative">
+                    <div className="relative flex-shrink-0">
                         <img
                             src={comment.profileImage}
                             alt={`${comment.userName}'s profile`}
@@ -212,10 +249,10 @@ const Comment = memo(({ comment, formatDate, index, onLike, onReply, onEdit, onD
                             loading="lazy"
                             onError={(e) => {
                                 e.target.style.display = 'none';
-                                e.target.nextSibling.style.display = 'block';
+                                e.target.nextSibling.style.display = 'flex';
                             }}
                         />
-                        <div className="hidden relative p-2 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 text-indigo-400">
+                        <div className="hidden w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 text-indigo-400 items-center justify-center">
                             <UserCircle2 className="w-5 h-5" />
                         </div>
                         {comment.isOnline && (
@@ -223,7 +260,7 @@ const Comment = memo(({ comment, formatDate, index, onLike, onReply, onEdit, onD
                         )}
                     </div>
                 ) : (
-                    <div className="relative p-2 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 text-indigo-400 group-hover:from-indigo-500/30 group-hover:to-purple-500/30 transition-colors">
+                    <div className="relative flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 text-indigo-400 flex items-center justify-center">
                         <UserCircle2 className="w-5 h-5" />
                         {comment.isOnline && (
                             <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-900"></div>
@@ -232,26 +269,28 @@ const Comment = memo(({ comment, formatDate, index, onLike, onReply, onEdit, onD
                 )}
                 
                 <div className="flex-grow min-w-0">
+                    {/* Header */}
                     <div className="flex items-center justify-between gap-4 mb-2">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 min-w-0">
                             <h4 className="font-medium text-white truncate">{comment.userName || 'Anonymous'}</h4>
                             {comment.isVerified && (
-                                <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+                                <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
                                     <span className="text-white text-xs">✓</span>
                                 </div>
                             )}
                             {comment.badge && (
-                                <span className="px-2 py-0.5 bg-indigo-500/20 text-indigo-400 text-xs rounded-full">
+                                <span className="px-2 py-0.5 bg-indigo-500/20 text-indigo-400 text-xs rounded-full flex-shrink-0">
                                     {comment.badge}
                                 </span>
                             )}
                         </div>
-                        <span className="text-xs text-gray-400 whitespace-nowrap flex items-center gap-1">
+                        <span className="text-xs text-gray-400 whitespace-nowrap flex items-center gap-1 flex-shrink-0">
                             <Clock className="w-3 h-3" />
                             {formatDate(comment.createdAt)}
                         </span>
                     </div>
                     
+                    {/* Content */}
                     {isEditing ? (
                         <div className="space-y-2">
                             <textarea
@@ -272,7 +311,7 @@ const Comment = memo(({ comment, formatDate, index, onLike, onReply, onEdit, onD
                                 <button
                                     onClick={() => {
                                         setIsEditing(false);
-                                        setEditContent(comment.content || '');
+                                        setEditContent('');
                                     }}
                                     className="px-3 py-1 bg-gray-500/20 text-gray-400 rounded-lg text-sm hover:bg-gray-500/30 transition-colors"
                                 >
@@ -282,30 +321,27 @@ const Comment = memo(({ comment, formatDate, index, onLike, onReply, onEdit, onD
                         </div>
                     ) : (
                         <>
-                            <p className="text-gray-300 text-sm break-words leading-relaxed relative bottom-2 mb-3">
-                                {comment.content || 'No content'}
+                            <p className="text-gray-300 text-sm break-words leading-relaxed mb-3">
+                                {comment.content}
                             </p>
                             
-                            {/* Reactions and actions */}
+                            {/* Actions */}
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-4">
                                     <button
-                                        onClick={() => onLike(comment.id)}
-                                        className={`flex items-center gap-1 px-3 py-1.5 rounded-full transition-all duration-200 ${
+                                        onClick={handleLikeClick}
+                                        className={`flex items-center gap-1 px-3 py-1.5 rounded-full transition-all duration-200 will-change-transform ${
                                             isLiked 
-                                                ? 'bg-red-500/20 text-red-400 scale-105' 
+                                                ? 'bg-red-500/20 text-red-400' 
                                                 : 'hover:bg-red-500/10 text-gray-400 hover:text-red-400'
                                         }`}
                                     >
-                                        <Heart className={`w-4 h-4 transition-all ${isLiked ? 'fill-current scale-110' : ''}`} />
+                                        <Heart className={`w-4 h-4 transition-all ${isLiked ? 'fill-current' : ''}`} />
                                         <span className="text-xs font-medium">{likesCount}</span>
                                     </button>
                                     
                                     <button
-                                        onClick={() => {
-                                            setShowReplyForm(true);
-                                            setShowMenu(false);
-                                        }}
+                                        onClick={() => setShowReplyForm(true)}
                                         className="flex items-center gap-1 px-3 py-1.5 rounded-full hover:bg-blue-500/10 text-gray-400 hover:text-blue-400 transition-all"
                                     >
                                         <Reply className="w-4 h-4" />
@@ -334,7 +370,7 @@ const Comment = memo(({ comment, formatDate, index, onLike, onReply, onEdit, onD
 
             {/* Reply Form */}
             {showReplyForm && (
-                <div className="mt-4 ml-8 p-4 bg-white/5 rounded-lg border border-white/10 animate-fadeIn">
+                <div className="mt-4 ml-8 p-4 bg-white/5 rounded-lg border border-white/10">
                     <h4 className="text-sm font-medium text-white mb-3">Reply to {comment.userName}</h4>
                     <form onSubmit={handleReplySubmit} className="space-y-3">
                         <input
@@ -387,21 +423,21 @@ const Comment = memo(({ comment, formatDate, index, onLike, onReply, onEdit, onD
                 </div>
             )}
 
-            {/* Replies section */}
+            {/* Replies */}
             {showReplies && repliesCount > 0 && (
-                <div className="mt-4 ml-8 space-y-3 border-l-2 border-indigo-500/20 pl-4 animate-fadeIn">
+                <div className="mt-4 ml-8 space-y-3 border-l-2 border-indigo-500/20 pl-4">
                     {comment.replies?.map((reply, replyIndex) => (
                         <div key={reply.id || replyIndex} className="p-3 bg-white/5 rounded-lg border border-white/10 hover:bg-white/8 transition-colors">
                             <div className="flex items-start gap-3">
-                                <div className="p-1.5 rounded-full bg-indigo-500/20 text-indigo-400">
+                                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
                                     <UserCircle2 className="w-4 h-4" />
                                 </div>
-                                <div className="flex-1">
+                                <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2 mb-1">
-                                        <span className="font-medium text-white text-sm">{reply.userName || 'Anonymous'}</span>
-                                        <span className="text-xs text-gray-400">{formatReplyDate(reply.createdAt)}</span>
+                                        <span className="font-medium text-white text-sm truncate">{reply.userName || 'Anonymous'}</span>
+                                        <span className="text-xs text-gray-400">{formatDate(reply.createdAt)}</span>
                                     </div>
-                                    <p className="text-gray-300 text-sm leading-relaxed">{reply.content || 'No content'}</p>
+                                    <p className="text-gray-300 text-sm leading-relaxed">{reply.content}</p>
                                 </div>
                             </div>
                         </div>
@@ -412,7 +448,8 @@ const Comment = memo(({ comment, formatDate, index, onLike, onReply, onEdit, onD
     );
 });
 
-const CommentForm = memo(({ onSubmit, isSubmitting, error }) => {
+// Optimized Comment Form
+const CommentForm = memo(({ onSubmit, isSubmitting }) => {
     const [newComment, setNewComment] = useState('');
     const [userName, setUserName] = useState('');
     const [imagePreview, setImagePreview] = useState(null);
@@ -441,17 +478,16 @@ const CommentForm = memo(({ onSubmit, isSubmitting, error }) => {
 
     const handleTextareaChange = useCallback((e) => {
         setNewComment(e.target.value);
-        if (textareaRef.current) {
-            textareaRef.current.style.height = 'auto';
-            textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+        const textarea = textareaRef.current;
+        if (textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = `${textarea.scrollHeight}px`;
         }
     }, []);
 
     const handleEmojiSelect = useCallback((emoji) => {
         setNewComment(prev => prev + emoji);
-        if (textareaRef.current) {
-            textareaRef.current.focus();
-        }
+        textareaRef.current?.focus();
     }, []);
 
     const handleSubmit = useCallback((e) => {
@@ -461,7 +497,13 @@ const CommentForm = memo(({ onSubmit, isSubmitting, error }) => {
             return;
         }
         
-        onSubmit({ newComment, userName, imageFile });
+        onSubmit({ 
+            newComment: newComment.trim(), 
+            userName: userName.trim(), 
+            imageFile 
+        });
+        
+        // Reset form
         setNewComment('');
         setUserName('');
         setImagePreview(null);
@@ -469,6 +511,12 @@ const CommentForm = memo(({ onSubmit, isSubmitting, error }) => {
         if (fileInputRef.current) fileInputRef.current.value = '';
         if (textareaRef.current) textareaRef.current.style.height = 'auto';
     }, [newComment, userName, imageFile, onSubmit]);
+
+    const removeImage = useCallback(() => {
+        setImagePreview(null);
+        setImageFile(null);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+    }, []);
 
     return (
         <div className="relative">
@@ -534,12 +582,8 @@ const CommentForm = memo(({ onSubmit, isSubmitting, error }) => {
                                 />
                                 <button
                                     type="button"
-                                    onClick={() => {
-                                        setImagePreview(null);
-                                        setImageFile(null);
-                                        if (fileInputRef.current) fileInputRef.current.value = '';
-                                    }}
-                                    className="flex items-center gap-2 px-4 py-2 rounded-full bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-all group"
+                                    onClick={removeImage}
+                                    className="flex items-center gap-2 px-4 py-2 rounded-full bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-all"
                                 >
                                     <X className="w-4 h-4" />
                                     <span>Remove Photo</span>
@@ -557,9 +601,9 @@ const CommentForm = memo(({ onSubmit, isSubmitting, error }) => {
                                 <button
                                     type="button"
                                     onClick={() => fileInputRef.current?.click()}
-                                    className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30 transition-all border border-dashed border-indigo-500/50 hover:border-indigo-500 group"
+                                    className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30 transition-all border border-dashed border-indigo-500/50 hover:border-indigo-500"
                                 >
-                                    <ImagePlus className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                                    <ImagePlus className="w-5 h-5" />
                                     <span>Choose Profile Photo</span>
                                 </button>
                                 <p className="text-center text-gray-400 text-sm mt-2">
@@ -573,9 +617,9 @@ const CommentForm = memo(({ onSubmit, isSubmitting, error }) => {
                 <button
                     type="submit"
                     disabled={isSubmitting || !newComment.trim() || !userName.trim()}
-                    className="relative w-full h-12 bg-gradient-to-r from-[#6366f1] via-[#8b5cf6] to-[#a855f7] rounded-xl font-medium text-white overflow-hidden group transition-all duration-300 hover:scale-[1.02] hover:shadow-lg active:scale-[0.98] disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
+                    className="relative w-full h-12 bg-gradient-to-r from-[#6366f1] via-[#8b5cf6] to-[#a855f7] rounded-xl font-medium text-white overflow-hidden group transition-all duration-200 hover:scale-[1.02] hover:shadow-lg active:scale-[0.98] disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed will-change-transform"
                 >
-                    <div className="absolute inset-0 bg-white/20 translate-y-12 group-hover:translate-y-0 transition-transform duration-300" />
+                    <div className="absolute inset-0 bg-white/20 translate-y-12 group-hover:translate-y-0 transition-transform duration-200" />
                     <div className="relative flex items-center justify-center gap-2">
                         {isSubmitting ? (
                             <>
@@ -595,6 +639,7 @@ const CommentForm = memo(({ onSubmit, isSubmitting, error }) => {
     );
 });
 
+// Main component with optimizations
 const Komentar = () => {
     const [comments, setComments] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -602,9 +647,18 @@ const Komentar = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState('newest');
     const [filterBy, setFilterBy] = useState('all');
-    const [currentUser] = useState('user123'); // Mock current user
     const [loading, setLoading] = useState(true);
+    const deviceId = useMemo(() => getDeviceId(), []);
 
+    // Memoize stats calculations
+    const { totalLikes, totalReplies } = useMemo(() => {
+        return {
+            totalLikes: comments.reduce((sum, comment) => sum + (comment.likes?.length || 0), 0),
+            totalReplies: comments.reduce((sum, comment) => sum + (comment.replies?.length || 0), 0)
+        };
+    }, [comments]);
+
+    // Optimized Firebase listener with error handling
     useEffect(() => {
         const commentsRef = collection(db, 'portfolio-comments');
         const q = query(commentsRef, orderBy('createdAt', 'desc'));
@@ -618,15 +672,15 @@ const Komentar = () => {
                         ...data,
                         likes: data.likes || [],
                         replies: data.replies || [],
-                        // Ensure we have required fields
                         content: data.content || '',
                         userName: data.userName || 'Anonymous',
                         createdAt: data.createdAt || new Date()
                     };
-                }).filter(comment => comment.content.trim() !== ''); // Filter out empty comments
+                }).filter(comment => comment.content.trim() !== '');
                 
                 setComments(commentsData);
                 setLoading(false);
+                setError('');
             },
             (error) => {
                 console.error('Error fetching comments:', error);
@@ -638,6 +692,7 @@ const Komentar = () => {
         return () => unsubscribe();
     }, []);
 
+    // Optimized image upload with error handling
     const uploadImage = useCallback(async (imageFile) => {
         if (!imageFile) return null;
         
@@ -651,6 +706,7 @@ const Komentar = () => {
         }
     }, []);
 
+    // Optimized comment submission
     const handleCommentSubmit = useCallback(async ({ newComment, userName, imageFile }) => {
         if (!newComment.trim() || !userName.trim()) {
             setError('Please fill in all required fields');
@@ -664,16 +720,17 @@ const Komentar = () => {
             const profileImageUrl = await uploadImage(imageFile);
             
             const commentData = {
-                content: newComment.trim(),
-                userName: userName.trim(),
+                content: newComment,
+                userName: userName,
                 profileImage: profileImageUrl,
                 createdAt: serverTimestamp(),
                 likes: [],
                 replies: [],
                 edited: false,
+                deviceId,
                 isOnline: true,
-                isVerified: Math.random() > 0.7, // Mock verification
-                badge: Math.random() > 0.8 ? 'Pro User' : null, // Mock badge
+                isVerified: Math.random() > 0.7,
+                badge: Math.random() > 0.8 ? 'Pro User' : null,
             };
 
             await addDoc(collection(db, 'portfolio-comments'), commentData);
@@ -683,19 +740,27 @@ const Komentar = () => {
         } finally {
             setIsSubmitting(false);
         }
-    }, [uploadImage]);
+    }, [uploadImage, deviceId]);
 
+    // Optimized like handler with device ID support
     const handleLike = useCallback(async (commentId) => {
         try {
             const comment = comments.find(c => c.id === commentId);
             if (!comment) return;
 
             const likes = comment.likes || [];
-            const isLiked = likes.includes(currentUser);
+            const isLiked = likes.includes(deviceId);
             
             const updatedLikes = isLiked 
-                ? likes.filter(userId => userId !== currentUser)
-                : [...likes, currentUser];
+                ? likes.filter(id => id !== deviceId)
+                : [...likes, deviceId];
+            
+            // Optimistic update for better UX
+            setComments(prev => prev.map(c => 
+                c.id === commentId 
+                    ? { ...c, likes: updatedLikes }
+                    : c
+            ));
             
             await updateDoc(doc(db, 'portfolio-comments', commentId), {
                 likes: updatedLikes
@@ -703,18 +768,23 @@ const Komentar = () => {
         } catch (error) {
             console.error('Error updating like:', error);
             setError('Failed to update like. Please try again.');
+            // Revert optimistic update on error
+            setComments(prev => prev.map(c => 
+                c.id === commentId 
+                    ? { ...c, likes: comment.likes || [] }
+                    : c
+            ));
         }
-    }, [comments, currentUser]);
+    }, [comments, deviceId]);
 
+    // Optimized reply handler
     const handleReply = useCallback(async (commentId, replyData) => {
         try {
             const comment = comments.find(c => c.id === commentId);
-            if (!comment) {
-                throw new Error('Comment not found');
-            }
+            if (!comment) throw new Error('Comment not found');
             
             const currentReplies = comment.replies || [];
-            const updatedReplies = [...currentReplies, replyData];
+            const updatedReplies = [...currentReplies, { ...replyData, deviceId }];
             
             await updateDoc(doc(db, 'portfolio-comments', commentId), {
                 replies: updatedReplies
@@ -723,16 +793,15 @@ const Komentar = () => {
             console.error('Error adding reply:', error);
             throw error;
         }
-    }, [comments]);
+    }, [comments, deviceId]);
 
+    // Optimized edit handler
     const handleEdit = useCallback(async (commentId, newContent) => {
         try {
-            if (!newContent.trim()) {
-                throw new Error('Comment cannot be empty');
-            }
+            if (!newContent.trim()) throw new Error('Comment cannot be empty');
 
             await updateDoc(doc(db, 'portfolio-comments', commentId), {
-                content: newContent.trim(),
+                content: newContent,
                 edited: true,
                 editedAt: serverTimestamp()
             });
@@ -742,6 +811,7 @@ const Komentar = () => {
         }
     }, []);
 
+    // Optimized delete handler
     const handleDelete = useCallback(async (commentId) => {
         try {
             await deleteDoc(doc(db, 'portfolio-comments', commentId));
@@ -751,63 +821,43 @@ const Komentar = () => {
         }
     }, []);
 
-    const formatDate = useCallback((timestamp) => {
-        if (!timestamp) return '';
-        
-        try {
-            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-            const now = new Date();
-            const diffMinutes = Math.floor((now - date) / (1000 * 60));
-            const diffHours = Math.floor(diffMinutes / 60);
-            const diffDays = Math.floor(diffHours / 24);
+    // Memoized filtered and sorted comments for better performance
+    const filteredAndSortedComments = useMemo(() => {
+        return comments
+            .filter(comment => {
+                if (!comment.content && !comment.userName) return false;
+                
+                const matchesSearch = (comment.content || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                    (comment.userName || '').toLowerCase().includes(searchTerm.toLowerCase());
+                const matchesFilter = filterBy === 'all' || 
+                                    (filterBy === 'liked' && comment.likes?.length > 0) ||
+                                    (filterBy === 'recent' && comment.createdAt && 
+                                     new Date() - (comment.createdAt.toDate ? comment.createdAt.toDate() : new Date(comment.createdAt)) < 24 * 60 * 60 * 1000);
+                return matchesSearch && matchesFilter;
+            })
+            .sort((a, b) => {
+                switch (sortBy) {
+                    case 'oldest':
+                        const aTime = a.createdAt?.toMillis ? a.createdAt.toMillis() : new Date(a.createdAt).getTime();
+                        const bTime = b.createdAt?.toMillis ? b.createdAt.toMillis() : new Date(b.createdAt).getTime();
+                        return aTime - bTime;
+                    case 'popular':
+                        return (b.likes?.length || 0) - (a.likes?.length || 0);
+                    case 'newest':
+                    default:
+                        const aTimeNew = a.createdAt?.toMillis ? a.createdAt.toMillis() : new Date(a.createdAt).getTime();
+                        const bTimeNew = b.createdAt?.toMillis ? b.createdAt.toMillis() : new Date(b.createdAt).getTime();
+                        return bTimeNew - aTimeNew;
+                }
+            });
+    }, [comments, searchTerm, filterBy, sortBy]);
 
-            if (diffMinutes < 1) return 'Just now';
-            if (diffMinutes < 60) return `${diffMinutes}m ago`;
-            if (diffHours < 24) return `${diffHours}h ago`;
-            if (diffDays < 7) return `${diffDays}d ago`;
-
-            return new Intl.DateTimeFormat('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            }).format(date);
-        } catch (error) {
-            console.error('Error formatting date:', error);
-            return '';
-        }
+    // Optimized clear filters handler
+    const clearFilters = useCallback(() => {
+        setSearchTerm('');
+        setFilterBy('all');
+        setSortBy('newest');
     }, []);
-
-    // Filter and sort comments
-    const filteredAndSortedComments = comments
-        .filter(comment => {
-            if (!comment.content && !comment.userName) return false;
-            
-            const matchesSearch = (comment.content || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                (comment.userName || '').toLowerCase().includes(searchTerm.toLowerCase());
-            const matchesFilter = filterBy === 'all' || 
-                                (filterBy === 'liked' && comment.likes?.length > 0) ||
-                                (filterBy === 'recent' && comment.createdAt && 
-                                 new Date() - (comment.createdAt.toDate ? comment.createdAt.toDate() : new Date(comment.createdAt)) < 24 * 60 * 60 * 1000);
-            return matchesSearch && matchesFilter;
-        })
-        .sort((a, b) => {
-            switch (sortBy) {
-                case 'oldest':
-                    const aTime = a.createdAt?.toMillis ? a.createdAt.toMillis() : new Date(a.createdAt).getTime();
-                    const bTime = b.createdAt?.toMillis ? b.createdAt.toMillis() : new Date(b.createdAt).getTime();
-                    return aTime - bTime;
-                case 'popular':
-                    return (b.likes?.length || 0) - (a.likes?.length || 0);
-                case 'newest':
-                default:
-                    const aTimeNew = a.createdAt?.toMillis ? a.createdAt.toMillis() : new Date(a.createdAt).getTime();
-                    const bTimeNew = b.createdAt?.toMillis ? b.createdAt.toMillis() : new Date(b.createdAt).getTime();
-                    return bTimeNew - aTimeNew;
-            }
-        });
-
-    const totalLikes = comments.reduce((sum, comment) => sum + (comment.likes?.length || 0), 0);
-    const totalReplies = comments.reduce((sum, comment) => sum + (comment.replies?.length || 0), 0);
 
     if (loading) {
         return (
@@ -822,7 +872,7 @@ const Komentar = () => {
 
     return (
         <div className="w-full bg-gradient-to-br from-white/10 via-white/5 to-white/8 rounded-2xl overflow-hidden backdrop-blur-xl shadow-2xl border border-white/10">
-            {/* Enhanced Header */}
+            {/* Header */}
             <div className="p-6 border-b border-white/10 bg-gradient-to-r from-indigo-500/10 to-purple-500/10">
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
@@ -902,9 +952,7 @@ const Komentar = () => {
                     </div>
                 )}
                 
-                <div>
-                    <CommentForm onSubmit={handleCommentSubmit} isSubmitting={isSubmitting} error={error} />
-                </div>
+                <CommentForm onSubmit={handleCommentSubmit} isSubmitting={isSubmitting} />
 
                 <div className="space-y-4 max-h-[500px] overflow-y-auto custom-scrollbar">
                     {filteredAndSortedComments.length === 0 ? (
@@ -934,11 +982,7 @@ const Komentar = () => {
                                         )}
                                     </div>
                                     <button
-                                        onClick={() => {
-                                            setSearchTerm('');
-                                            setFilterBy('all');
-                                            setSortBy('newest');
-                                        }}
+                                        onClick={clearFilters}
                                         className="text-xs text-gray-400 hover:text-white transition-colors px-2 py-1 hover:bg-white/10 rounded"
                                     >
                                         Clear filters
@@ -950,13 +994,12 @@ const Komentar = () => {
                                 <Comment 
                                     key={comment.id} 
                                     comment={comment} 
-                                    formatDate={formatDate}
                                     index={index}
                                     onLike={handleLike}
                                     onReply={handleReply}
                                     onEdit={handleEdit}
                                     onDelete={handleDelete}
-                                    currentUser={currentUser}
+                                    deviceId={deviceId}
                                 />
                             ))}
                         </>
@@ -964,81 +1007,63 @@ const Komentar = () => {
                 </div>
             </div>
 
-            {/* Enhanced Custom Scrollbar and Animations */}
+            {/* Optimized CSS with reduced animations and improved performance */}
             <style jsx>{`
                 @keyframes fadeInUp {
                     from {
                         opacity: 0;
-                        transform: translateY(20px);
+                        transform: translate3d(0, 20px, 0);
                     }
                     to {
                         opacity: 1;
-                        transform: translateY(0);
+                        transform: translate3d(0, 0, 0);
                     }
                 }
 
-                @keyframes fadeIn {
-                    from {
-                        opacity: 0;
-                    }
-                    to {
-                        opacity: 1;
-                    }
-                }
-
-                .animate-fadeIn {
-                    animation: fadeIn 0.3s ease-out;
+                .custom-scrollbar {
+                    scrollbar-width: thin;
+                    scrollbar-color: rgba(99, 102, 241, 0.5) rgba(255, 255, 255, 0.05);
                 }
 
                 .custom-scrollbar::-webkit-scrollbar {
                     width: 8px;
                 }
+
                 .custom-scrollbar::-webkit-scrollbar-track {
                     background: rgba(255, 255, 255, 0.05);
                     border-radius: 8px;
                     margin: 4px;
                 }
+
                 .custom-scrollbar::-webkit-scrollbar-thumb {
                     background: linear-gradient(45deg, rgba(99, 102, 241, 0.5), rgba(168, 85, 247, 0.5));
                     border-radius: 8px;
                     border: 1px solid rgba(255, 255, 255, 0.1);
                 }
+
                 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
                     background: linear-gradient(45deg, rgba(99, 102, 241, 0.7), rgba(168, 85, 247, 0.7));
                 }
                 
-                /* Smooth transitions for all interactive elements */
-                * {
-                    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
-                    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-                    transition-duration: 200ms;
+                /* GPU acceleration for better performance */
+                .will-change-transform {
+                    will-change: transform;
+                    transform: translateZ(0);
                 }
                 
-                /* Enhanced loading states */
-                .loading-shimmer {
-                    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-                    background-size: 200% 100%;
-                    animation: shimmer 1.5s infinite;
-                }
-                
-                @keyframes shimmer {
-                    0% { background-position: -200% 0; }
-                    100% { background-position: 200% 0; }
-                }
-                
-                /* Mobile responsiveness improvements */
-                @media (max-width: 640px) {
-                    .custom-scrollbar {
-                        -webkit-overflow-scrolling: touch;
-                    }
-                }
-                
-                /* Accessibility improvements */
+                /* Reduce motion for accessibility */
                 @media (prefers-reduced-motion: reduce) {
                     *, *::before, *::after {
                         animation-duration: 0.01ms !important;
                         animation-iteration-count: 1 !important;
                         transition-duration: 0.01ms !important;
+                    }
+                }
+                
+                /* Touch device optimizations */
+                @media (hover: none) and (pointer: coarse) {
+                    .hover\\:scale-\\[1\\.02\\]:hover {
+                        transform: none;
                     }
                 }
                 

@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import {
   Trophy,
   Crown,
@@ -10,7 +10,6 @@ import {
   Diamond,
   Gift,
   Zap,
-  Atom,
   Flame,
   Building2,
   ArrowRight,
@@ -19,12 +18,19 @@ import {
   Heart,
 } from "lucide-react";
 
-// Enhanced typewriter with Indonesian flag cursor
-const IndonesianTypewriter = ({ text, speed = 120, delay = 0 }) => {
+// Optimized typewriter with reduced complexity
+const IndonesianTypewriter = ({ text, speed = 100, delay = 0 }) => {
   const [displayText, setDisplayText] = useState("");
   const [showCursor, setShowCursor] = useState(true);
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
+    if (prefersReducedMotion) {
+      setDisplayText(text);
+      setShowCursor(false);
+      return;
+    }
+
     let index = 0;
     const timer = setTimeout(() => {
       const typeTimer = setInterval(() => {
@@ -33,30 +39,23 @@ const IndonesianTypewriter = ({ text, speed = 120, delay = 0 }) => {
           index++;
         } else {
           clearInterval(typeTimer);
-          setTimeout(() => setShowCursor(false), 2000);
+          setTimeout(() => setShowCursor(false), 1500);
         }
       }, speed);
       return () => clearInterval(typeTimer);
     }, delay);
 
     return () => clearTimeout(timer);
-  }, [text, speed, delay]);
+  }, [text, speed, delay, prefersReducedMotion]);
 
   return (
     <span className="inline-block">
       {displayText}
-      {showCursor && (
+      {showCursor && !prefersReducedMotion && (
         <motion.span
           className="text-red-400 ml-0.5 inline-block"
-          animate={{ 
-            opacity: [0, 1, 0],
-            scale: [0.8, 1.2, 0.8]
-          }}
-          transition={{ 
-            duration: 1.2, 
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
+          animate={{ opacity: [0, 1, 0] }}
+          transition={{ duration: 1, repeat: Infinity }}
         >
           <Flag className="w-3 h-3 sm:w-4 sm:h-4" />
         </motion.span>
@@ -65,41 +64,44 @@ const IndonesianTypewriter = ({ text, speed = 120, delay = 0 }) => {
   );
 };
 
-// Indonesian themed particles
+// Simplified particles with better performance
 const IndonesianParticles = () => {
+  const prefersReducedMotion = useReducedMotion();
+  
   const particles = useMemo(() => {
-    return Array.from({ length: 15 }, (_, i) => ({
+    if (prefersReducedMotion) return [];
+    
+    return Array.from({ length: 8 }, (_, i) => ({
       id: i,
-      size: Math.random() * 8 + 6,
+      size: Math.random() * 6 + 4,
       x: Math.random() * 100,
       y: Math.random() * 100,
-      delay: Math.random() * 3,
-      duration: 4 + Math.random() * 4,
-      color: i % 3 === 0 ? "from-red-500 to-red-600" :
-             i % 3 === 1 ? "from-white to-gray-100" :
-             "from-yellow-400 to-amber-500"
+      delay: Math.random() * 2,
+      duration: 6 + Math.random() * 2,
+      color: i % 3 === 0 ? "bg-red-500/40" :
+             i % 3 === 1 ? "bg-white/30" :
+             "bg-yellow-400/40"
     }));
-  }, []);
+  }, [prefersReducedMotion]);
+
+  if (prefersReducedMotion) return null;
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       {particles.map((particle) => (
         <motion.div
           key={particle.id}
-          className={`absolute rounded-full bg-gradient-to-br ${particle.color} blur-sm`}
+          className={`absolute rounded-full ${particle.color} blur-sm`}
           style={{
             width: particle.size,
             height: particle.size,
             left: `${particle.x}%`,
             top: `${particle.y}%`,
-            boxShadow: "0 0 25px currentColor",
           }}
           animate={{
-            y: [-30, -120, -30],
-            x: [-15, 15, -15],
-            opacity: [0, 1, 0.8, 0],
-            scale: [0.3, 1.4, 0.9, 0.2],
-            rotate: [0, 180, 360],
+            y: [-20, -80, -20],
+            opacity: [0, 0.8, 0],
+            scale: [0.5, 1, 0.3],
           }}
           transition={{
             duration: particle.duration,
@@ -113,17 +115,22 @@ const IndonesianParticles = () => {
   );
 };
 
-// Indonesian flag light beams
+// Simplified light beams
 const IndonesianLightBeams = () => {
+  const prefersReducedMotion = useReducedMotion();
+  
   const beams = useMemo(() => {
-    return Array.from({ length: 8 }, (_, i) => ({
+    if (prefersReducedMotion) return [];
+    
+    return Array.from({ length: 4 }, (_, i) => ({
       id: i,
-      rotation: i * 45,
-      delay: i * 0.2,
-      opacity: 0.2 + Math.random() * 0.15,
-      color: i % 2 === 0 ? "from-red-500/80 to-red-600/20" : "from-white/60 to-gray-200/10"
+      rotation: i * 90,
+      delay: i * 0.5,
+      opacity: 0.15 + Math.random() * 0.1,
     }));
-  }, []);
+  }, [prefersReducedMotion]);
+
+  if (prefersReducedMotion) return null;
 
   return (
     <div className="absolute inset-0 overflow-hidden">
@@ -132,17 +139,17 @@ const IndonesianLightBeams = () => {
           key={beam.id}
           className="absolute top-1/2 left-1/2 origin-bottom"
           style={{
-            width: "3px",
-            height: "60vh",
-            background: `linear-gradient(to top, ${beam.color.includes('red') ? 'rgba(239,68,68,0.9)' : 'rgba(255,255,255,0.7)'}, transparent)`,
+            width: "2px",
+            height: "50vh",
+            background: `linear-gradient(to top, rgba(239,68,68,${beam.opacity}), transparent)`,
             transform: `translate(-50%, -100%) rotate(${beam.rotation}deg)`,
           }}
           animate={{
             opacity: [0, beam.opacity, 0],
-            scaleY: [0.6, 1.3, 0.9],
+            scaleY: [0.8, 1.2, 0.8],
           }}
           transition={{
-            duration: 7,
+            duration: 8,
             repeat: Infinity,
             delay: beam.delay,
             ease: "easeInOut",
@@ -153,459 +160,418 @@ const IndonesianLightBeams = () => {
   );
 };
 
-// Indonesian themed background
+// Optimized background with reduced complexity
 const IndonesianLuxuryBackground = () => {
+  const prefersReducedMotion = useReducedMotion();
+  
   const backgroundElements = useMemo(() => {
-    const elements = [];
+    if (prefersReducedMotion) return [];
     
-    // Floating Indonesian symbols
+    const elements = [];
     const symbols = [
       { icon: Flag, color: "text-red-500" },
-      { icon: Crown, color: "text-yellow-500" },
       { icon: Star, color: "text-white" },
       { icon: Heart, color: "text-red-400" },
     ];
     
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 6; i++) {
       const symbol = symbols[i % symbols.length];
       elements.push(
         <motion.div
           key={`symbol-${i}`}
-          className="absolute"
+          className="absolute opacity-40"
           style={{
             top: `${Math.random() * 100}%`,
             left: `${Math.random() * 100}%`,
           }}
           animate={{
-            y: [0, -40, 0],
-            x: [0, Math.random() * 30 - 15, 0],
-            rotate: [0, 360],
-            opacity: [0.4, 0.9, 0.4],
-            scale: [0.9, 1.4, 0.9],
+            y: [0, -30, 0],
+            opacity: [0.2, 0.6, 0.2],
+            scale: [0.8, 1.2, 0.8],
           }}
           transition={{
-            duration: 10 + Math.random() * 5,
+            duration: 8 + Math.random() * 4,
             repeat: Infinity,
-            delay: Math.random() * 5,
+            delay: Math.random() * 3,
             ease: "easeInOut",
           }}
         >
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-white rounded-full blur-xl opacity-50" />
-            <symbol.icon className={`w-5 h-5 ${symbol.color} relative z-10`} />
-          </div>
+          <symbol.icon className={`w-4 h-4 ${symbol.color}`} />
         </motion.div>
       );
     }
     
     return elements;
-  }, []);
+  }, [prefersReducedMotion]);
 
   return (
     <div className="absolute inset-0 overflow-hidden">
-      {/* Indonesian flag gradient layers */}
-      <motion.div 
-        className="absolute inset-0 bg-gradient-to-br from-red-900 via-red-800/90 to-red-950"
-        animate={{
-          opacity: [0.9, 1, 0.9],
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-      />
+      {/* Simplified gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-red-900 via-red-800 to-red-950" />
       
       <motion.div 
-        className="absolute inset-0 bg-gradient-to-tl from-white/20 via-transparent to-red-600/30"
-        animate={{
-          opacity: [0.6, 0.9, 0.6],
-        }}
+        className="absolute inset-0 bg-gradient-to-tl from-white/10 via-transparent to-red-600/20"
+        animate={!prefersReducedMotion ? {
+          opacity: [0.5, 0.8, 0.5],
+        } : {}}
         transition={{
-          duration: 12,
+          duration: 10,
           repeat: Infinity,
           ease: "easeInOut",
-          delay: 3,
         }}
       />
 
-      {/* Indonesian light beams */}
+      {/* Light beams */}
       <IndonesianLightBeams />
 
-      {/* Merdeka aurora effects */}
-      <motion.div
-        className="absolute top-0 left-0 w-full h-full"
-        animate={{
-          background: [
-            "radial-gradient(ellipse at 30% 20%, rgba(239,68,68,0.2) 0%, transparent 60%)",
-            "radial-gradient(ellipse at 70% 80%, rgba(255,255,255,0.15) 0%, transparent 60%)",
-            "radial-gradient(ellipse at 50% 50%, rgba(251,191,36,0.1) 0%, transparent 60%)",
-            "radial-gradient(ellipse at 30% 20%, rgba(239,68,68,0.2) 0%, transparent 60%)",
-          ],
-        }}
-        transition={{
-          duration: 15,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-      />
+      {/* Simplified aurora effect */}
+      {!prefersReducedMotion && (
+        <motion.div
+          className="absolute top-0 left-0 w-full h-full opacity-40"
+          animate={{
+            background: [
+              "radial-gradient(ellipse at 30% 20%, rgba(239,68,68,0.15) 0%, transparent 50%)",
+              "radial-gradient(ellipse at 70% 80%, rgba(255,255,255,0.1) 0%, transparent 50%)",
+              "radial-gradient(ellipse at 30% 20%, rgba(239,68,68,0.15) 0%, transparent 50%)",
+            ],
+          }}
+          transition={{
+            duration: 12,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      )}
 
-      {/* Floating Indonesian elements */}
+      {/* Floating elements */}
       <div className="absolute inset-0">
         {backgroundElements}
       </div>
 
-      {/* Indonesian particle system */}
+      {/* Particle system */}
       <IndonesianParticles />
 
-      {/* Batik-inspired grid pattern */}
-      <motion.div 
-        className="absolute inset-0 opacity-8"
-        animate={{
-          opacity: [0.03, 0.08, 0.03],
+      {/* Simplified grid pattern */}
+      <div 
+        className="absolute inset-0 opacity-5"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(239,68,68,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.2) 1px, transparent 1px)",
+          backgroundSize: "80px 80px",
         }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-      >
-        <div
-          className="w-full h-full"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(239,68,68,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
+      />
+    </div>
+  );
+};
+
+// Optimized icon button
+const IndonesianIconButton = React.memo(({ Icon, index }) => {
+  const prefersReducedMotion = useReducedMotion();
+  
+  return (
+    <motion.div
+      className="relative group cursor-pointer"
+      initial={{ opacity: 0, scale: 0 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{
+        delay: 0.8 + index * 0.05,
+        duration: 0.6,
+        type: "spring",
+        stiffness: 150,
+      }}
+      whileHover={!prefersReducedMotion ? { 
+        scale: 1.1,
+        transition: { duration: 0.2 }
+      } : {}}
+      whileTap={{ scale: 0.95 }}
+    >
+      {/* Simplified glow effect */}
+      {!prefersReducedMotion && (
+        <motion.div
+          className="absolute -inset-1 bg-gradient-to-r from-red-500/20 to-white/10 rounded-full blur-md"
+          animate={{
+            opacity: [0.3, 0.6, 0.3],
+            scale: [0.9, 1.1, 0.9],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            delay: index * 0.2,
           }}
         />
+      )}
+      
+      <div className="relative p-2 sm:p-3 bg-gradient-to-br from-red-900/90 to-red-800/90 backdrop-blur-sm rounded-full border border-white/60 shadow-lg group-hover:border-yellow-300/80 transition-all duration-200">
+        <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-white group-hover:text-yellow-200 transition-colors duration-200" />
+        
+        {/* Simplified sparkle on hover */}
+        <div className="absolute -top-1 -right-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <Sparkles className="w-3 h-3 text-yellow-400" />
+        </div>
+      </div>
+    </motion.div>
+  );
+});
+
+// Optimized trophy
+const IndonesianTrophy = () => {
+  const prefersReducedMotion = useReducedMotion();
+  
+  return (
+    <div className="relative flex justify-center w-full">
+      {/* Simplified glow effects */}
+      {!prefersReducedMotion && (
+        <>
+          <motion.div
+            className="absolute w-32 h-32 sm:w-40 sm:h-40 rounded-full blur-2xl"
+            style={{
+              background: "radial-gradient(circle, rgba(239,68,68,0.3) 0%, transparent 70%)"
+            }}
+            animate={{
+              scale: [1, 1.3, 1],
+              opacity: [0.3, 0.7, 0.3],
+            }}
+            transition={{ duration: 6, repeat: Infinity }}
+          />
+          
+          <motion.div
+            className="absolute w-24 h-24 sm:w-32 sm:h-32 rounded-full blur-xl"
+            style={{
+              background: "radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%)"
+            }}
+            animate={{
+              scale: [1.2, 0.8, 1.2],
+              opacity: [0.2, 0.5, 0.2],
+            }}
+            transition={{ duration: 8, repeat: Infinity }}
+          />
+        </>
+      )}
+
+      <motion.div
+        initial={{ scale: 0.3, opacity: 0 }}
+        animate={{
+          scale: 1,
+          opacity: 1,
+          y: !prefersReducedMotion ? [0, -10, 0] : 0,
+        }}
+        transition={{
+          scale: { duration: 2, ease: "easeOut", type: "spring", stiffness: 100 },
+          opacity: { duration: 2, ease: "easeOut" },
+          y: !prefersReducedMotion ? {
+            duration: 4,
+            repeat: Infinity,
+            repeatType: "reverse",
+            ease: "easeInOut",
+          } : {},
+        }}
+        className="relative z-10"
+        whileHover={!prefersReducedMotion ? {
+          scale: 1.05,
+          transition: { duration: 0.3 }
+        } : {}}
+      >
+        <Trophy className="w-16 h-16 sm:w-20 sm:h-20 lg:w-28 lg:h-28 text-yellow-400 drop-shadow-xl" />
+        
+        {/* Simplified crown */}
+        {!prefersReducedMotion && (
+          <motion.div
+            className="absolute -top-2 -right-2 sm:-top-3 sm:-right-3"
+            animate={{
+              rotate: [0, 360],
+              y: [0, -5, 0],
+            }}
+            transition={{
+              rotate: { duration: 8, repeat: Infinity, ease: "linear" },
+              y: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+            }}
+          >
+            <Crown className="w-5 h-5 sm:w-7 sm:h-7 text-red-500 drop-shadow-lg" />
+          </motion.div>
+        )}
+
+        {/* Simplified orbiting stars */}
+        {!prefersReducedMotion && [0, 1, 2].map((i) => (
+          <motion.div
+            key={i}
+            className="absolute top-1/2 left-1/2"
+            animate={{
+              rotate: [0, 360],
+            }}
+            transition={{
+              rotate: { duration: 4 + i, repeat: Infinity, ease: "linear" },
+            }}
+          >
+            <div
+              className="absolute"
+              style={{
+                transform: `translate(-50%, -50%) translateX(${35 + i * 10}px)`,
+              }}
+            >
+              <Star className="w-2 h-2 sm:w-3 sm:h-3 text-white drop-shadow-sm" />
+            </div>
+          </motion.div>
+        ))}
       </motion.div>
     </div>
   );
 };
 
-// Indonesian themed icon button
-const IndonesianIconButton = ({ Icon, index }) => (
-  <motion.div
-    className="relative group cursor-pointer"
-    initial={{ opacity: 0, scale: 0, rotate: -180 }}
-    animate={{ opacity: 1, scale: 1, rotate: 0 }}
-    transition={{
-      delay: 1 + index * 0.1,
-      duration: 0.8,
-      type: "spring",
-      stiffness: 200,
-    }}
-    whileHover={{ 
-      scale: 1.2,
-      rotate: [0, -5, 5, 0],
-      transition: { duration: 0.3 }
-    }}
-    whileTap={{ scale: 0.95 }}
-  >
-    {/* Indonesian flag glow effect */}
+// Simplified spinning element
+const IndonesianSpinningElement = () => {
+  const prefersReducedMotion = useReducedMotion();
+  
+  return (
     <motion.div
-      className="absolute -inset-2 bg-gradient-to-r from-red-500/30 via-white/20 to-red-600/30 rounded-full blur-lg"
-      animate={{
-        opacity: [0.4, 0.8, 0.4],
-        scale: [0.9, 1.3, 0.9],
-      }}
-      transition={{
-        duration: 4,
-        repeat: Infinity,
-        delay: index * 0.3,
-      }}
-    />
-    
-    <div className="relative p-2 sm:p-3 bg-gradient-to-br from-red-900/95 to-red-800/95 backdrop-blur-md rounded-full border-2 border-white/70 shadow-2xl shadow-red-500/40 group-hover:border-yellow-300/90 group-hover:shadow-yellow-400/50 transition-all duration-300">
-      <Icon className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-white group-hover:text-yellow-200 transition-colors duration-300" />
-      
-      {/* Indonesian sparkle effects on hover */}
-      <motion.div
-        className="absolute -top-1 -right-1 opacity-0 group-hover:opacity-100"
-        animate={{
-          rotate: [0, 360],
-        }}
-        transition={{
-          duration: 2,
-          repeat: Infinity,
-          ease: "linear",
-        }}
-      >
-        <Sparkles className="w-3 h-3 text-yellow-400" />
-      </motion.div>
-    </div>
-  </motion.div>
-);
-
-// Indonesian themed trophy
-const IndonesianTrophy = () => (
-  <div className="relative flex justify-center w-full">
-    {/* Multiple layered Indonesian glows */}
-    <motion.div
-      className="absolute w-40 h-40 sm:w-48 sm:h-48 rounded-full blur-3xl"
-      style={{
-        background: "radial-gradient(circle, rgba(239,68,68,0.4) 0%, rgba(220,38,38,0.3) 50%, transparent 100%)"
-      }}
-      animate={{
-        scale: [1, 1.5, 1],
-        opacity: [0.4, 0.9, 0.4],
-        rotate: [0, 180, 360],
-      }}
-      transition={{ duration: 8, repeat: Infinity }}
-    />
-    
-    <motion.div
-      className="absolute w-32 h-32 sm:w-40 sm:h-40 rounded-full blur-2xl"
-      style={{
-        background: "radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(248,250,252,0.2) 50%, transparent 100%)"
-      }}
-      animate={{
-        scale: [1.3, 0.9, 1.3],
-        opacity: [0.3, 0.7, 0.3],
-        rotate: [360, 180, 0],
-      }}
-      transition={{ duration: 10, repeat: Infinity }}
-    />
-
-    <motion.div
-      initial={{ scale: 0.3, opacity: 0, rotate: -180 }}
+      initial={{ scale: 0, opacity: 0 }}
       animate={{
         scale: 1,
+        rotate: !prefersReducedMotion ? [0, 360] : 0,
         opacity: 1,
-        rotate: 0,
-        y: [0, -15, 0],
       }}
       transition={{
-        scale: { duration: 2.5, ease: "easeOut", type: "spring", stiffness: 120 },
-        opacity: { duration: 2.5, ease: "easeOut" },
-        rotate: { duration: 2.5, ease: "easeOut" },
-        y: {
-          duration: 5,
-          repeat: Infinity,
-          repeatType: "reverse",
-          ease: "easeInOut",
-        },
+        scale: { duration: 1.5, delay: 0.3, type: "spring", stiffness: 120 },
+        opacity: { duration: 1.5, delay: 0.3 },
+        rotate: !prefersReducedMotion ? { duration: 20, repeat: Infinity, ease: "linear" } : {},
       }}
-      className="relative z-10"
-      whileHover={{
-        scale: 1.1,
-        rotate: [0, -5, 5, 0],
-        transition: { duration: 0.5 }
-      }}
+      className="relative"
+      whileHover={!prefersReducedMotion ? {
+        scale: 1.2,
+        transition: { duration: 0.3 }
+      } : {}}
     >
-      <Trophy className="w-16 h-16 sm:w-20 sm:h-20 lg:w-32 lg:h-32 text-yellow-400 drop-shadow-2xl filter" />
-      
-      {/* Indonesian flag crown */}
-      <motion.div
-        className="absolute -top-3 -right-3 sm:-top-4 sm:-right-4"
-        animate={{
-          rotate: [0, 360],
-          y: [0, -8, 0],
-          scale: [1, 1.2, 1],
-        }}
-        transition={{
-          rotate: { duration: 12, repeat: Infinity, ease: "linear" },
-          y: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-          scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
-        }}
-      >
-        <div className="relative">
-          <Crown className="w-6 h-6 sm:w-8 sm:h-8 lg:w-14 lg:h-14 text-red-500 drop-shadow-lg" />
-          <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-white rounded-full blur-md opacity-50" />
-        </div>
-      </motion.div>
+      {/* Simplified glow */}
+      {!prefersReducedMotion && (
+        <motion.div
+          className="absolute -inset-3 bg-gradient-to-r from-red-500/30 to-white/20 rounded-full blur-lg"
+          animate={{
+            scale: [1, 1.4, 1],
+            opacity: [0.4, 0.8, 0.4],
+          }}
+          transition={{ duration: 4, repeat: Infinity }}
+        />
+      )}
 
-      {/* Orbiting Indonesian stars */}
-      {[0, 1, 2, 3, 4].map((i) => (
+      <Diamond className="w-8 h-8 sm:w-10 sm:h-10 text-red-500 relative z-10 drop-shadow-lg" />
+      
+      {/* Simplified orbiting elements */}
+      {!prefersReducedMotion && [0, 1].map((i) => (
         <motion.div
           key={i}
-          className="absolute"
-          style={{
-            top: "50%",
-            left: "50%",
-          }}
+          className="absolute top-1/2 left-1/2"
           animate={{
             rotate: [0, 360],
-            scale: [0.6, 1.1, 0.6],
           }}
           transition={{
-            rotate: { duration: 5 + i, repeat: Infinity, ease: "linear" },
-            scale: { duration: 3, repeat: Infinity, delay: i * 0.4 },
+            duration: 3 + i,
+            repeat: Infinity,
+            ease: "linear",
           }}
         >
           <div
             className="absolute"
             style={{
-              transform: `translate(-50%, -50%) translateX(${45 + i * 12}px)`,
+              transform: `translate(-50%, -50%) translateX(${25 + i * 6}px)`,
             }}
           >
-            <Star className="w-3 h-3 sm:w-4 sm:h-4 text-white drop-shadow-md" />
+            {i === 0 && <Flag className="w-2 h-2 text-red-500" />}
+            {i === 1 && <Star className="w-2 h-2 text-white" />}
           </div>
         </motion.div>
       ))}
     </motion.div>
-  </div>
-);
+  );
+};
 
-// Indonesian spinning Garuda symbol
-const IndonesianSpinningElement = () => (
-  <motion.div
-    initial={{ scale: 0, rotate: 0, opacity: 0 }}
-    animate={{
-      scale: 1,
-      rotate: [0, 360],
-      opacity: 1,
-    }}
-    transition={{
-      scale: { duration: 2, delay: 0.5, type: "spring", stiffness: 150 },
-      opacity: { duration: 2, delay: 0.5 },
-      rotate: { duration: 25, repeat: Infinity, ease: "linear" },
-    }}
-    className="relative"
-    whileHover={{
-      scale: 1.3,
-      transition: { duration: 0.4 }
-    }}
-  >
-    {/* Indonesian glow layers */}
-    <motion.div
-      className="absolute -inset-4 bg-gradient-to-r from-red-500 via-white to-red-600 rounded-full blur-xl opacity-70"
-      animate={{
-        scale: [1, 1.6, 1],
-        opacity: [0.5, 1, 0.5],
-      }}
-      transition={{ duration: 5, repeat: Infinity }}
-    />
-    
-    <motion.div
-      className="absolute -inset-2 bg-gradient-to-r from-yellow-400 via-red-500 to-white rounded-full blur-lg opacity-50"
-      animate={{
-        scale: [1.3, 0.9, 1.3],
-        opacity: [0.3, 0.7, 0.3],
-        rotate: [0, -360],
-      }}
-      transition={{ duration: 8, repeat: Infinity }}
-    />
-
-    <Diamond className="w-10 h-10 sm:w-12 sm:h-12 lg:w-18 lg:h-18 text-red-500 relative z-10 drop-shadow-lg" />
-    
-    {/* Orbiting Indonesian mini symbols */}
-    {[0, 1, 2].map((i) => (
+// Simplified border frame
+const IndonesianBorderFrame = () => {
+  const prefersReducedMotion = useReducedMotion();
+  
+  return (
+    <>
       <motion.div
-        key={i}
-        className="absolute top-1/2 left-1/2"
-        animate={{
-          rotate: [0, 360],
+        className="absolute inset-4 sm:inset-8 lg:inset-12 border-2 sm:border-4 border-red-500/60 rounded-2xl lg:rounded-3xl"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ 
+          opacity: 1, 
+          scale: 1,
+          borderColor: !prefersReducedMotion ? [
+            "rgba(239,68,68,0.6)",
+            "rgba(255,255,255,0.5)", 
+            "rgba(239,68,68,0.6)"
+          ] : "rgba(239,68,68,0.6)"
         }}
-        transition={{
-          duration: 4 + i,
-          repeat: Infinity,
-          ease: "linear",
+        transition={{ 
+          scale: { delay: 0.2, duration: 1.5 },
+          opacity: { delay: 0.2, duration: 1.5 },
+          borderColor: !prefersReducedMotion ? { duration: 8, repeat: Infinity } : {}
         }}
-      >
-        <div
-          className="absolute"
-          style={{
-            transform: `translate(-50%, -50%) translateX(${30 + i * 8}px)`,
+        style={{
+          boxShadow: "0 0 50px rgba(239,68,68,0.4)",
+        }}
+      />
+
+      {/* Simplified corner emblems */}
+      {[
+        { top: "1rem", left: "1rem" },
+        { top: "1rem", right: "1rem" },
+        { bottom: "1rem", left: "1rem" },
+        { bottom: "1rem", right: "1rem" }
+      ].map((position, i) => (
+        <motion.div
+          key={i}
+          className="absolute w-8 h-8 sm:w-12 sm:h-12"
+          style={position}
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{
+            opacity: [0.6, 1, 0.6],
+            scale: !prefersReducedMotion ? [0.9, 1.2, 0.9] : 1,
+          }}
+          transition={{
+            opacity: { delay: 0.5 + i * 0.2, duration: 4, repeat: Infinity },
+            scale: !prefersReducedMotion ? { delay: 0.5 + i * 0.2, duration: 4, repeat: Infinity } : { delay: 0.5 + i * 0.2, duration: 1 },
           }}
         >
-          {i === 0 && <Flag className="w-2 h-2 text-red-500" />}
-          {i === 1 && <Star className="w-2 h-2 text-white" />}
-          {i === 2 && <Heart className="w-2 h-2 text-red-400" />}
-        </div>
-      </motion.div>
-    ))}
-  </motion.div>
-);
-
-// Indonesian border frame
-const IndonesianBorderFrame = () => (
-  <>
-    <motion.div
-      className="absolute inset-4 sm:inset-8 lg:inset-16 border-4 sm:border-6 lg:border-8 border-red-500/70 rounded-3xl lg:rounded-4xl"
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ 
-        opacity: 1, 
-        scale: 1,
-        borderColor: [
-          "rgba(239,68,68,0.7)",
-          "rgba(255,255,255,0.6)", 
-          "rgba(251,191,36,0.6)",
-          "rgba(239,68,68,0.7)"
-        ]
-      }}
-      transition={{ 
-        scale: { delay: 0.3, duration: 2 },
-        opacity: { delay: 0.3, duration: 2 },
-        borderColor: { duration: 10, repeat: Infinity }
-      }}
-      style={{
-        boxShadow: "0 0 100px rgba(239,68,68,0.6), inset 0 0 100px rgba(239,68,68,0.2)",
-      }}
-    />
-
-    {/* Indonesian corner emblems */}
-    {[
-      { top: "1rem", left: "1rem" },
-      { top: "1rem", right: "1rem" },
-      { bottom: "1rem", left: "1rem" },
-      { bottom: "1rem", right: "1rem" }
-    ].map((position, i) => (
-      <motion.div
-        key={i}
-        className="absolute w-12 h-12 sm:w-16 sm:h-16"
-        style={position}
-        initial={{ opacity: 0, scale: 0, rotate: -180 }}
-        animate={{
-          opacity: [0.7, 1, 0.7],
-          scale: [0.9, 1.4, 0.9],
-          rotate: [0, 360],
-        }}
-        transition={{
-          opacity: { delay: 0.7 + i * 0.3, duration: 5, repeat: Infinity },
-          scale: { delay: 0.7 + i * 0.3, duration: 5, repeat: Infinity },
-          rotate: { delay: 0.7 + i * 0.3, duration: 10, repeat: Infinity, ease: "linear" },
-        }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-white rounded-full blur-xl" />
-        <div className="relative h-full w-full border-3 border-white/90 rounded-full flex items-center justify-center bg-gradient-to-br from-red-800/90 to-red-900/90 backdrop-blur-sm">
-          <motion.div
-            className="w-4 h-4 sm:w-5 sm:h-5 bg-gradient-to-br from-white to-red-200 rounded-full"
-            animate={{
-              scale: [1, 1.6, 1],
-            }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-              delay: i * 0.4,
-            }}
-          />
-        </div>
-      </motion.div>
-    ))}
-  </>
-);
+          <div className="relative h-full w-full border-2 border-white/80 rounded-full flex items-center justify-center bg-gradient-to-br from-red-800/80 to-red-900/80 backdrop-blur-sm">
+            <motion.div
+              className="w-3 h-3 sm:w-4 sm:h-4 bg-gradient-to-br from-white to-red-200 rounded-full"
+              animate={!prefersReducedMotion ? {
+                scale: [1, 1.3, 1],
+              } : {}}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                delay: i * 0.3,
+              }}
+            />
+          </div>
+        </motion.div>
+      ))}
+    </>
+  );
+};
 
 const IndonesianVictoryScreen = ({ onLoadingComplete }) => {
   const [isLoading, setIsLoading] = useState(true);
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
       setTimeout(() => {
         onLoadingComplete?.();
-      }, 1000);
-    }, 12000);
+      }, 800);
+    }, prefersReducedMotion ? 8000 : 10000);
 
     return () => clearTimeout(timer);
-  }, [onLoadingComplete]);
+  }, [onLoadingComplete, prefersReducedMotion]);
 
   const containerVariants = {
     exit: {
       opacity: 0,
-      scale: 1.05,
+      scale: 1.02,
       transition: {
-        duration: 1.5,
+        duration: 1,
         ease: "easeInOut",
       },
     },
@@ -627,55 +593,55 @@ const IndonesianVictoryScreen = ({ onLoadingComplete }) => {
         >
           <IndonesianLuxuryBackground />
 
-          <div className="relative min-h-screen flex items-center justify-center py-4 px-3 sm:py-8 sm:px-6 lg:py-16 lg:px-8">
-            <div className="w-full max-w-6xl mx-auto text-center py-4 sm:py-6 lg:py-10">
+          <div className="relative min-h-screen flex items-center justify-center py-4 px-3 sm:py-6 sm:px-4 lg:py-8 lg:px-6">
+            <div className="w-full max-w-5xl mx-auto text-center py-4 sm:py-6 lg:py-8">
               
               <IndonesianBorderFrame />
 
-              {/* Indonesian Trophy Section */}
-              <motion.div className="mb-6 sm:mb-8 lg:mb-12 pt-8 sm:pt-12 lg:pt-24 relative h-24 sm:h-28 lg:h-40">
+              {/* Trophy Section */}
+              <motion.div className="mb-6 sm:mb-8 lg:mb-10 pt-6 sm:pt-8 lg:pt-16 relative h-20 sm:h-24 lg:h-32">
                 <IndonesianTrophy />
               </motion.div>
 
-              {/* Indonesian Spinning Element */}
+              {/* Spinning Element */}
               <motion.div
-                className="flex justify-center mb-4 sm:mb-6 lg:mb-10"
-                initial={{ opacity: 0, y: -30 }}
+                className="flex justify-center mb-4 sm:mb-6 lg:mb-8"
+                initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.8, duration: 1.5 }}
+                transition={{ delay: 1.5, duration: 1 }}
               >
                 <IndonesianSpinningElement />
               </motion.div>
 
-              {/* Indonesian Icons Grid */}
-              <motion.div className="flex flex-wrap justify-center gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-10 lg:mb-16">
+              {/* Icons Grid */}
+              <motion.div className="flex flex-wrap justify-center gap-2 sm:gap-3 lg:gap-4 mb-6 sm:mb-8 lg:mb-12">
                 {indonesianIcons.map((Icon, index) => (
                   <IndonesianIconButton key={index} Icon={Icon} index={index} />
                 ))}
               </motion.div>
 
-              {/* Main Title - 80th Independence */}
-              <motion.div className="text-center mb-6 sm:mb-8 lg:mb-14 px-2 sm:px-4">
+              {/* Main Title */}
+              <motion.div className="text-center mb-6 sm:mb-8 lg:mb-12 px-2 sm:px-4">
                 <motion.h1 
-                  className="text-xl sm:text-3xl lg:text-5xl xl:text-7xl font-bold tracking-tight"
-                  whileHover={{
+                  className="text-xl sm:text-3xl lg:text-5xl xl:text-6xl font-bold tracking-tight"
+                  whileHover={!prefersReducedMotion ? {
                     scale: 1.02,
                     transition: { duration: 0.3 }
-                  }}
+                  } : {}}
                 >
                   <motion.div
-                    className="mb-3 sm:mb-4 lg:mb-6"
-                    initial={{ opacity: 0, y: -30, scale: 0.9 }}
+                    className="mb-2 sm:mb-3 lg:mb-4"
+                    initial={{ opacity: 0, y: -20, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ delay: 0.8, duration: 1.5, type: "spring", stiffness: 100 }}
+                    transition={{ delay: 0.6, duration: 1.2, type: "spring", stiffness: 80 }}
                   >
                     <motion.span 
                       className="bg-gradient-to-r from-red-300 via-white to-red-400 bg-clip-text text-transparent"
-                      animate={{
+                      animate={!prefersReducedMotion ? {
                         backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-                      }}
+                      } : {}}
                       transition={{
-                        duration: 8,
+                        duration: 6,
                         repeat: Infinity,
                         ease: "easeInOut"
                       }}
@@ -684,17 +650,17 @@ const IndonesianVictoryScreen = ({ onLoadingComplete }) => {
                     </motion.span>
                   </motion.div>
                   <motion.div
-                    initial={{ opacity: 0, y: 30, scale: 0.9 }}
+                    initial={{ opacity: 0, y: 20, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ delay: 1.2, duration: 1.5, type: "spring", stiffness: 100 }}
+                    transition={{ delay: 1, duration: 1.2, type: "spring", stiffness: 80 }}
                   >
                     <motion.span 
                       className="bg-gradient-to-r from-yellow-300 via-red-400 to-white bg-clip-text text-transparent"
-                      animate={{
+                      animate={!prefersReducedMotion ? {
                         backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-                      }}
+                      } : {}}
                       transition={{
-                        duration: 10,
+                        duration: 8,
                         repeat: Infinity,
                         ease: "easeInOut"
                       }}
@@ -705,20 +671,20 @@ const IndonesianVictoryScreen = ({ onLoadingComplete }) => {
                 </motion.h1>
               </motion.div>
 
-              {/* Indonesian Subtitle */}
+              {/* Subtitle */}
               <motion.div
-                className="mb-6 sm:mb-10 lg:mb-16"
-                initial={{ opacity: 0, scale: 0.9 }}
+                className="mb-6 sm:mb-8 lg:mb-12"
+                initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 2, duration: 1.5 }}
+                transition={{ delay: 1.8, duration: 1.2 }}
               >
                 <motion.h2 
-                  className="text-sm sm:text-xl lg:text-3xl xl:text-4xl bg-gradient-to-r from-white via-red-300 to-yellow-400 bg-clip-text text-transparent font-bold mb-4 sm:mb-6"
-                  animate={{
+                  className="text-sm sm:text-xl lg:text-3xl bg-gradient-to-r from-white via-red-300 to-yellow-400 bg-clip-text text-transparent font-bold mb-3 sm:mb-4"
+                  animate={!prefersReducedMotion ? {
                     backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-                  }}
+                  } : {}}
                   transition={{
-                    duration: 12,
+                    duration: 10,
                     repeat: Infinity,
                     ease: "easeInOut"
                   }}
@@ -726,12 +692,12 @@ const IndonesianVictoryScreen = ({ onLoadingComplete }) => {
                   MERDEKA! INDONESIA JAYA!
                 </motion.h2>
                 <motion.p 
-                  className="text-xs sm:text-base lg:text-xl text-white opacity-90 font-semibold"
-                  animate={{
+                  className="text-xs sm:text-base lg:text-xl text-white/90 font-semibold"
+                  animate={!prefersReducedMotion ? {
                     opacity: [0.7, 1, 0.7],
-                  }}
+                  } : {}}
                   transition={{
-                    duration: 4,
+                    duration: 3,
                     repeat: Infinity,
                     ease: "easeInOut"
                   }}
@@ -740,192 +706,226 @@ const IndonesianVictoryScreen = ({ onLoadingComplete }) => {
                 </motion.p>
               </motion.div>
 
-              {/* Indonesian Company Visit Section */}
+              {/* Company Visit Section */}
               <motion.div
-                className="mb-4 sm:mb-6 lg:mb-10"
-                initial={{ opacity: 0, y: 20 }}
+                className="mb-4 sm:mb-6 lg:mb-8"
+                initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 2.2, duration: 1 }}
+                transition={{ delay: 2, duration: 0.8 }}
               >
-                <div className="inline-flex items-center gap-1 sm:gap-2 lg:gap-3 px-3 py-2 sm:px-6 sm:py-3 lg:px-8 lg:py-4 rounded-full bg-gradient-to-r from-red-600/30 via-white/20 to-red-600/30 border border-white/50 backdrop-blur-sm">
-                  <Building2 className="w-3 h-3 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-white" />
-                  <span className="text-xs sm:text-lg lg:text-2xl font-bold bg-gradient-to-r from-white to-red-200 bg-clip-text text-transparent">
-                    <IndonesianTypewriter text="BIOFOURTEAM INDONESIA" speed={80} delay={2800} />
+                <div className="inline-flex items-center gap-1 sm:gap-2 lg:gap-3 px-3 py-2 sm:px-5 sm:py-3 lg:px-6 lg:py-3 rounded-full bg-gradient-to-r from-red-600/25 via-white/15 to-red-600/25 border border-white/40 backdrop-blur-sm">
+                  <Building2 className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-white" />
+                  <span className="text-xs sm:text-lg lg:text-xl font-bold bg-gradient-to-r from-white to-red-200 bg-clip-text text-transparent">
+                    <IndonesianTypewriter text="BIOFOURTEAM INDONESIA" speed={60} delay={2500} />
                   </span>
-                  <ArrowRight className="w-3 h-3 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-yellow-400" />
+                  <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-yellow-400" />
                 </div>
               </motion.div>
 
-              {/* Indonesian Team Name */}
+              {/* Team Name */}
               <motion.div
-                className="text-center mt-3 sm:mt-4 lg:mt-8 mb-4 sm:mb-6 lg:mb-10"
-                initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                className="text-center mt-3 sm:mt-4 lg:mt-6 mb-4 sm:mb-6 lg:mb-8"
+                initial={{ opacity: 0, y: 15, scale: 0.97 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ delay: 2.5, duration: 1 }}
+                transition={{ delay: 2.3, duration: 0.8 }}
               >
                 <motion.div
-                  className="inline-flex items-center gap-1 sm:gap-2 lg:gap-3 px-4 py-2 sm:px-6 sm:py-3 lg:px-10 lg:py-5 rounded-full relative"
-                  whileHover={{ scale: 1.03 }}
-                  transition={{ type: "spring", stiffness: 300 }}
+                  className="inline-flex items-center gap-1 sm:gap-2 lg:gap-3 px-4 py-2 sm:px-5 sm:py-3 lg:px-8 lg:py-4 rounded-full relative"
+                  whileHover={!prefersReducedMotion ? { scale: 1.02 } : {}}
+                  transition={{ type: "spring", stiffness: 200 }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-red-800/60 via-white/30 to-red-800/60 rounded-full blur-lg" />
-                  <div className="absolute inset-0 border-2 border-white/50 rounded-full" />
-                  <div className="relative flex items-center gap-1 sm:gap-2 lg:gap-3 text-sm sm:text-xl lg:text-3xl font-bold">
+                  <div className="absolute inset-0 bg-gradient-to-r from-red-800/50 via-white/25 to-red-800/50 rounded-full blur-lg" />
+                  <div className="absolute inset-0 border-2 border-white/40 rounded-full" />
+                  <div className="relative flex items-center gap-1 sm:gap-2 lg:gap-3 text-sm sm:text-xl lg:text-2xl font-bold">
                     <motion.div
-                      animate={{ rotate: [0, 360] }}
-                      transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                      animate={!prefersReducedMotion ? { rotate: [0, 360] } : {}}
+                      transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
                     >
-                      <Flag className="w-5 h-5 sm:w-6 sm:h-6 text-red-500" />
+                      <Flag className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" />
                     </motion.div>
                     <span className="bg-gradient-to-r from-white via-red-200 to-yellow-300 bg-clip-text text-transparent">
-                      <IndonesianTypewriter text="GARUDA BIOETHANOL" speed={120} delay={3500} />
+                      <IndonesianTypewriter text="GARUDA BIOETHANOL" speed={80} delay={3200} />
                     </span>
-                    <Star className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                    <Star className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                   </div>
                 </motion.div>
               </motion.div>
 
-              {/* Indonesian Independence Date */}
+              {/* Independence Date */}
               <motion.div
-                className="text-center mb-6 sm:mb-8 lg:mb-12"
-                initial={{ opacity: 0, y: 20 }}
+                className="text-center mb-6 sm:mb-8 lg:mb-10"
+                initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 2.8, duration: 1 }}
+                transition={{ delay: 2.6, duration: 0.8 }}
               >
                 <motion.div
-                  className="inline-flex items-center gap-2 sm:gap-3 px-4 py-2 sm:px-8 sm:py-4 rounded-full bg-gradient-to-r from-red-900/80 via-white/20 to-red-900/80 border-2 border-yellow-400/60 backdrop-blur-md"
-                  animate={{
+                  className="inline-flex items-center gap-2 sm:gap-3 px-4 py-2 sm:px-6 sm:py-3 rounded-full bg-gradient-to-r from-red-900/70 via-white/15 to-red-900/70 border-2 border-yellow-400/50 backdrop-blur-md"
+                  animate={!prefersReducedMotion ? {
                     borderColor: [
-                      "rgba(251,191,36,0.6)",
-                      "rgba(255,255,255,0.8)",
-                      "rgba(239,68,68,0.6)",
-                      "rgba(251,191,36,0.6)"
+                      "rgba(251,191,36,0.5)",
+                      "rgba(255,255,255,0.7)",
+                      "rgba(239,68,68,0.5)",
+                      "rgba(251,191,36,0.5)"
                     ],
                     boxShadow: [
-                      "0 0 30px rgba(251,191,36,0.3)",
-                      "0 0 50px rgba(255,255,255,0.4)",
-                      "0 0 30px rgba(239,68,68,0.3)",
-                      "0 0 30px rgba(251,191,36,0.3)"
+                      "0 0 20px rgba(251,191,36,0.2)",
+                      "0 0 30px rgba(255,255,255,0.3)",
+                      "0 0 20px rgba(239,68,68,0.2)",
+                      "0 0 20px rgba(251,191,36,0.2)"
                     ]
-                  }}
-                  transition={{ duration: 6, repeat: Infinity }}
+                  } : {}}
+                  transition={{ duration: 5, repeat: Infinity }}
                 >
                   <motion.div
-                    animate={{
-                      scale: [1, 1.2, 1],
-                      rotate: [0, 360]
-                    }}
+                    animate={!prefersReducedMotion ? {
+                      scale: [1, 1.15, 1],
+                    } : {}}
                     transition={{
-                      scale: { duration: 3, repeat: Infinity },
-                      rotate: { duration: 8, repeat: Infinity, ease: "linear" }
+                      duration: 2.5,
+                      repeat: Infinity,
                     }}
                   >
-                    <Heart className="w-4 h-4 sm:w-6 sm:h-6 text-red-500" />
+                    <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" />
                   </motion.div>
                   <span className="text-sm sm:text-xl lg:text-2xl font-bold bg-gradient-to-r from-red-300 via-white to-yellow-400 bg-clip-text text-transparent">
-                    <IndonesianTypewriter text="17 AGUSTUS 1945 - 2025" speed={100} delay={4200} />
+                    <IndonesianTypewriter text="17 AGUSTUS 1945 - 2025" speed={70} delay={3800} />
                   </span>
                   <motion.div
-                    animate={{
-                      scale: [1, 1.1, 1],
-                      opacity: [0.7, 1, 0.7]
-                    }}
-                    transition={{ duration: 2, repeat: Infinity }}
+                    animate={!prefersReducedMotion ? {
+                      scale: [1, 1.05, 1],
+                      opacity: [0.8, 1, 0.8]
+                    } : {}}
+                    transition={{ duration: 1.8, repeat: Infinity }}
                   >
-                    <Star className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
+                    <Star className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                   </motion.div>
                 </motion.div>
               </motion.div>
 
-              {/* Indonesian Patriotic Quote */}
+              {/* Patriotic Quote */}
               <motion.div
-                className="text-center mb-8 sm:mb-12 lg:mb-16"
-                initial={{ opacity: 0, scale: 0.9 }}
+                className="text-center mb-8 sm:mb-10 lg:mb-12"
+                initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 3.2, duration: 1.5 }}
+                transition={{ delay: 3, duration: 1.2 }}
               >
                 <motion.blockquote 
-                  className="text-xs sm:text-lg lg:text-2xl italic text-white/90 font-medium max-w-4xl mx-auto leading-relaxed"
-                  animate={{
+                  className="text-xs sm:text-lg lg:text-xl italic text-white/90 font-medium max-w-4xl mx-auto leading-relaxed"
+                  animate={!prefersReducedMotion ? {
                     opacity: [0.8, 1, 0.8],
-                  }}
+                  } : {}}
                   transition={{
-                    duration: 5,
+                    duration: 4,
                     repeat: Infinity,
                     ease: "easeInOut"
                   }}
                 >
                   <IndonesianTypewriter 
                     text='"Sekali Merdeka, Tetap Merdeka!"' 
-                    speed={150} 
-                    delay={5000} 
+                    speed={120} 
+                    delay={4500} 
                   />
                   <motion.div 
-                    className="text-xs sm:text-base lg:text-lg text-red-300 mt-2 sm:mt-4"
+                    className="text-xs sm:text-base lg:text-lg text-red-300 mt-2 sm:mt-3"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ delay: 7, duration: 1 }}
+                    transition={{ delay: prefersReducedMotion ? 5 : 6.5, duration: 1 }}
                   >
                     - Ir. Soekarno, Proklamator Kemerdekaan RI
                   </motion.div>
                 </motion.blockquote>
               </motion.div>
 
-              {/* Indonesian achievement ring */}
+              {/* Achievement ring */}
               <motion.div
-                className="absolute -bottom-4 sm:-bottom-2 left-1/2 transform -translate-x-1/2"
-                initial={{ opacity: 0, scale: 0.5 }}
+                className="absolute -bottom-2 sm:bottom-0 left-1/2 transform -translate-x-1/2"
+                initial={{ opacity: 0, scale: 0.7 }}
                 animate={{
-                  opacity: 0.5,
+                  opacity: 0.4,
                   scale: 1,
-                  rotate: [0, 360],
+                  rotate: !prefersReducedMotion ? [0, 360] : 0,
                 }}
                 transition={{
-                  opacity: { delay: 3, duration: 1.5 },
-                  scale: { delay: 3, duration: 1.5 },
-                  rotate: { delay: 3.5, duration: 25, repeat: Infinity, ease: "linear" },
+                  opacity: { delay: 2.5, duration: 1.2 },
+                  scale: { delay: 2.5, duration: 1.2 },
+                  rotate: !prefersReducedMotion ? { delay: 3, duration: 20, repeat: Infinity, ease: "linear" } : {},
                 }}
               >
-                <div className="w-32 h-32 sm:w-40 sm:h-40 border-3 sm:border-4 border-red-500/70 rounded-full flex items-center justify-center relative">
-                  <div className="w-24 h-24 sm:w-32 sm:h-32 border-2 border-white/60 rounded-full flex items-center justify-center">
+                <div className="w-24 h-24 sm:w-32 sm:h-32 border-2 sm:border-3 border-red-500/60 rounded-full flex items-center justify-center relative">
+                  <div className="w-18 h-18 sm:w-24 sm:h-24 border border-white/50 rounded-full flex items-center justify-center">
                     <motion.div
-                      className="text-lg sm:text-2xl font-bold text-yellow-400"
-                      animate={{
-                        scale: [1, 1.1, 1],
+                      className="text-lg sm:text-xl font-bold text-yellow-400"
+                      animate={!prefersReducedMotion ? {
+                        scale: [1, 1.08, 1],
                         opacity: [0.8, 1, 0.8]
-                      }}
+                      } : {}}
                       transition={{
-                        duration: 3,
+                        duration: 2.5,
                         repeat: Infinity
                       }}
                     >
                       80
                     </motion.div>
                   </div>
-                  {/* Mini Indonesian flags around the ring */}
+                  {/* Mini flags around the ring */}
                   {[0, 1, 2, 3].map((i) => (
                     <motion.div
                       key={i}
-                      className="absolute w-6 h-6 sm:w-8 sm:h-8"
+                      className="absolute w-4 h-4 sm:w-6 sm:h-6"
                       style={{
                         top: i === 0 ? "0%" : i === 1 ? "100%" : "50%",
                         left: i === 2 ? "0%" : i === 3 ? "100%" : "50%",
                         transform: `translate(-50%, -50%)`
                       }}
-                      animate={{
-                        scale: [0.8, 1.2, 0.8],
-                        rotate: [0, 360]
-                      }}
+                      animate={!prefersReducedMotion ? {
+                        scale: [0.8, 1.1, 0.8],
+                      } : {}}
                       transition={{
-                        scale: { duration: 2, repeat: Infinity, delay: i * 0.5 },
-                        rotate: { duration: 6, repeat: Infinity, ease: "linear", delay: i * 0.3 }
+                        duration: 1.8,
+                        repeat: Infinity,
+                        delay: i * 0.3
                       }}
                     >
-                      <div className="w-full h-full bg-gradient-to-b from-red-500 to-white rounded-sm border border-yellow-400/50" />
+                      <div className="w-full h-full bg-gradient-to-b from-red-500 to-white rounded-sm border border-yellow-400/40" />
                     </motion.div>
                   ))}
                 </div>
               </motion.div>
+
+              {/* Floating celebration elements */}
+              {!prefersReducedMotion && (
+                <div className="absolute inset-0 pointer-events-none">
+                  {[0, 1, 2, 3, 4].map((i) => (
+                    <motion.div
+                      key={`celebration-${i}`}
+                      className="absolute"
+                      style={{
+                        top: `${20 + Math.random() * 60}%`,
+                        left: `${10 + Math.random() * 80}%`,
+                      }}
+                      animate={{
+                        y: [0, -40, 0],
+                        x: [0, Math.random() * 20 - 10, 0],
+                        opacity: [0, 0.7, 0],
+                        scale: [0.5, 1.2, 0.5],
+                        rotate: [0, 360],
+                      }}
+                      transition={{
+                        duration: 6 + Math.random() * 4,
+                        repeat: Infinity,
+                        delay: Math.random() * 3,
+                        ease: "easeInOut",
+                      }}
+                    >
+                      {i % 3 === 0 && <Flag className="w-3 h-3 text-red-500" />}
+                      {i % 3 === 1 && <Star className="w-3 h-3 text-white" />}
+                      {i % 3 === 2 && <Heart className="w-3 h-3 text-red-400" />}
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+
+
             </div>
           </div>
         </motion.div>
@@ -934,4 +934,7 @@ const IndonesianVictoryScreen = ({ onLoadingComplete }) => {
   );
 };
 
-export default IndonesianVictoryScreen; 
+// Add performance optimization wrapper
+const OptimizedIndonesianVictoryScreen = React.memo(IndonesianVictoryScreen);
+
+export default OptimizedIndonesianVictoryScreen; 

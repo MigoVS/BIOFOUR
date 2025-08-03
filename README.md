@@ -1,4 +1,4 @@
-# Website Biofour V2
+# Website Biofour V3
 Halo semuanya!
 Perkenalkan, saya Fahmi Nabeel, dan pada kesempatan kali ini, saya ingin berbagi proyek website Biofour yang telah saya kembangkan.
 
@@ -15,13 +15,6 @@ Tech Stack yang digunakan:
 Link Website:
 https://github.com/MigoVS/
 "# BIOFOUR" 
-# BIOFOUR
-# BIOFOUR
-# BIOFOUR
-# BIOFOUR
+# BIOFOURTEAM
 # Bioetanol
-# Bioetanol
-"# biofour" 
-# BIOFOUR
-# BIOFOUR
-# BIOFOUR
+# Fahmi Nabeel 
