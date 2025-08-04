@@ -21,7 +21,9 @@ import {
     Star,
     Smile,
     Clock,
-    TrendingUp
+    TrendingUp,
+    Crown,
+    Shield
 } from 'lucide-react';
 
 // Generate unique device ID for cross-device functionality
@@ -32,6 +34,26 @@ const getDeviceId = () => {
         localStorage.setItem('deviceId', deviceId);
     }
     return deviceId;
+};
+
+// Check if user is Fahmi Nabeel (Pro User)
+const isProUser = (userName) => {
+    const proUserNames = ['Fahmi Nabeel', 'fahmi nabeel', 'FAHMI NABEEL', 'Fahmi', 'Nabeel', 'fahmi', 'nabeel'];
+    return proUserNames.includes(userName?.trim());
+};
+
+// Get user badge based on name and other criteria
+const getUserBadge = (userName, isVerified = false) => {
+    if (isProUser(userName)) {
+        return {
+            text: 'Pro User',
+            color: 'from-yellow-400 to-orange-500',
+            textColor: 'text-yellow-100',
+            icon: Crown
+        };
+    }
+    
+    return null;
 };
 
 // Optimized emoji picker with virtualization
@@ -90,7 +112,7 @@ const useDateFormatter = () => {
     }, []);
 };
 
-// Optimized Comment component with proper memoization
+// Enhanced Comment component with Pro User badge
 const Comment = memo(({ comment, index, onLike, onReply, onEdit, onDelete, deviceId }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editContent, setEditContent] = useState('');
@@ -104,14 +126,19 @@ const Comment = memo(({ comment, index, onLike, onReply, onEdit, onDelete, devic
     const formatDate = useDateFormatter();
 
     // Memoize computed values to prevent recalculation
-    const { isLiked, likesCount, repliesCount } = useMemo(() => {
+    const { isLiked, likesCount, repliesCount, userBadge, isPro } = useMemo(() => {
         const likes = comment.likes || [];
+        const badge = getUserBadge(comment.userName, comment.isVerified);
+        const pro = isProUser(comment.userName);
+        
         return {
             isLiked: likes.includes(deviceId),
             likesCount: likes.length,
-            repliesCount: comment.replies?.length || 0
+            repliesCount: comment.replies?.length || 0,
+            userBadge: badge,
+            isPro: pro
         };
-    }, [comment.likes, comment.replies, deviceId]);
+    }, [comment.likes, comment.replies, comment.userName, comment.isVerified, deviceId]);
 
     // Initialize edit content only when needed
     useEffect(() => {
@@ -158,7 +185,8 @@ const Comment = memo(({ comment, index, onLike, onReply, onEdit, onDelete, devic
                 userName: replyUserName.trim(),
                 createdAt: new Date().toISOString(),
                 id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-                deviceId
+                deviceId,
+                isProUser: isProUser(replyUserName.trim())
             };
             
             await onReply(comment.id, replyData);
@@ -192,12 +220,21 @@ const Comment = memo(({ comment, index, onLike, onReply, onEdit, onDelete, devic
 
     return (
         <div 
-            className="group relative px-4 pt-4 pb-2 rounded-xl bg-gradient-to-br from-white/8 to-white/3 border border-white/10 hover:from-white/12 hover:to-white/6 transition-all duration-200 hover:shadow-lg backdrop-blur-sm will-change-transform"
+            className={`group relative px-4 pt-4 pb-2 rounded-xl bg-gradient-to-br border transition-all duration-200 hover:shadow-lg backdrop-blur-sm will-change-transform ${
+                isPro 
+                    ? 'from-yellow-500/10 via-orange-500/5 to-yellow-500/8 border-yellow-500/20 hover:from-yellow-500/15 hover:to-orange-500/10 shadow-yellow-500/10' 
+                    : 'from-white/8 to-white/3 border-white/10 hover:from-white/12 hover:to-white/6'
+            }`}
             style={{ 
                 opacity: 0,
                 animation: `fadeInUp 0.4s ease-out ${Math.min(index * 50, 500)}ms forwards`
             }}
         >
+            {/* Pro User Glow Effect */}
+            {isPro && (
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-yellow-400/5 via-orange-500/5 to-yellow-400/5 animate-pulse pointer-events-none" />
+            )}
+
             {/* Menu */}
             <div className="absolute top-2 right-2 flex items-center gap-2">
                 {comment.isPinned && (
@@ -238,32 +275,54 @@ const Comment = memo(({ comment, index, onLike, onReply, onEdit, onDelete, devic
                 </div>
             </div>
 
-            <div className="flex items-start gap-3">
+            <div className="flex items-start gap-3 relative z-10">
                 {/* Profile Image */}
                 {comment.profileImage ? (
                     <div className="relative flex-shrink-0">
                         <img
                             src={comment.profileImage}
                             alt={`${comment.userName}'s profile`}
-                            className="w-10 h-10 rounded-full object-cover border-2 border-indigo-500/30 ring-2 ring-indigo-500/10"
+                            className={`w-10 h-10 rounded-full object-cover border-2 ring-2 ${
+                                isPro 
+                                    ? 'border-yellow-500/50 ring-yellow-500/20' 
+                                    : 'border-indigo-500/30 ring-indigo-500/10'
+                            }`}
                             loading="lazy"
                             onError={(e) => {
                                 e.target.style.display = 'none';
                                 e.target.nextSibling.style.display = 'flex';
                             }}
                         />
-                        <div className="hidden w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 text-indigo-400 items-center justify-center">
+                        <div className={`hidden w-10 h-10 rounded-full text-indigo-400 items-center justify-center ${
+                            isPro 
+                                ? 'bg-gradient-to-br from-yellow-500/20 to-orange-500/20 text-yellow-400' 
+                                : 'bg-gradient-to-br from-indigo-500/20 to-purple-500/20 text-indigo-400'
+                        }`}>
                             <UserCircle2 className="w-5 h-5" />
                         </div>
                         {comment.isOnline && (
                             <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-900"></div>
                         )}
+                        {isPro && (
+                            <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
+                                <Crown className="w-2.5 h-2.5 text-white" />
+                            </div>
+                        )}
                     </div>
                 ) : (
-                    <div className="relative flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 text-indigo-400 flex items-center justify-center">
+                    <div className={`relative flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
+                        isPro 
+                            ? 'bg-gradient-to-br from-yellow-500/20 to-orange-500/20 text-yellow-400' 
+                            : 'bg-gradient-to-br from-indigo-500/20 to-purple-500/20 text-indigo-400'
+                    }`}>
                         <UserCircle2 className="w-5 h-5" />
                         {comment.isOnline && (
                             <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-900"></div>
+                        )}
+                        {isPro && (
+                            <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
+                                <Crown className="w-2.5 h-2.5 text-white" />
+                            </div>
                         )}
                     </div>
                 )}
@@ -272,16 +331,24 @@ const Comment = memo(({ comment, index, onLike, onReply, onEdit, onDelete, devic
                     {/* Header */}
                     <div className="flex items-center justify-between gap-4 mb-2">
                         <div className="flex items-center gap-2 min-w-0">
-                            <h4 className="font-medium text-white truncate">{comment.userName || 'Anonymous'}</h4>
-                            {comment.isVerified && (
+                            <h4 className={`font-medium truncate ${
+                                isPro ? 'text-yellow-100' : 'text-white'
+                            }`}>
+                                {comment.userName || 'Anonymous'}
+                            </h4>
+                            
+                            {/* Enhanced Badge System */}
+                            {userBadge && (
+                                <div className={`flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r ${userBadge.color} ${userBadge.textColor} text-xs rounded-full flex-shrink-0 shadow-lg`}>
+                                    <userBadge.icon className="w-3 h-3" />
+                                    <span className="font-medium">{userBadge.text}</span>
+                                </div>
+                            )}
+                            
+                            {comment.isVerified && !isPro && (
                                 <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
                                     <span className="text-white text-xs">✓</span>
                                 </div>
-                            )}
-                            {comment.badge && (
-                                <span className="px-2 py-0.5 bg-indigo-500/20 text-indigo-400 text-xs rounded-full flex-shrink-0">
-                                    {comment.badge}
-                                </span>
                             )}
                         </div>
                         <span className="text-xs text-gray-400 whitespace-nowrap flex items-center gap-1 flex-shrink-0">
@@ -321,7 +388,9 @@ const Comment = memo(({ comment, index, onLike, onReply, onEdit, onDelete, devic
                         </div>
                     ) : (
                         <>
-                            <p className="text-gray-300 text-sm break-words leading-relaxed mb-3">
+                            <p className={`text-sm break-words leading-relaxed mb-3 ${
+                                isPro ? 'text-yellow-50' : 'text-gray-300'
+                            }`}>
                                 {comment.content}
                             </p>
                             
@@ -370,7 +439,7 @@ const Comment = memo(({ comment, index, onLike, onReply, onEdit, onDelete, devic
 
             {/* Reply Form */}
             {showReplyForm && (
-                <div className="mt-4 ml-8 p-4 bg-white/5 rounded-lg border border-white/10">
+                <div className="mt-4 ml-8 p-4 bg-white/5 rounded-lg border border-white/10 relative z-10">
                     <h4 className="text-sm font-medium text-white mb-3">Reply to {comment.userName}</h4>
                     <form onSubmit={handleReplySubmit} className="space-y-3">
                         <input
@@ -425,30 +494,64 @@ const Comment = memo(({ comment, index, onLike, onReply, onEdit, onDelete, devic
 
             {/* Replies */}
             {showReplies && repliesCount > 0 && (
-                <div className="mt-4 ml-8 space-y-3 border-l-2 border-indigo-500/20 pl-4">
-                    {comment.replies?.map((reply, replyIndex) => (
-                        <div key={reply.id || replyIndex} className="p-3 bg-white/5 rounded-lg border border-white/10 hover:bg-white/8 transition-colors">
-                            <div className="flex items-start gap-3">
-                                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
-                                    <UserCircle2 className="w-4 h-4" />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <span className="font-medium text-white text-sm truncate">{reply.userName || 'Anonymous'}</span>
-                                        <span className="text-xs text-gray-400">{formatDate(reply.createdAt)}</span>
+                <div className="mt-4 ml-8 space-y-3 border-l-2 border-indigo-500/20 pl-4 relative z-10">
+                    {comment.replies?.map((reply, replyIndex) => {
+                        const replyIsProUser = isProUser(reply.userName);
+                        const replyBadge = getUserBadge(reply.userName);
+                        
+                        return (
+                            <div key={reply.id || replyIndex} className={`p-3 rounded-lg border transition-colors ${
+                                replyIsProUser 
+                                    ? 'bg-yellow-500/5 border-yellow-500/20 hover:bg-yellow-500/8' 
+                                    : 'bg-white/5 border-white/10 hover:bg-white/8'
+                            }`}>
+                                <div className="flex items-start gap-3">
+                                    <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center relative ${
+                                        replyIsProUser 
+                                            ? 'bg-yellow-500/20 text-yellow-400' 
+                                            : 'bg-indigo-500/20 text-indigo-400'
+                                    }`}>
+                                        <UserCircle2 className="w-4 h-4" />
+                                        {replyIsProUser && (
+                                            <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
+                                                <Crown className="w-1.5 h-1.5 text-white" />
+                                            </div>
+                                        )}
                                     </div>
-                                    <p className="text-gray-300 text-sm leading-relaxed">{reply.content}</p>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <span className={`font-medium text-sm truncate ${
+                                                replyIsProUser ? 'text-yellow-100' : 'text-white'
+                                            }`}>
+                                                {reply.userName || 'Anonymous'}
+                                            </span>
+                                            
+                                            {replyBadge && (
+                                                <div className={`flex items-center gap-1 px-1.5 py-0.5 bg-gradient-to-r ${replyBadge.color} ${replyBadge.textColor} text-xs rounded-full flex-shrink-0`}>
+                                                    <replyBadge.icon className="w-2 h-2" />
+                                                    <span className="text-xs font-medium">{replyBadge.text}</span>
+                                                </div>
+                                            )}
+                                            
+                                            <span className="text-xs text-gray-400">{formatDate(reply.createdAt)}</span>
+                                        </div>
+                                        <p className={`text-sm leading-relaxed ${
+                                            replyIsProUser ? 'text-yellow-50' : 'text-gray-300'
+                                        }`}>
+                                            {reply.content}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
         </div>
     );
 });
 
-// Optimized Comment Form
+// Enhanced Comment Form with Pro User detection
 const CommentForm = memo(({ onSubmit, isSubmitting }) => {
     const [newComment, setNewComment] = useState('');
     const [userName, setUserName] = useState('');
@@ -457,6 +560,9 @@ const CommentForm = memo(({ onSubmit, isSubmitting }) => {
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const textareaRef = useRef(null);
     const fileInputRef = useRef(null);
+
+    // Check if current user is Pro User
+    const currentUserIsPro = useMemo(() => isProUser(userName), [userName]);
 
     const handleImageChange = useCallback((e) => {
         const file = e.target.files[0];
