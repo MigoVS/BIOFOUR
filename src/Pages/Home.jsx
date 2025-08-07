@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, memo } from "react";
 import {
   Github,
@@ -25,15 +26,16 @@ import { Google, Photo } from "@mui/icons-material";
 // Memoized Components
 const StatusBadge = memo(() => (
   <div
-    className="inline-block animate-float lg:mx-0"
+    className="inline-block animate-float"
     data-aos="zoom-in"
-    data-aos-delay="400"
+    data-aos-delay="200"
+    data-aos-duration="600"
   >
     <div className="relative group">
-      <div className="absolute -inset-0.5 bg-gradient-to-r from-[#6366f1] to-[#a855f7] rounded-full blur opacity-30 group-hover:opacity-50 transition duration-1000"></div>
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-[#6366f1] to-[#a855f7] rounded-full blur opacity-30 group-hover:opacity-50 transition duration-300"></div>
       <div className="relative px-3 sm:px-4 py-2 rounded-full bg-black/40 backdrop-blur-xl border border-white/10">
-        <span className="bg-gradient-to-r from-[#6366f1] to-[#a855f7] text-transparent bg-clip-text sm:text-sm text-[0.7rem] font-medium flex items-center">
-          <Sparkles className="sm:w-4 sm:h-4 w-3 h-3 mr-2 text-blue-400" />
+        <span className="bg-gradient-to-r from-[#6366f1] to-[#a855f7] text-transparent bg-clip-text text-xs sm:text-sm font-medium flex items-center">
+          <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 mr-2 text-blue-400" />
           Ready to Innovate
         </span>
       </div>
@@ -42,8 +44,8 @@ const StatusBadge = memo(() => (
 ));
 
 const MainTitle = memo(() => (
-  <div className="space-y-2" data-aos="fade-up" data-aos-delay="600">
-    <h1 className="text-5xl sm:text-6xl md:text-6xl lg:text-6xl xl:text-7xl font-bold tracking-tight">
+  <div className="space-y-2" data-aos="fade-up" data-aos-delay="300" data-aos-duration="800">
+    <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight">
       <span className="relative inline-block">
         <span className="absolute -inset-2 bg-gradient-to-r from-[#6366f1] to-[#a855f7] blur-2xl opacity-20"></span>
         <span className="relative bg-gradient-to-r from-white via-blue-100 to-purple-200 bg-clip-text text-transparent">
@@ -62,23 +64,23 @@ const MainTitle = memo(() => (
 ));
 
 const TechStack = memo(({ tech }) => (
-  <div className="px-4 py-2 block rounded-full bg-white/5 backdrop-blur-sm border border-white/10 text-sm text-gray-300 hover:bg-white/10 transition-colors">
+  <div className="px-3 py-2 block rounded-full bg-white/5 backdrop-blur-sm border border-white/10 text-sm text-gray-300 hover:bg-white/10 transition-colors">
     {tech}
   </div>
 ));
 
 const CTAButton = memo(({ href, text, icon: Icon }) => (
   <a href={href}>
-    <button className="group relative w-[160px]">
-      <div className="absolute -inset-0.5 bg-gradient-to-r from-[#4f52c9] to-[#8644c5] rounded-xl opacity-50 blur-md group-hover:opacity-90 transition-all duration-700"></div>
-      <div className="relative h-11 bg-[#030014] backdrop-blur-xl rounded-lg border border-white/10 leading-none overflow-hidden">
-        <div className="absolute inset-0 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500 bg-gradient-to-r from-[#4f52c9]/20 to-[#8644c5]/20"></div>
-        <span className="absolute inset-0 flex items-center justify-center gap-2 text-sm group-hover:gap-3 transition-all duration-300">
+    <button className="group relative w-[140px] sm:w-[160px]">
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-[#4f52c9] to-[#8644c5] rounded-xl opacity-50 blur-md group-hover:opacity-90 transition-all duration-300"></div>
+      <div className="relative h-10 sm:h-11 bg-[#030014] backdrop-blur-xl rounded-lg border border-white/10 leading-none overflow-hidden">
+        <div className="absolute inset-0 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 bg-gradient-to-r from-[#4f52c9]/20 to-[#8644c5]/20"></div>
+        <span className="absolute inset-0 flex items-center justify-center gap-2 text-xs sm:text-sm group-hover:gap-3 transition-all duration-300">
           <span className="bg-gradient-to-r from-gray-200 to-white bg-clip-text text-transparent font-medium z-10">
             {text}
           </span>
           <Icon
-            className={`w-4 h-4 text-gray-200 ${
+            className={`w-3 h-3 sm:w-4 sm:h-4 text-gray-200 ${
               text === "Contact"
                 ? "group-hover:translate-x-1"
                 : "group-hover:rotate-45"
@@ -92,10 +94,10 @@ const CTAButton = memo(({ href, text, icon: Icon }) => (
 
 const SocialLink = memo(({ icon: Icon, link }) => (
   <a href={link} target="_blank" rel="noopener noreferrer">
-    <button className="group relative p-3">
+    <button className="group relative p-2 sm:p-3">
       <div className="absolute inset-0 bg-gradient-to-r from-[#6366f1] to-[#a855f7] rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-300"></div>
       <div className="relative rounded-xl bg-black/50 backdrop-blur-xl p-2 flex items-center justify-center border border-white/10 group-hover:border-white/20 transition-all duration-300">
-        <Icon className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
+        <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-white transition-colors" />
       </div>
     </button>
   </a>
@@ -274,12 +276,12 @@ const AirQualityCard = memo(() => {
   const PollutantIcon = pollutantInfo.icon;
 
   return (
-    <div className="relative group" data-aos="fade-up" data-aos-delay="1300">
+    <div className="relative group" data-aos="fade-up" data-aos-delay="700" data-aos-duration="600">
       {/* Enhanced outer glow */}
-      <div className={`absolute -inset-1 bg-gradient-to-r ${colors.glow} rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition-all duration-700 ${animateUpdate ? 'animate-pulse' : ''}`}></div>
+      <div className={`absolute -inset-1 bg-gradient-to-r ${colors.glow} rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition-all duration-300 ${animateUpdate ? 'animate-pulse' : ''}`}></div>
       
       <div 
-        className={`relative rounded-2xl bg-gradient-to-br from-black/60 via-black/50 to-black/40 backdrop-blur-xl border border-white/10 group-hover:border-white/20 transition-all duration-500 overflow-hidden ${colors.shadow} ${isCardHovered ? 'scale-[1.02] shadow-2xl' : ''}`}
+        className={`relative rounded-2xl bg-gradient-to-br from-black/60 via-black/50 to-black/40 backdrop-blur-xl border border-white/10 group-hover:border-white/20 transition-all duration-300 overflow-hidden ${colors.shadow} ${isCardHovered ? 'scale-[1.01] shadow-2xl' : ''}`}
         onMouseEnter={() => setIsCardHovered(true)}
         onMouseLeave={() => setIsCardHovered(false)}
       >
@@ -289,22 +291,22 @@ const AirQualityCard = memo(() => {
           <div className={`absolute inset-0 bg-gradient-to-r ${colors.gradient} opacity-5 ${animateUpdate ? 'animate-pulse' : ''}`}></div>
         </div>
 
-        <div className="relative p-6">
+        <div className="relative p-4 sm:p-6">
           {/* Enhanced Header */}
           <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-3 sm:space-x-4">
               <div className="relative">
                 <div className={`absolute -inset-2 bg-gradient-to-r ${colors.gradient} rounded-full blur-md opacity-30 ${animateUpdate ? 'animate-ping' : ''}`}></div>
                 <div className="relative p-2 rounded-full bg-black/30 backdrop-blur-sm border border-white/10">
-                  <Factory className={`w-6 h-6 ${colors.text} ${animateUpdate ? 'animate-bounce' : ''}`} />
+                  <Factory className={`w-5 h-5 sm:w-6 sm:h-6 ${colors.text} ${animateUpdate ? 'animate-bounce' : ''}`} />
                 </div>
                 <div className={`absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full ${animateUpdate ? 'animate-ping' : 'animate-pulse'}`}></div>
               </div>
               <div>
-                <h3 className="text-lg font-bold text-white mb-1">
+                <h3 className="text-base sm:text-lg font-bold text-white mb-1">
                   Kualitas Udara Cilegon
                 </h3>
-                <p className="text-sm text-gray-400 flex items-center gap-2">
+                <p className="text-xs sm:text-sm text-gray-400 flex items-center gap-2">
                   <span>Kawasan Industri Banten</span>
                   <span className="flex items-center gap-1">
                     {trend === "up" && <TrendingUp className="w-3 h-3 text-red-400" />}
@@ -333,35 +335,35 @@ const AirQualityCard = memo(() => {
           <div className="flex items-center justify-between mb-6">
             <div className="flex flex-col">
               <div className="flex items-center space-x-3">
-                <span className={`text-5xl font-bold bg-gradient-to-r ${colors.gradient} bg-clip-text text-transparent transition-all duration-500 ${animateUpdate ? 'scale-110' : ''}`}>
+                <span className={`text-4xl sm:text-5xl font-bold bg-gradient-to-r ${colors.gradient} bg-clip-text text-transparent transition-all duration-300 ${animateUpdate ? 'scale-110' : ''}`}>
                   {aqiValue}
                 </span>
                 <div className="flex flex-col items-center">
-                  <AlertTriangle className={`w-6 h-6 ${colors.text} ${animateUpdate ? 'animate-bounce' : 'animate-pulse'}`} />
+                  <AlertTriangle className={`w-5 h-5 sm:w-6 sm:h-6 ${colors.text} ${animateUpdate ? 'animate-bounce' : 'animate-pulse'}`} />
                   {trend === "up" && <TrendingUp className="w-4 h-4 text-red-400 mt-1" />}
                   {trend === "down" && <TrendingDown className="w-4 h-4 text-green-400 mt-1" />}
                 </div>
               </div>
-              <span className="text-sm text-gray-400 mt-2 font-medium">
+              <span className="text-xs sm:text-sm text-gray-400 mt-2 font-medium">
                 Air Quality Index
               </span>
             </div>
 
             <div className="flex flex-col items-end">
-              <div className={`px-4 py-2 rounded-full ${colors.bg} border border-white/20 backdrop-blur-sm ${animateUpdate ? 'animate-pulse' : ''}`}>
-                <span className={`text-base font-bold ${colors.text}`}>
+              <div className={`px-3 sm:px-4 py-2 rounded-full ${colors.bg} border border-white/20 backdrop-blur-sm ${animateUpdate ? 'animate-pulse' : ''}`}>
+                <span className={`text-sm sm:text-base font-bold ${colors.text}`}>
                   {aqiLevel}
                 </span>
               </div>
-              <span className="text-sm text-gray-400 mt-2">Status Udara</span>
+              <span className="text-xs sm:text-sm text-gray-400 mt-2">Status Udara</span>
             </div>
           </div>
 
           {/* Enhanced Progress Bar */}
           <div className="mb-6">
-            <div className="w-full bg-gray-800/50 rounded-full h-4 overflow-hidden border border-white/10">
+            <div className="w-full bg-gray-800/50 rounded-full h-3 sm:h-4 overflow-hidden border border-white/10">
               <div
-                className={`h-4 rounded-full bg-gradient-to-r ${colors.gradient} relative overflow-hidden transition-all duration-1000 ease-out ${animateUpdate ? 'animate-pulse' : ''}`}
+                className={`h-3 sm:h-4 rounded-full bg-gradient-to-r ${colors.gradient} relative overflow-hidden transition-all duration-500 ease-out ${animateUpdate ? 'animate-pulse' : ''}`}
                 style={{ width: `${Math.min(100, (aqiValue / 200) * 100)}%` }}
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"></div>
@@ -379,19 +381,19 @@ const AirQualityCard = memo(() => {
           {/* Enhanced Pollutant Details */}
           <div className="border-t border-gray-700/30 pt-6">
             <div className="flex items-center justify-between mb-4">
-              <h4 className="text-base font-bold text-gray-200 flex items-center gap-2">
+              <h4 className="text-sm sm:text-base font-bold text-gray-200 flex items-center gap-2">
                 <Wind className="w-4 h-4 text-blue-400" />
                 Detail Polutan
               </h4>
             </div>
 
             {/* Enhanced Pollutant Selector */}
-            <div className="grid grid-cols-3 gap-3 mb-6">
+            <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-6">
               {pollutants.map((pollutant) => (
                 <button
                   key={pollutant.id}
                   onClick={() => setSelectedPollutant(pollutant.id)}
-                  className={`relative px-3 py-3 text-sm rounded-xl transition-all duration-300 transform hover:scale-105 ${
+                  className={`relative px-2 sm:px-3 py-2 sm:py-3 text-xs sm:text-sm rounded-xl transition-all duration-300 transform hover:scale-105 ${
                     selectedPollutant === pollutant.id
                       ? `bg-gradient-to-r ${colors.gradient} text-white shadow-lg ${colors.shadow}`
                       : "bg-gray-800/40 text-gray-300 hover:bg-gray-700/50 border border-gray-700/50 hover:border-gray-600/50"
@@ -406,28 +408,28 @@ const AirQualityCard = memo(() => {
             </div>
 
             {/* Enhanced Selected Pollutant Display */}
-            <div className={`bg-gradient-to-br from-gray-800/60 to-gray-900/60 rounded-xl p-5 mb-6 border border-white/10 backdrop-blur-sm ${animateUpdate ? 'animate-pulse' : ''}`}>
+            <div className={`bg-gradient-to-br from-gray-800/60 to-gray-900/60 rounded-xl p-4 sm:p-5 mb-6 border border-white/10 backdrop-blur-sm ${animateUpdate ? 'animate-pulse' : ''}`}>
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <div className={`p-3 rounded-full bg-gradient-to-r ${colors.gradient} shadow-lg`}>
-                    <PollutantIcon className="w-6 h-6 text-white" />
+                <div className="flex items-center space-x-3 sm:space-x-4">
+                  <div className={`p-2 sm:p-3 rounded-full bg-gradient-to-r ${colors.gradient} shadow-lg`}>
+                    <PollutantIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                   </div>
                   <div className="flex flex-col">
-                    <span className={`text-3xl font-bold bg-gradient-to-r ${colors.gradient} bg-clip-text text-transparent`}>
+                    <span className={`text-2xl sm:text-3xl font-bold bg-gradient-to-r ${colors.gradient} bg-clip-text text-transparent`}>
                       {getPollutantValue()}
                     </span>
-                    <span className="text-sm text-gray-400 font-medium">
+                    <span className="text-xs sm:text-sm text-gray-400 font-medium">
                       {getPollutantUnit()}
                     </span>
                   </div>
                 </div>
 
                 <div className="flex flex-col items-end">
-                  <div className="flex items-center space-x-3 mb-2">
-                    <span className="text-xl text-white font-bold">
+                  <div className="flex items-center space-x-2 sm:space-x-3 mb-2">
+                    <span className="text-lg sm:text-xl text-white font-bold">
                       {pollutantInfo.name}
                     </span>
-                    <div className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                    <div className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold ${
                       pollutantInfo.danger === "Tinggi"
                         ? "bg-red-500/20 text-red-300 border border-red-500/30"
                         : "bg-yellow-500/20 text-yellow-300 border border-yellow-500/30"
@@ -435,7 +437,7 @@ const AirQualityCard = memo(() => {
                       {pollutantInfo.danger}
                     </div>
                   </div>
-                  <span className="text-sm text-gray-400">
+                  <span className="text-xs sm:text-sm text-gray-400">
                     {pollutantInfo.desc}
                   </span>
                 </div>
@@ -444,30 +446,30 @@ const AirQualityCard = memo(() => {
 
             {/* Enhanced Impact Info */}
             <div className="space-y-4">
-              <div className="flex items-start space-x-4 p-4 bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 rounded-xl backdrop-blur-sm">
+              <div className="flex items-start space-x-3 sm:space-x-4 p-3 sm:p-4 bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 rounded-xl backdrop-blur-sm">
                 <div className="p-2 rounded-full bg-amber-500/20 border border-amber-500/30">
-                  <AlertTriangle className="w-5 h-5 text-amber-300" />
+                  <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 text-amber-300" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm text-amber-200 font-semibold mb-2">
+                  <p className="text-xs sm:text-sm text-amber-200 font-semibold mb-2">
                     Dampak Kesehatan
                   </p>
-                  <p className="text-sm text-gray-300 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
                     Kualitas udara saat ini dapat menyebabkan iritasi mata, hidung, dan tenggorokan. 
                     Hindari aktivitas outdoor yang intens dan gunakan masker saat beraktivitas di luar ruangan.
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-start space-x-4 p-4 bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-xl backdrop-blur-sm">
+              <div className="flex items-start space-x-3 sm:space-x-4 p-3 sm:p-4 bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-xl backdrop-blur-sm">
                 <div className="p-2 rounded-full bg-green-500/20 border border-green-500/30">
-                  <Leaf className="w-5 h-5 text-green-300" />
+                  <Leaf className="w-4 h-4 sm:w-5 sm:h-5 text-green-300" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm text-green-200 font-semibold mb-2">
+                  <p className="text-xs sm:text-sm text-green-200 font-semibold mb-2">
                     Solusi Bioetanol
                   </p>
-                  <p className="text-sm text-gray-300 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
                     Bioetanol dapat mengurangi emisi CO, NOx, dan partikulat hingga 80% 
                     dibanding bahan bakar fosil konvensional, membantu meningkatkan kualitas udara.
                   </p>

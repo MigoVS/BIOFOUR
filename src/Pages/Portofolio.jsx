@@ -110,7 +110,7 @@ function TabPanel({ children, value, index, ...other }) {
       {...other}
     >
       {value === index && (
-        <Box sx={{ p: { xs: 1, sm: 3 } }}>
+        <Box sx={{ p: { xs: 0, sm: 3 } }}>
           <Typography>{children}</Typography>
         </Box>
       )}
@@ -366,10 +366,10 @@ export default function FullWidthTabs() {
   const displayedPhoto = showAllPhoto ? photo : photo.slice(0, initialItems);
 
   return (
-    <div className="md:px-[10%] px-[5%] w-full sm:mt-0 mt-[3rem] bg-[#030014] overflow-hidden" id="Portofolio">
-      {/* Header section - unchanged */}
-      <div className="text-center pb-10" data-aos="fade-up" data-aos-duration="1000">
-        <h2 className="inline-block text-3xl md:text-5xl font-bold text-center mx-auto text-transparent bg-clip-text bg-gradient-to-r from-[#6366f1] to-[#a855f7]">
+    <div className="w-full max-w-full px-3 sm:px-4 md:px-[5%] lg:px-[10%] sm:mt-0 mt-[3rem] bg-[#030014] overflow-x-hidden" id="Portofolio">
+      {/* Header section - responsive padding */}
+      <div className="text-center pb-6 sm:pb-10 px-2 sm:px-0" data-aos="fade-up" data-aos-duration="1000">
+        <h2 className="inline-block text-2xl sm:text-3xl md:text-5xl font-bold text-center mx-auto text-transparent bg-clip-text bg-gradient-to-r from-[#6366f1] to-[#a855f7]">
           <span style={{
             color: '#6366f1',
             backgroundImage: 'linear-gradient(45deg, #6366f1 10%, #a855f7 93%)',
@@ -380,7 +380,7 @@ export default function FullWidthTabs() {
             Kandungan Bioetanol
           </span>
         </h2>
-        <p className="text-slate-400 max-w-2xl mx-auto text-sm md:text-base mt-2">
+        <p className="text-slate-400 max-w-2xl mx-auto text-xs sm:text-sm md:text-base mt-2 px-2 sm:px-0">
         Jelajahi kandungan proyek kami melalui Kadar Glukosa, Kadar Etanol, dan Hasil uji emisi gas buang kendaraan bermotor. 
         Setiap bagian mewakili tonggak sejarah dalam jalur pembelajaran berkelanjutan kami.
         </p>
@@ -388,10 +388,10 @@ export default function FullWidthTabs() {
 
       {/* Image Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80" onClick={closeModal}>
-          <div className="max-w-4xl max-h-[90vh] overflow-auto p-2 relative" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-2 sm:p-4" onClick={closeModal}>
+          <div className="max-w-full sm:max-w-4xl max-h-[90vh] overflow-auto relative" onClick={(e) => e.stopPropagation()}>
             <button 
-              className="absolute top-4 right-4 z-10 bg-black/50 text-white rounded-full w-8 h-8 flex items-center justify-center"
+              className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10 bg-black/50 text-white rounded-full w-8 h-8 flex items-center justify-center"
               onClick={closeModal}
             >
               ✕
@@ -405,17 +405,18 @@ export default function FullWidthTabs() {
         </div>
       )}
 
-      <Box sx={{ width: "100%" }}>
-        {/* AppBar and Tabs section - updated icons */}
+      <Box sx={{ width: "100%", maxWidth: "100%", overflow: "hidden" }}>
+        {/* AppBar and Tabs section - responsive design */}
         <AppBar
           position="static"
           elevation={0}
           sx={{
             bgcolor: "transparent",
             border: "1px solid rgba(255, 255, 255, 0.1)",
-            borderRadius: "20px",
+            borderRadius: { xs: "16px", sm: "20px" },
             position: "relative",
             overflow: "hidden",
+            mx: { xs: 0, sm: 0 },
             "&::before": {
               content: '""',
               position: "absolute",
@@ -428,7 +429,6 @@ export default function FullWidthTabs() {
               zIndex: 0,
             },
           }}
-          className="md:px-4"
         >
           <Tabs
             value={value}
@@ -440,17 +440,18 @@ export default function FullWidthTabs() {
             allowScrollButtonsMobile
             aria-label="scrollable tabs"
             sx={{
-              minHeight: "70px",
+              minHeight: { xs: "60px", sm: "70px" },
+              px: { xs: 1, sm: 2, md: 4 },
               "& .MuiTab-root": {
-                fontSize: { xs: "0.9rem", md: "1rem" },
+                fontSize: { xs: "0.75rem", sm: "0.9rem", md: "1rem" },
                 fontWeight: "600",
                 color: "#94a3b8",
                 textTransform: "none",
                 transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-                padding: "20px 10px",
+                padding: { xs: "16px 8px", sm: "20px 10px" },
                 zIndex: 1,
-                margin: "8px",
-                borderRadius: "12px",
+                margin: { xs: "4px", sm: "8px" },
+                borderRadius: { xs: "8px", sm: "12px" },
                 minWidth: "max-content",
                 "&:hover": {
                   color: "#ffffff",
@@ -481,37 +482,37 @@ export default function FullWidthTabs() {
             }}
           >
             <Tab
-              icon={<Code className="mb-2 w-5 h-5 transition-all duration-300" />}
+              icon={<Code className="mb-1 sm:mb-2 w-4 h-4 sm:w-5 sm:h-5 transition-all duration-300" />}
               label={isMobile ? "Glukosa" : "Glukosa"}
               {...a11yProps(0)}
             />
             <Tab
-              icon={<Atom className="mb-2 w-5 h-5 transition-all duration-300" />}
+              icon={<Atom className="mb-1 sm:mb-2 w-4 h-4 sm:w-5 sm:h-5 transition-all duration-300" />}
               label={isMobile ? "Etanol" : "Kadar Etanol"}
               {...a11yProps(1)}
             />
             <Tab
-              icon={<Fuel className="mb-2 w-5 h-5 transition-all duration-300" />}
+              icon={<Fuel className="mb-1 sm:mb-2 w-4 h-4 sm:w-5 sm:h-5 transition-all duration-300" />}
               label={isMobile ? "Emisi" : "Hasil Uji Emisi Gas Buang"}
               {...a11yProps(2)}
             />
             <Tab
-              icon={<Trophy className="mb-2 w-5 h-5 transition-all duration-300" style={{ transform: "rotate(0deg)" }} />}
+              icon={<Trophy className="mb-1 sm:mb-2 w-4 h-4 sm:w-5 sm:h-5 transition-all duration-300" style={{ transform: "rotate(0deg)" }} />}
               label={isMobile ? "Champ" : "Biofour Champion"}
               {...a11yProps(3)}
             />
             <Tab
-              icon={<Medal className="mb-2 w-5 h-5 transition-all duration-300" />}
+              icon={<Medal className="mb-1 sm:mb-2 w-4 h-4 sm:w-5 sm:h-5 transition-all duration-300" />}
               label={isMobile ? "Certif" : "Certificate"}
               {...a11yProps(4)}
             />
             <Tab
-              icon={<Image className="mb-2 w-5 h-5 transition-all duration-300" />}
+              icon={<Image className="mb-1 sm:mb-2 w-4 h-4 sm:w-5 sm:h-5 transition-all duration-300" />}
               label={isMobile ? "Photo" : "Photo"}
               {...a11yProps(5)}
             />
             <Tab
-              icon={<Cpu className="mb-2 w-5 h-5 transition-all duration-300" />}
+              icon={<Cpu className="mb-1 sm:mb-2 w-4 h-4 sm:w-5 sm:h-5 transition-all duration-300" />}
               label={isMobile ? "Tech" : "Teknologi dalam Website"}
               {...a11yProps(6)}
             />
@@ -519,7 +520,7 @@ export default function FullWidthTabs() {
         </AppBar>
 
         {isMobile && (
-          <div className="text-xs text-slate-400 text-center mt-2 mb-3">
+          <div className="text-xs text-slate-400 text-center mt-2 mb-3 px-2">
             <span>← Geser untuk melihat tab lainnya →</span>
           </div>
         )}
@@ -528,15 +529,26 @@ export default function FullWidthTabs() {
           axis={theme.direction === "rtl" ? "x-reverse" : "x"}
           index={value}
           onChangeIndex={handleChangeIndex}
+          containerStyle={{ 
+            width: '100%', 
+            maxWidth: '100%',
+            overflow: 'hidden'
+          }}
+          slideStyle={{ 
+            overflow: 'hidden',
+            width: '100%',
+            maxWidth: '100%'
+          }}
         >
           <TabPanel value={value} index={0} dir={theme.direction}>
-            <div className="container mx-auto flex justify-center items-center overflow-hidden">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-5">
+            <div className="w-full max-w-full flex justify-center items-center overflow-x-hidden px-1 sm:px-0">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-3 sm:gap-5 w-full max-w-full">
                 {displayedProjects.map((project, index) => (
                   <div
                     key={project.id || `project-${index}`}
                     data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
                     data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
+                    className="w-full max-w-full"
                   >
                     <CardProject
                       Img={project.Img}
@@ -550,7 +562,7 @@ export default function FullWidthTabs() {
               </div>
             </div>
             {projects.length > initialItems && (
-              <div className="mt-6 w-full flex justify-start">
+              <div className="mt-4 sm:mt-6 w-full flex justify-start px-1 sm:px-0">
                 <ToggleButton
                   onClick={() => toggleShowMore('projects')}
                   isShowingMore={showAllProjects}
@@ -560,15 +572,15 @@ export default function FullWidthTabs() {
           </TabPanel>
 
           <TabPanel value={value} index={1} dir={theme.direction}>
-            <div className="container mx-auto flex justify-center items-center overflow-hidden">
-              <div className="grid grid-cols-1 md:grid-cols-3 md:gap-5 gap-4">
+            <div className="w-full max-w-full flex justify-center items-center overflow-x-hidden px-1 sm:px-0">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 md:gap-5 w-full max-w-full">
                 {displayedCertificates.map((certificate, index) => (
                   <div
                     key={certificate.id || `certificate-${index}`}
                     data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
                     data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
                     onClick={() => openImageModal(certificate.Img)}
-                    className="cursor-pointer"
+                    className="cursor-pointer w-full max-w-full"
                   >
                     <CertificateDisplay 
                       ImgSertif={certificate.Img} 
@@ -580,7 +592,7 @@ export default function FullWidthTabs() {
               </div>
             </div>
             {certificates.length > initialItems && (
-              <div className="mt-6 w-full flex justify-start">
+              <div className="mt-4 sm:mt-6 w-full flex justify-start px-1 sm:px-0">
                 <ToggleButton
                   onClick={() => toggleShowMore('certificates')}
                   isShowingMore={showAllCertificates}
@@ -590,13 +602,14 @@ export default function FullWidthTabs() {
           </TabPanel>
 
           <TabPanel value={value} index={2} dir={theme.direction}>
-            <div className="container mx-auto flex justify-center items-center overflow-hidden">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-5">
+            <div className="w-full max-w-full flex justify-center items-center overflow-x-hidden px-1 sm:px-0">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-3 sm:gap-5 w-full max-w-full">
                 {displayedEmisi.map((emisiItem, index) => (
                   <div
                     key={emisiItem.id || `emisi-${index}`}
                     data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
                     data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
+                    className="w-full max-w-full"
                   >
                     <CardProject
                       Img={emisiItem.Img}
@@ -610,7 +623,7 @@ export default function FullWidthTabs() {
               </div>
             </div>
             {emisi.length > initialItems && (
-              <div className="mt-6 w-full flex justify-start">
+              <div className="mt-4 sm:mt-6 w-full flex justify-start px-1 sm:px-0">
                 <ToggleButton
                   onClick={() => toggleShowMore('emisi')}
                   isShowingMore={showAllEmisi}
@@ -620,15 +633,15 @@ export default function FullWidthTabs() {
           </TabPanel>
 
           <TabPanel value={value} index={3} dir={theme.direction}>
-            <div className="container mx-auto flex justify-center items-center overflow-hidden">
-              <div className="grid grid-cols-1 md:grid-cols-3 md:gap-5 gap-4">
+            <div className="w-full max-w-full flex justify-center items-center overflow-x-hidden px-1 sm:px-0">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 md:gap-5 w-full max-w-full">
                 {displayedChampion.map((champItem, index) => (
                   <div
                     key={champItem.id || `champion-${index}`}
                     data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
                     data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
                     onClick={() => openImageModal(champItem.Img)}
-                    className="cursor-pointer"
+                    className="cursor-pointer w-full max-w-full"
                   >
                     <CertificateDisplay 
                       ImgSertif={champItem.Img} 
@@ -640,7 +653,7 @@ export default function FullWidthTabs() {
               </div>
             </div>
             {champion.length > initialItems && (
-              <div className="mt-6 w-full flex justify-start">
+              <div className="mt-4 sm:mt-6 w-full flex justify-start px-1 sm:px-0">
                 <ToggleButton
                   onClick={() => toggleShowMore('champion')}
                   isShowingMore={showAllChampion}
@@ -650,15 +663,15 @@ export default function FullWidthTabs() {
           </TabPanel>
 
           <TabPanel value={value} index={4} dir={theme.direction}>
-            <div className="container mx-auto flex justify-center items-center overflow-hidden">
-              <div className="grid grid-cols-1 md:grid-cols-3 md:gap-5 gap-4">
+            <div className="w-full max-w-full flex justify-center items-center overflow-x-hidden px-1 sm:px-0">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 md:gap-5 w-full max-w-full">
                 {displayedCertif.map((certifItem, index) => (
                   <div
                     key={certifItem.id || `certif-${index}`}
                     data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
                     data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
                     onClick={() => openImageModal(certifItem.Img)}
-                    className="cursor-pointer"
+                    className="cursor-pointer w-full max-w-full"
                   >
                     <CertificateDisplay 
                       ImgSertif={certifItem.Img} 
@@ -670,7 +683,7 @@ export default function FullWidthTabs() {
               </div>
             </div>
             {certif.length > initialItems && (
-              <div className="mt-6 w-full flex justify-start">
+              <div className="mt-4 sm:mt-6 w-full flex justify-start px-1 sm:px-0">
                 <ToggleButton
                   onClick={() => toggleShowMore('certif')}
                   isShowingMore={showAllCertif}
@@ -680,15 +693,15 @@ export default function FullWidthTabs() {
           </TabPanel>
 
           <TabPanel value={value} index={5} dir={theme.direction}>
-            <div className="container mx-auto flex justify-center items-center overflow-hidden">
-              <div className="grid grid-cols-1 md:grid-cols-3 md:gap-5 gap-4">
+            <div className="w-full max-w-full flex justify-center items-center overflow-x-hidden px-1 sm:px-0">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 md:gap-5 w-full max-w-full">
                 {displayedPhoto.map((photoItem, index) => (
                   <div
                     key={photoItem.id || `photo-${index}`}
                     data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
                     data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
                     onClick={() => openImageModal(photoItem.Img)}
-                    className="cursor-pointer"
+                    className="cursor-pointer w-full max-w-full"
                   >
                     <CertificateDisplay 
                       ImgSertif={photoItem.Img} 
@@ -700,7 +713,7 @@ export default function FullWidthTabs() {
               </div>
             </div>
             {photo.length > initialItems && (
-              <div className="mt-6 w-full flex justify-start">
+              <div className="mt-4 sm:mt-6 w-full flex justify-start px-1 sm:px-0">
                 <ToggleButton
                   onClick={() => toggleShowMore('photo')}
                   isShowingMore={showAllPhoto}
@@ -710,13 +723,14 @@ export default function FullWidthTabs() {
           </TabPanel>
 
           <TabPanel value={value} index={6} dir={theme.direction}>
-            <div className="container mx-auto flex justify-center items-center overflow-hidden pb-[5%]">
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 lg:gap-8 gap-5">
+            <div className="w-full max-w-full flex justify-center items-center overflow-x-hidden px-1 sm:px-0 pb-[3%] sm:pb-[5%]">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-5 lg:gap-8 w-full max-w-full">
                 {techStacks.map((stack, index) => (
                   <div
                     key={`tech-${index}`}
                     data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
                     data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
+                    className="w-full max-w-full"
                   >
                     <TechStackIcon TechStackIcon={stack.icon} Language={stack.language} />
                   </div>

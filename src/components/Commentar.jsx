@@ -329,9 +329,9 @@ const Comment = memo(({ comment, index, onLike, onReply, onEdit, onDelete, devic
                 
                 <div className="flex-grow min-w-0">
                     {/* Header */}
-                    <div className="flex items-center justify-between gap-4 mb-2">
+                    <div className="flex items-center justify-between gap-1 mb-2">
                         <div className="flex items-center gap-2 min-w-0">
-                            <h4 className={`font-medium truncate ${
+                            <h4 className={`font-bold truncate ${
                                 isPro ? 'text-yellow-100' : 'text-white'
                             }`}>
                                 {comment.userName || 'Anonymous'}
@@ -1044,7 +1044,7 @@ const Komentar = () => {
                 </div>
             </div>
 
-            <div className="p-6 space-y-6">
+            <div className="p-1 space-y-6">
                 {error && (
                     <div className="flex items-center gap-2 p-4 text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl">
                         <AlertCircle className="w-5 h-5 flex-shrink-0" />
@@ -1060,7 +1060,7 @@ const Komentar = () => {
                 
                 <CommentForm onSubmit={handleCommentSubmit} isSubmitting={isSubmitting} />
 
-                <div className="space-y-4 max-h-[500px] overflow-y-auto custom-scrollbar">
+                <div className="space-y-3 max-h-[500px] overflow-y-auto custom-scrollbar">
                     {filteredAndSortedComments.length === 0 ? (
                         <div className="text-center py-12">
                             <div className="relative mx-auto w-20 h-20 mb-4">
@@ -1078,7 +1078,7 @@ const Komentar = () => {
                         <>
                             {/* Stats bar */}
                             {(searchTerm || filterBy !== 'all') && (
-                                <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10 mb-4">
+                                <div className="flex items-center justify-between p-8 bg-white/5 rounded-lg border border-white/10 mb-4">
                                     <div className="flex items-center gap-4 text-sm text-gray-400">
                                         <span>Showing {filteredAndSortedComments.length} of {comments.length} comments</span>
                                         {searchTerm && (

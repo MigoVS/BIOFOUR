@@ -59,12 +59,12 @@ const Navbar = () => {
         if (isOpen) {
             document.body.style.overflow = 'hidden';
         } else {
-            document.body.style.overflow = 'unset';
+            document.body.style.overflow = 'hidden';
         }
         
         // Cleanup on unmount
         return () => {
-            document.body.style.overflow = 'unset';
+            document.body.style.overflow = 'hidden';
         };
     }, [isOpen]);
 
