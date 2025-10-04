@@ -35,7 +35,7 @@ import {
   Leaf
 } from "lucide-react";
 
-// Molecular structure animation component
+// Enhanced Molecular structure animation component
 const MolecularStructure = ({ className = "" }) => {
   const prefersReducedMotion = useReducedMotion();
   
@@ -81,9 +81,11 @@ const MolecularStructure = ({ className = "" }) => {
   );
 };
 
-// Refinery tower component
-const RefineryTower = ({ height = 100, delay = 0 }) => {
+// Enhanced Refinery tower component with more details
+const RefineryTower = ({ height = 100, delay = 0, isMobile = false }) => {
   const prefersReducedMotion = useReducedMotion();
+  const towerWidth = isMobile ? "40px" : "60px";
+  const towerHeight = isMobile ? `${height * 0.7}px` : `${height}px`;
   
   return (
     <motion.div
@@ -95,7 +97,7 @@ const RefineryTower = ({ height = 100, delay = 0 }) => {
       {/* Tower structure */}
       <div 
         className="relative bg-gradient-to-b from-gray-700 via-gray-800 to-gray-900 rounded-t-lg shadow-2xl"
-        style={{ width: "60px", height: `${height}px` }}
+        style={{ width: towerWidth, height: towerHeight }}
       >
         {/* Metallic shine effect */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent rounded-t-lg" />
@@ -120,16 +122,18 @@ const RefineryTower = ({ height = 100, delay = 0 }) => {
             repeat: Infinity,
           }}
         >
-          <Flame className="w-8 h-8 text-orange-500 drop-shadow-[0_0_10px_rgba(251,146,60,0.8)]" />
+          <Flame className={`${isMobile ? "w-6 h-6" : "w-8 h-8"} text-orange-500 drop-shadow-[0_0_10px_rgba(251,146,60,0.8)]`} />
         </motion.div>
         
         {/* Status lights */}
         {[0, 1, 2].map((i) => (
           <motion.div
             key={i}
-            className="absolute right-2 w-2 h-2 rounded-full"
+            className="absolute right-2 rounded-full"
             style={{
               top: `${20 + i * 25}%`,
+              width: isMobile ? "4px" : "8px",
+              height: isMobile ? "4px" : "8px",
               backgroundColor: i === 0 ? "#10b981" : i === 1 ? "#f59e0b" : "#ef4444",
             }}
             animate={!prefersReducedMotion ? {
@@ -142,16 +146,27 @@ const RefineryTower = ({ height = 100, delay = 0 }) => {
             }}
           />
         ))}
+        
+        {/* Additional details for mobile */}
+        {isMobile && (
+          <div className="absolute inset-0 bg-gradient-to-t from-blue-900/30 to-transparent rounded-t-lg" />
+        )}
       </div>
       
       {/* Base platform */}
-      <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-20 h-4 bg-gradient-to-b from-gray-700 to-gray-900 rounded-sm shadow-lg" />
+      <div 
+        className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-gradient-to-b from-gray-700 to-gray-900 rounded-sm shadow-lg"
+        style={{ 
+          width: isMobile ? "60px" : "80px", 
+          height: isMobile ? "3px" : "4px" 
+        }}
+      />
     </motion.div>
   );
 };
 
-// Pipeline system component
-const PipelineSystem = () => {
+// Enhanced Pipeline system component
+const PipelineSystem = ({ isMobile = false }) => {
   const prefersReducedMotion = useReducedMotion();
   
   return (
@@ -172,12 +187,15 @@ const PipelineSystem = () => {
         </filter>
       </defs>
       
-      {/* Main pipeline paths */}
+      {/* Main pipeline paths - simplified for mobile */}
       <motion.path
-        d="M 100 300 Q 200 250 300 300 T 500 300 Q 600 350 700 300"
+        d={isMobile ? 
+          "M 100 300 Q 200 250 300 300 T 500 300 Q 600 350 700 300" : 
+          "M 100 300 Q 200 250 300 300 T 500 300 Q 600 350 700 300"
+        }
         fill="none"
         stroke="url(#pipeGradient)"
-        strokeWidth="8"
+        strokeWidth={isMobile ? "4" : "8"}
         filter="url(#glow)"
         initial={{ pathLength: 0 }}
         animate={{ pathLength: 1 }}
@@ -185,21 +203,24 @@ const PipelineSystem = () => {
       />
       
       <motion.path
-        d="M 150 400 L 350 400 Q 400 400 400 350 L 400 250"
+        d={isMobile ? 
+          "M 150 400 L 350 400 Q 400 400 400 350 L 400 250" : 
+          "M 150 400 L 350 400 Q 400 400 400 350 L 400 250"
+        }
         fill="none"
         stroke="url(#pipeGradient)"
-        strokeWidth="6"
+        strokeWidth={isMobile ? "3" : "6"}
         filter="url(#glow)"
         initial={{ pathLength: 0 }}
         animate={{ pathLength: 1 }}
         transition={{ duration: 2.5, delay: 0.5 }}
       />
       
-      {/* Flow indicators */}
-      {!prefersReducedMotion && [0, 1, 2, 3].map((i) => (
+      {/* Flow indicators - reduced for mobile */}
+      {!prefersReducedMotion && [...Array(isMobile ? 2 : 4)].map((_, i) => (
         <motion.circle
           key={i}
-          r="4"
+          r={isMobile ? "2" : "4"}
           fill="#60a5fa"
           filter="url(#glow)"
           initial={{ offsetDistance: "0%" }}
@@ -222,12 +243,13 @@ const PipelineSystem = () => {
 };
 
 // Energy flow visualization
-const EnergyFlow = () => {
+const EnergyFlow = ({ isMobile = false }) => {
   const prefersReducedMotion = useReducedMotion();
+  const particleCount = isMobile ? 3 : 6;
   
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {[...Array(6)].map((_, i) => (
+      {[...Array(particleCount)].map((_, i) => (
         <motion.div
           key={i}
           className="absolute"
@@ -247,7 +269,7 @@ const EnergyFlow = () => {
           }}
         >
           <div className="relative">
-            <div className="w-2 h-2 bg-cyan-400 rounded-full blur-sm" />
+            <div className={`${isMobile ? "w-1 h-1" : "w-2 h-2"} bg-cyan-400 rounded-full blur-sm`} />
             <div className="absolute inset-0 bg-cyan-400 rounded-full animate-ping" />
           </div>
         </motion.div>
@@ -257,7 +279,7 @@ const EnergyFlow = () => {
 };
 
 // Industrial background
-const PetrochemicalBackground = () => {
+const PetrochemicalBackground = ({ isMobile = false }) => {
   const prefersReducedMotion = useReducedMotion();
   
   return (
@@ -265,7 +287,7 @@ const PetrochemicalBackground = () => {
       {/* Base gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950" />
       
-      {/* Industrial grid overlay */}
+      {/* Industrial grid overlay - adjusted for mobile */}
       <div 
         className="absolute inset-0 opacity-10"
         style={{
@@ -273,26 +295,26 @@ const PetrochemicalBackground = () => {
             linear-gradient(cyan 1px, transparent 1px),
             linear-gradient(90deg, cyan 1px, transparent 1px)
           `,
-          backgroundSize: "50px 50px",
+          backgroundSize: isMobile ? "30px 30px" : "50px 50px",
         }}
       />
       
-      {/* Tech circuit pattern */}
+      {/* Tech circuit pattern - simplified for mobile */}
       <svg className="absolute inset-0 w-full h-full opacity-5">
-        <pattern id="circuit" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
-          <path d="M 10 10 L 30 10 L 30 30 M 50 10 L 70 10 L 70 30 L 90 30" stroke="cyan" fill="none" strokeWidth="1"/>
-          <circle cx="10" cy="10" r="3" fill="cyan" />
-          <circle cx="30" cy="30" r="3" fill="cyan" />
-          <circle cx="70" cy="30" r="3" fill="cyan" />
+        <pattern id="circuit" x="0" y="0" width={isMobile ? "60" : "100"} height={isMobile ? "60" : "100"} patternUnits="userSpaceOnUse">
+          <path d={`M ${isMobile ? "6" : "10"} ${isMobile ? "6" : "10"} L ${isMobile ? "18" : "30"} ${isMobile ? "6" : "10"} L ${isMobile ? "18" : "30"} ${isMobile ? "18" : "30"} M ${isMobile ? "30" : "50"} ${isMobile ? "6" : "10"} L ${isMobile ? "42" : "70"} ${isMobile ? "6" : "10"} L ${isMobile ? "42" : "70"} ${isMobile ? "18" : "30"} L ${isMobile ? "54" : "90"} ${isMobile ? "18" : "30"}`} stroke="cyan" fill="none" strokeWidth="1"/>
+          <circle cx={isMobile ? "6" : "10"} cy={isMobile ? "6" : "10"} r={isMobile ? "2" : "3"} fill="cyan" />
+          <circle cx={isMobile ? "18" : "30"} cy={isMobile ? "18" : "30"} r={isMobile ? "2" : "3"} fill="cyan" />
+          <circle cx={isMobile ? "42" : "70"} cy={isMobile ? "18" : "30"} r={isMobile ? "2" : "3"} fill="cyan" />
         </pattern>
         <rect width="100%" height="100%" fill="url(#circuit)" />
       </svg>
       
       {/* Pipeline system */}
-      <PipelineSystem />
+      <PipelineSystem isMobile={isMobile} />
       
       {/* Energy flow particles */}
-      <EnergyFlow />
+      <EnergyFlow isMobile={isMobile} />
       
       {/* Holographic overlay */}
       <motion.div
@@ -316,22 +338,23 @@ const PetrochemicalBackground = () => {
 };
 
 // Premium industrial frame
-const IndustrialFrame = () => {
+const IndustrialFrame = ({ isMobile = false }) => {
   const prefersReducedMotion = useReducedMotion();
+  const frameInset = isMobile ? "inset-2" : "inset-4 sm:inset-8 lg:inset-12";
   
   return (
     <>
       {/* Main frame */}
       <motion.div
-        className="absolute inset-4 sm:inset-8 lg:inset-12 rounded-2xl"
+        className={`absolute ${frameInset} rounded-2xl`}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1.5 }}
         style={{
           background: "linear-gradient(to bottom, rgba(6,182,212,0.3), transparent, rgba(59,130,246,0.3))",
           boxShadow: `
-            inset 0 0 50px rgba(6,182,212,0.2),
-            0 0 100px rgba(59,130,246,0.1)
+            inset 0 0 ${isMobile ? "20px" : "50px"} rgba(6,182,212,0.2),
+            0 0 ${isMobile ? "40px" : "100px"} rgba(59,130,246,0.1)
           `,
         }}
       >
@@ -344,13 +367,17 @@ const IndustrialFrame = () => {
         ].map((pos, i) => (
           <motion.div
             key={i}
-            className="absolute w-20 h-20"
-            style={pos}
+            className="absolute"
+            style={{
+              ...pos,
+              width: isMobile ? "40px" : "80px",
+              height: isMobile ? "40px" : "80px",
+            }}
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3 + i * 0.1, duration: 0.6 }}
           >
-            <svg width="80" height="80" viewBox="0 0 80 80">
+            <svg width={isMobile ? "40" : "80"} height={isMobile ? "40" : "80"} viewBox="0 0 80 80">
               <path
                 d="M 0 20 L 0 0 L 20 0"
                 stroke="url(#techGradient)"
@@ -373,7 +400,11 @@ const IndustrialFrame = () => {
             
             {/* Corner indicator */}
             <motion.div
-              className="absolute top-0 left-0 w-3 h-3 bg-cyan-400 rounded-full"
+              className="absolute top-0 left-0 rounded-full bg-cyan-400"
+              style={{
+                width: isMobile ? "6px" : "12px",
+                height: isMobile ? "6px" : "12px",
+              }}
               animate={!prefersReducedMotion ? {
                 opacity: [0.5, 1, 0.5],
                 scale: [0.8, 1.2, 0.8],
@@ -390,14 +421,14 @@ const IndustrialFrame = () => {
       
       {/* Tech border lines */}
       <motion.div
-        className="absolute inset-4 sm:inset-8 lg:inset-12"
+        className={`absolute ${frameInset}`}
         initial={{ opacity: 0 }}
         animate={{ opacity: 0.3 }}
         transition={{ delay: 0.5, duration: 1 }}
       >
         {/* Top line */}
         <motion.div
-          className="absolute top-0 left-20 right-20 h-[1px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent"
+          className={`absolute top-0 ${isMobile ? "left-10 right-10" : "left-20 right-20"} h-[1px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent`}
           animate={!prefersReducedMotion ? {
             opacity: [0.3, 0.8, 0.3],
           } : {}}
@@ -408,7 +439,7 @@ const IndustrialFrame = () => {
         />
         {/* Bottom line */}
         <motion.div
-          className="absolute bottom-0 left-20 right-20 h-[1px] bg-gradient-to-r from-transparent via-blue-400 to-transparent"
+          className={`absolute bottom-0 ${isMobile ? "left-10 right-10" : "left-20 right-20"} h-[1px] bg-gradient-to-r from-transparent via-blue-400 to-transparent`}
           animate={!prefersReducedMotion ? {
             opacity: [0.3, 0.8, 0.3],
           } : {}}
@@ -423,16 +454,19 @@ const IndustrialFrame = () => {
   );
 };
 
-// Industrial icon grid
-const IndustrialIconGrid = () => {
+// Industrial icon grid - optimized for mobile
+const IndustrialIconGrid = ({ isMobile = false }) => {
   const icons = [
     Factory, Fuel, Atom, Battery, Beaker, CircuitBoard, 
     Power, Network, Gauge, Shield
   ];
   
+  // Show fewer icons on mobile
+  const displayIcons = isMobile ? icons.slice(0, 6) : icons;
+  
   return (
-    <motion.div className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-8">
-      {icons.map((Icon, index) => (
+    <motion.div className={`flex flex-wrap justify-center gap-${isMobile ? "2" : "3 sm:gap-4"} mb-${isMobile ? "4" : "8"}`}>
+      {displayIcons.map((Icon, index) => (
         <motion.div
           key={index}
           className="relative group cursor-pointer"
@@ -447,7 +481,7 @@ const IndustrialIconGrid = () => {
           whileHover={{ scale: 1.15, rotate: 5 }}
         >
           {/* Hexagonal container */}
-          <div className="relative w-14 h-14 sm:w-16 sm:h-16">
+          <div className="relative" style={{ width: isMobile ? "48px" : "56px", height: isMobile ? "48px" : "56px" }}>
             <svg className="absolute inset-0" viewBox="0 0 60 60">
               <defs>
                 <linearGradient id={`hexGrad${index}`} x1="0%" y1="0%" x2="100%" y2="100%">
@@ -466,7 +500,7 @@ const IndustrialIconGrid = () => {
             
             {/* Icon */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <Icon className="w-6 h-6 sm:w-7 sm:h-7 text-cyan-400 group-hover:text-white transition-colors" />
+              <Icon className={`${isMobile ? "w-5 h-5" : "w-6 h-6 sm:w-7 sm:h-7"} text-cyan-400 group-hover:text-white transition-colors`} />
             </div>
             
             {/* Glow effect on hover */}
@@ -487,17 +521,19 @@ const IndustrialIconGrid = () => {
   );
 };
 
-// Main petrochemical victory trophy
-const PetrochemicalTrophy = () => {
+// Enhanced petrochemical victory trophy with more towers
+const PetrochemicalTrophy = ({ isMobile = false }) => {
   const prefersReducedMotion = useReducedMotion();
   
   return (
-    <div className="relative flex justify-center items-center h-32 sm:h-40 lg:h-48">
-      {/* Refinery towers arrangement */}
-      <div className="absolute inset-0 flex justify-center items-end gap-4">
-        <RefineryTower height={80} delay={0.5} />
-        <RefineryTower height={120} delay={0.7} />
-        <RefineryTower height={100} delay={0.9} />
+    <div className={`relative flex justify-center items-center ${isMobile ? "h-24" : "h-32 sm:h-40 lg:h-48"}`}>
+      {/* Refinery towers arrangement - more towers and better layout */}
+      <div className="absolute inset-0 flex justify-center items-end gap-2 sm:gap-4">
+        <RefineryTower height={isMobile ? 60 : 80} delay={0.5} isMobile={isMobile} />
+        <RefineryTower height={isMobile ? 90 : 120} delay={0.7} isMobile={isMobile} />
+        <RefineryTower height={isMobile ? 70 : 100} delay={0.9} isMobile={isMobile} />
+        <RefineryTower height={isMobile ? 50 : 70} delay={1.1} isMobile={isMobile} />
+        <RefineryTower height={isMobile ? 80 : 110} delay={1.3} isMobile={isMobile} />
       </div>
       
       {/* Central molecular structure */}
@@ -507,7 +543,7 @@ const PetrochemicalTrophy = () => {
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 1.2, duration: 1, type: "spring" }}
       >
-        <MolecularStructure className="w-32 h-32" />
+        <MolecularStructure className={`${isMobile ? "w-20 h-20" : "w-32 h-32"}`} />
         
         {/* Trophy overlay */}
         <motion.div
@@ -520,12 +556,12 @@ const PetrochemicalTrophy = () => {
             repeat: Infinity,
           }}
         >
-          <Trophy className="w-12 h-12 text-yellow-400 drop-shadow-[0_0_20px_rgba(251,191,36,0.8)]" />
+          <Trophy className={`${isMobile ? "w-8 h-8" : "w-12 h-12"} text-yellow-400 drop-shadow-[0_0_20px_rgba(251,191,36,0.8)]`} />
         </motion.div>
       </motion.div>
       
-      {/* Energy rings */}
-      {!prefersReducedMotion && [0, 1, 2].map((i) => (
+      {/* Energy rings - adjusted for mobile */}
+      {!prefersReducedMotion && [...Array(isMobile ? 2 : 3)].map((i) => (
         <motion.div
           key={i}
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
@@ -543,8 +579,8 @@ const PetrochemicalTrophy = () => {
           <div 
             className="rounded-full border-2 border-cyan-400"
             style={{
-              width: `${100 + i * 30}px`,
-              height: `${100 + i * 30}px`,
+              width: `${isMobile ? 60 + i * 20 : 100 + i * 30}px`,
+              height: `${isMobile ? 60 + i * 20 : 100 + i * 30}px`,
             }}
           />
         </motion.div>
@@ -553,8 +589,8 @@ const PetrochemicalTrophy = () => {
   );
 };
 
-// HUD-style display component
-const HUDDisplay = ({ label, value, icon: Icon, delay = 0 }) => {
+// HUD-style display component - optimized for mobile
+const HUDDisplay = ({ label, value, icon: Icon, delay = 0, isMobile = false }) => {
   const prefersReducedMotion = useReducedMotion();
   
   return (
@@ -564,14 +600,14 @@ const HUDDisplay = ({ label, value, icon: Icon, delay = 0 }) => {
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay, duration: 0.8 }}
     >
-      <div className="relative bg-gradient-to-r from-cyan-900/20 to-blue-900/20 backdrop-blur-md border border-cyan-400/30 rounded-lg p-3 sm:p-4">
+      <div className={`relative bg-gradient-to-r from-cyan-900/20 to-blue-900/20 backdrop-blur-md border border-cyan-400/30 rounded-lg ${isMobile ? "p-2" : "p-3 sm:p-4"}`}>
         {/* Corner accents */}
         <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-cyan-400" />
         <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-cyan-400" />
         <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-cyan-400" />
         <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-cyan-400" />
         
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <div className="relative">
             <motion.div
               className="absolute inset-0 bg-cyan-400/20 rounded-full blur-xl"
@@ -584,12 +620,12 @@ const HUDDisplay = ({ label, value, icon: Icon, delay = 0 }) => {
                 repeat: Infinity,
               }}
             />
-            <Icon className="relative w-6 h-6 text-cyan-400" />
+            <Icon className={`relative ${isMobile ? "w-4 h-4" : "w-6 h-6"} text-cyan-400`} />
           </div>
           
           <div>
-            <div className="text-xs text-cyan-400/70 uppercase tracking-wider">{label}</div>
-            <div className="text-lg sm:text-xl font-bold text-white">{value}</div>
+            <div className={`text-xs ${isMobile ? "text-[10px]" : ""} text-cyan-400/70 uppercase tracking-wider`}>{label}</div>
+            <div className={`${isMobile ? "text-sm" : "text-lg sm:text-xl"} font-bold text-white`}>{value}</div>
           </div>
         </div>
         
@@ -613,7 +649,20 @@ const HUDDisplay = ({ label, value, icon: Icon, delay = 0 }) => {
 
 const IndonesianPetrochemicalVictory = ({ onLoadingComplete }) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
   const prefersReducedMotion = useReducedMotion();
+
+  // Detect mobile screen size
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -635,20 +684,20 @@ const IndonesianPetrochemicalVictory = ({ onLoadingComplete }) => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
-          <PetrochemicalBackground />
+          <PetrochemicalBackground isMobile={isMobile} />
           
-          <div className="relative min-h-screen flex items-center justify-center py-4 px-3 sm:py-6 sm:px-4 lg:py-8 lg:px-6">
+          <div className={`relative min-h-screen flex items-center justify-center ${isMobile ? "py-2 px-2" : "py-4 px-3 sm:py-6 sm:px-4 lg:py-8 lg:px-6"}`}>
             <div className="w-full max-w-6xl mx-auto">
               
-              <IndustrialFrame />
+              <IndustrialFrame isMobile={isMobile} />
               
               {/* Main trophy section */}
-              <div className="relative z-10 text-center pt-8 sm:pt-12">
-                <PetrochemicalTrophy />
+              <div className={`relative z-10 text-center ${isMobile ? "pt-4" : "pt-8 sm:pt-12"}`}>
+                <PetrochemicalTrophy isMobile={isMobile} />
                 
-                {/* Company badges */}
+                {/* Company badges - stacked on mobile */}
                 <motion.div
-                  className="flex justify-center gap-4 mt-8 mb-6"
+                  className={`flex ${isMobile ? "flex-col items-center gap-2" : "justify-center gap-4"} mt-4 mb-4`}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 1.5 }}
@@ -658,23 +707,25 @@ const IndonesianPetrochemicalVictory = ({ onLoadingComplete }) => {
                     value="BIOFOURTEAM"
                     icon={Factory}
                     delay={1.6}
+                    isMobile={isMobile}
                   />
                   <HUDDisplay
                     label="Excellence"
                     value="GARUDA BIOETHANOL"
                     icon={Fuel}
                     delay={1.8}
+                    isMobile={isMobile}
                   />
                 </motion.div>
                 
-                {/* Main title with tech styling */}
+                {/* Main title with tech styling - adjusted for mobile */}
                 <motion.div
-                  className="mb-8"
+                  className="mb-4 sm:mb-8"
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 2, duration: 1 }}
                 >
-                  <h1 className="text-3xl sm:text-5xl lg:text-7xl font-bold mb-4">
+                  <h1 className={`${isMobile ? "text-xl" : "text-3xl sm:text-5xl lg:text-7xl"} font-bold mb-2 sm:mb-4`}>
                     <motion.span 
                       className="block bg-gradient-to-r from-cyan-300 via-blue-400 to-indigo-400 bg-clip-text text-transparent"
                       animate={!prefersReducedMotion ? {
@@ -685,10 +736,10 @@ const IndonesianPetrochemicalVictory = ({ onLoadingComplete }) => {
                         repeat: Infinity,
                       }}
                     >
-                      PETROCHEMICAL EXCELLENCE
+                      {isMobile ? "PETROCHEMICAL" : "PETROCHEMICAL EXCELLENCE"}
                     </motion.span>
                     <motion.span 
-                      className="block text-2xl sm:text-4xl lg:text-5xl mt-2 bg-gradient-to-r from-red-400 via-white to-red-400 bg-clip-text text-transparent"
+                      className={`block ${isMobile ? "text-lg" : "text-2xl sm:text-4xl lg:text-5xl"} mt-2 bg-gradient-to-r from-red-400 via-white to-red-400 bg-clip-text text-transparent`}
                       animate={!prefersReducedMotion ? {
                         opacity: [0.8, 1, 0.8],
                       } : {}}
@@ -697,13 +748,13 @@ const IndonesianPetrochemicalVictory = ({ onLoadingComplete }) => {
                         repeat: Infinity,
                       }}
                     >
-                      Environmentally Friendly Fuel
+                      {isMobile ? "Eco-Friendly Fuel" : "Environmentally Friendly Fuel"}
                     </motion.span>
                   </h1>
                   
-                  {/* HUT RI Badge */}
+                  {/* HUT RI Badge - adjusted for mobile */}
                   <motion.div
-                    className="inline-flex items-center gap-3 mt-6 px-6 py-3 rounded-full"
+                    className={`inline-flex items-center ${isMobile ? "gap-1 px-3 py-2" : "gap-3 px-6 py-3"} rounded-full`}
                     style={{
                       background: "linear-gradient(135deg, rgba(239,68,68,0.2), rgba(255,255,255,0.1), rgba(239,68,68,0.2))",
                       border: "2px solid rgba(239,68,68,0.5)",
@@ -711,18 +762,20 @@ const IndonesianPetrochemicalVictory = ({ onLoadingComplete }) => {
                     }}
                     whileHover={{ scale: 1.05 }}
                   >
-                    <Flag className="w-6 h-6 text-red-500" />
-                    <span className="text-xl font-bold text-white">BIOFOUR TEAM</span>
-                    <span className="text-lg text-red-300">Politeknik Industri Petrokimia Banten</span>
+                    <Flag className={`${isMobile ? "w-4 h-4" : "w-6 h-6"} text-red-500`} />
+                    <span className={`${isMobile ? "text-sm" : "text-xl"} font-bold text-white`}>BIOFOUR TEAM</span>
+                    {!isMobile && (
+                      <span className="text-lg text-red-300">Politeknik Industri Petrokimia Banten</span>
+                    )}
                   </motion.div>
                 </motion.div>
                 
                 {/* Industrial icon grid */}
-                <IndustrialIconGrid />
+                <IndustrialIconGrid isMobile={isMobile} />
                 
-                {/* Stats display */}
+                {/* Stats display - adjusted for mobile */}
                 <motion.div
-                  className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto mt-8"
+                  className={`grid ${isMobile ? "grid-cols-2 gap-2" : "grid-cols-2 sm:grid-cols-4 gap-4"} max-w-4xl mx-auto mt-4 sm:mt-8`}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 2.5, stagger: 0.1 }}
@@ -735,27 +788,27 @@ const IndonesianPetrochemicalVictory = ({ onLoadingComplete }) => {
                   ].map((stat, i) => (
                     <motion.div
                       key={i}
-                      className="bg-gradient-to-br from-blue-900/20 to-cyan-900/20 backdrop-blur-sm border border-cyan-400/20 rounded-lg p-3"
+                      className="bg-gradient-to-br from-blue-900/20 to-cyan-900/20 backdrop-blur-sm border border-cyan-400/20 rounded-lg p-2 sm:p-3"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ delay: 2.5 + i * 0.1, type: "spring" }}
                     >
-                      <stat.icon className="w-8 h-8 mx-auto mb-2 text-cyan-400" />
-                      <div className="text-xs text-cyan-300/70 uppercase">{stat.label}</div>
-                      <div className="text-xl font-bold text-white mt-1">{stat.value}</div>
+                      <stat.icon className={`${isMobile ? "w-5 h-5" : "w-8 h-8"} mx-auto mb-1 sm:mb-2 text-cyan-400`} />
+                      <div className={`text-xs ${isMobile ? "text-[10px]" : ""} text-cyan-300/70 uppercase`}>{stat.label}</div>
+                      <div className={`${isMobile ? "text-sm" : "text-xl"} font-bold text-white mt-1`}>{stat.value}</div>
                     </motion.div>
                   ))}
                 </motion.div>
                 
-                {/* Victory message */}
+                {/* Victory message - adjusted for mobile */}
                 <motion.div
-                  className="mt-12 space-y-4"
+                  className="mt-6 sm:mt-12 space-y-2 sm:space-y-4"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 3 }}
                 >
                   <motion.p
-                    className="text-base sm:text-lg text-cyan-100/80 max-w-3xl mx-auto leading-relaxed"
+                    className={`${isMobile ? "text-xs" : "text-base sm:text-lg"} text-cyan-100/80 max-w-3xl mx-auto leading-relaxed`}
                     animate={!prefersReducedMotion ? {
                       opacity: [0.8, 1, 0.8],
                     } : {}}
@@ -764,10 +817,10 @@ const IndonesianPetrochemicalVictory = ({ onLoadingComplete }) => {
                       repeat: Infinity,
                     }}
                   >
-                    Pioneering the future of sustainable petrochemical innovation
+                    {isMobile ? "Pioneering sustainable petrochemical innovation" : "Pioneering the future of sustainable petrochemical innovation"}
                     <br />
                     <span className="text-cyan-400 font-semibold">
-                      Powering Indonesia's Industrial Renaissance
+                      {isMobile ? "Powering Indonesia's Future" : "Powering Indonesia's Industrial Renaissance"}
                     </span>
                   </motion.p>
                   
@@ -782,20 +835,20 @@ const IndonesianPetrochemicalVictory = ({ onLoadingComplete }) => {
                       repeat: Infinity,
                     }}
                   >
-                    <Sparkles className="w-5 h-5" />
-                    <span className="text-lg font-bold tracking-wider">
-                      EXCELLENCE IN EVERY MOLECULE
+                    <Sparkles className={`${isMobile ? "w-3 h-3" : "w-5 h-5"}`} />
+                    <span className={`${isMobile ? "text-xs" : "text-lg"} font-bold tracking-wider`}>
+                      {isMobile ? "EXCELLENCE" : "EXCELLENCE IN EVERY MOLECULE"}
                     </span>
-                    <Sparkles className="w-5 h-5" />
+                    <Sparkles className={`${isMobile ? "w-3 h-3" : "w-5 h-5"}`} />
                   </motion.div>
                 </motion.div>
               </div>
             </div>
           </div>
           
-          {/* Loading progress bar */}
+          {/* Loading progress bar - adjusted for mobile */}
           <motion.div
-            className="absolute bottom-8 left-1/2 -translate-x-1/2 w-64 sm:w-96"
+            className={`absolute bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 ${isMobile ? "w-48" : "w-64 sm:w-96"}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
@@ -823,7 +876,7 @@ const IndonesianPetrochemicalVictory = ({ onLoadingComplete }) => {
               />
             </div>
             <motion.p
-              className="text-center mt-3 text-cyan-400 text-sm tracking-wider"
+              className={`text-center mt-2 sm:mt-3 text-cyan-400 ${isMobile ? "text-[10px]" : "text-sm"} tracking-wider`}
               animate={!prefersReducedMotion ? {
                 opacity: [0.5, 1, 0.5],
               } : {}}
