@@ -149,12 +149,14 @@ const techStacks = [
 export default function FullWidthTabs() {
   const theme = useTheme();
   const [value, setValue] = useState(0);
+  const [karya, setKarya] = useState([]);
   const [projects, setProjects] = useState([]);
   const [certificates, setCertificates] = useState([]);
   const [emisi, setEmisi] = useState([]);
   const [champion, setChampion] = useState([]);
   const [certif, setCertif] = useState([]);
   const [photo, setPhoto] = useState([]);
+  const [showAllKarya, setShowAllKarya] = useState(false);
   const [showAllProjects, setShowAllProjects] = useState(false);
   const [showAllCertificates, setShowAllCertificates] = useState(false);
   const [showAllEmisi, setShowAllEmisi] = useState(false);
@@ -207,6 +209,7 @@ export default function FullWidthTabs() {
       const isValid = isCacheValid(cacheTimestamp);
       
       if (isValid) {
+        const cachedKarya = localStorage.getItem("karya");
         const cachedProjects = localStorage.getItem("projects");
         const cachedCertificates = localStorage.getItem("certificates");
         const cachedEmisi = localStorage.getItem("emisi");
@@ -214,8 +217,9 @@ export default function FullWidthTabs() {
         const cachedCertif = localStorage.getItem("certif");
         const cachedPhoto = localStorage.getItem("photo");
         
-        if (cachedProjects && cachedCertificates && cachedEmisi && 
+        if (cachedKarya && cachedProjects && cachedCertificates && cachedEmisi && 
             cachedChampion && cachedCertif && cachedPhoto) {
+          setKarya(JSON.parse(cachedKarya));    
           setProjects(JSON.parse(cachedProjects));
           setCertificates(JSON.parse(cachedCertificates));
           setEmisi(JSON.parse(cachedEmisi));
@@ -227,6 +231,7 @@ export default function FullWidthTabs() {
       }
 
       // Cache is invalid or doesn't exist, fetch fresh data
+      const karyaCollection = collection(db, "karya");
       const projectCollection = collection(db, "projects");
       const certificateCollection = collection(db, "certificates");
       const emisiCollection = collection(db, "emisi");
@@ -234,7 +239,8 @@ export default function FullWidthTabs() {
       const certifCollection = collection(db, "certif");
       const photoCollection = collection(db, "photo");
 
-      const [projectSnapshot, certificateSnapshot, emisiSnapshot, championSnapshot, certifSnapshot, photoSnapshot] = await Promise.all([
+      const [karyaSnapshot, projectSnapshot, certificateSnapshot, emisiSnapshot, championSnapshot, certifSnapshot, photoSnapshot] = await Promise.all([
+        getDocs(karyaCollection),
         getDocs(projectCollection),
         getDocs(certificateCollection),
         getDocs(emisiCollection),
@@ -244,6 +250,13 @@ export default function FullWidthTabs() {
       ]);
 
       // Process the data with unique IDs to ensure proper image references
+            const karyaData = karyaSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        Img: doc.data().Img || '',
+        TechStack: doc.data().TechStack || [],
+      }));
+
       const projectData = projectSnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
@@ -283,6 +296,7 @@ export default function FullWidthTabs() {
       }));
 
       // Set state with the fresh data
+      setKarya(karyaData);
       setProjects(projectData);
       setCertificates(certificateData);
       setEmisi(emisiData);
@@ -291,6 +305,7 @@ export default function FullWidthTabs() {
       setPhoto(photoData);
 
       // Store fresh data in localStorage with timestamp
+      localStorage.setItem("karya", JSON.stringify(karyaData));
       localStorage.setItem("projects", JSON.stringify(projectData));
       localStorage.setItem("certificates", JSON.stringify(certificateData));
       localStorage.setItem("emisi", JSON.stringify(emisiData));
@@ -308,6 +323,7 @@ export default function FullWidthTabs() {
     } catch (error) {
       console.error("Error fetching data:", error);
       // Use empty arrays if fetching fails
+      setKarya([]);
       setProjects([]);
       setCertificates([]);
       setEmisi([]);
@@ -332,6 +348,8 @@ export default function FullWidthTabs() {
   const toggleShowMore = useCallback((type) => {
     if (type === 'projects') {
       setShowAllProjects(prev => !prev);
+    } else if (type === 'karya') {
+      setShowAllKarya(prev => !prev);
     } else if (type === 'certificates') {
       setShowAllCertificates(prev => !prev);
     } else if (type === 'emisi') {
@@ -358,6 +376,7 @@ export default function FullWidthTabs() {
   };
 
   // Make sure we're displaying the correct number of items
+  const displayedKarya = showAllKarya ? karya : karya.slice(0, initialItems);
   const displayedProjects = showAllProjects ? projects : projects.slice(0, initialItems);
   const displayedCertificates = showAllCertificates ? certificates : certificates.slice(0, initialItems);
   const displayedEmisi = showAllEmisi ? emisi : emisi.slice(0, initialItems);
@@ -480,40 +499,45 @@ export default function FullWidthTabs() {
               },
             }}
           >
+             <Tab
+              icon={<Code className="mb-2 w-5 h-5 transition-all duration-300" />}
+              label={isMobile ? "Karya" : "Karya"}
+              {...a11yProps(0)}
+            />
             <Tab
               icon={<Code className="mb-2 w-5 h-5 transition-all duration-300" />}
               label={isMobile ? "Glukosa" : "Glukosa"}
-              {...a11yProps(0)}
+              {...a11yProps(1)}
             />
             <Tab
               icon={<Atom className="mb-2 w-5 h-5 transition-all duration-300" />}
               label={isMobile ? "Etanol" : "Kadar Etanol"}
-              {...a11yProps(1)}
+              {...a11yProps(2)}
             />
             <Tab
               icon={<Fuel className="mb-2 w-5 h-5 transition-all duration-300" />}
               label={isMobile ? "Emisi" : "Hasil Uji Emisi Gas Buang"}
-              {...a11yProps(2)}
+              {...a11yProps(3)}
             />
             <Tab
               icon={<Trophy className="mb-2 w-5 h-5 transition-all duration-300" style={{ transform: "rotate(0deg)" }} />}
               label={isMobile ? "Champ" : "Biofour Champion"}
-              {...a11yProps(3)}
+              {...a11yProps(4)}
             />
             <Tab
               icon={<Medal className="mb-2 w-5 h-5 transition-all duration-300" />}
               label={isMobile ? "Certif" : "Certificate"}
-              {...a11yProps(4)}
+              {...a11yProps(5)}
             />
             <Tab
               icon={<Image className="mb-2 w-5 h-5 transition-all duration-300" />}
               label={isMobile ? "Photo" : "Photo"}
-              {...a11yProps(5)}
+              {...a11yProps(6)}
             />
             <Tab
               icon={<Cpu className="mb-2 w-5 h-5 transition-all duration-300" />}
               label={isMobile ? "Tech" : "Teknologi dalam Website"}
-              {...a11yProps(6)}
+              {...a11yProps(7)}
             />
           </Tabs>
         </AppBar>
@@ -530,6 +554,36 @@ export default function FullWidthTabs() {
           onChangeIndex={handleChangeIndex}
         >
           <TabPanel value={value} index={0} dir={theme.direction}>
+            <div className="container mx-auto flex justify-center items-center overflow-hidden">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-5">
+                {displayedKarya.map((karyaItem, index) => (
+                  <div
+                    key={karyaItem.id || `karya-${index}`}
+                    data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
+                    data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
+                  >
+                    <CardProject
+                      Img={karyaItem.Img}
+                      Title={karyaItem.Title}
+                      Description={karyaItem.Description}
+                      Link={karyaItem.Link}
+                      id={karyaItem.id}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+            {karya.length > initialItems && (
+              <div className="mt-6 w-full flex justify-start">
+                <ToggleButton
+                  onClick={() => toggleShowMore('Karya')}
+                  isShowingMore={showAllKarya}
+                />
+              </div>
+            )}
+          </TabPanel>
+
+          <TabPanel value={value} index={1} dir={theme.direction}>
             <div className="container mx-auto flex justify-center items-center overflow-hidden">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-5">
                 {displayedProjects.map((project, index) => (
@@ -559,7 +613,7 @@ export default function FullWidthTabs() {
             )}
           </TabPanel>
 
-          <TabPanel value={value} index={1} dir={theme.direction}>
+          <TabPanel value={value} index={2} dir={theme.direction}>
             <div className="container mx-auto flex justify-center items-center overflow-hidden">
               <div className="grid grid-cols-1 md:grid-cols-3 md:gap-5 gap-4">
                 {displayedCertificates.map((certificate, index) => (
@@ -589,7 +643,7 @@ export default function FullWidthTabs() {
             )}
           </TabPanel>
 
-          <TabPanel value={value} index={2} dir={theme.direction}>
+          <TabPanel value={value} index={3} dir={theme.direction}>
             <div className="container mx-auto flex justify-center items-center overflow-hidden">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-5">
                 {displayedEmisi.map((emisiItem, index) => (
@@ -619,7 +673,7 @@ export default function FullWidthTabs() {
             )}
           </TabPanel>
 
-          <TabPanel value={value} index={3} dir={theme.direction}>
+          <TabPanel value={value} index={4} dir={theme.direction}>
             <div className="container mx-auto flex justify-center items-center overflow-hidden">
               <div className="grid grid-cols-1 md:grid-cols-3 md:gap-5 gap-4">
                 {displayedChampion.map((champItem, index) => (
@@ -649,7 +703,7 @@ export default function FullWidthTabs() {
             )}
           </TabPanel>
 
-          <TabPanel value={value} index={4} dir={theme.direction}>
+          <TabPanel value={value} index={5} dir={theme.direction}>
             <div className="container mx-auto flex justify-center items-center overflow-hidden">
               <div className="grid grid-cols-1 md:grid-cols-3 md:gap-5 gap-4">
                 {displayedCertif.map((certifItem, index) => (
@@ -679,7 +733,7 @@ export default function FullWidthTabs() {
             )}
           </TabPanel>
 
-          <TabPanel value={value} index={5} dir={theme.direction}>
+          <TabPanel value={value} index={6} dir={theme.direction}>
             <div className="container mx-auto flex justify-center items-center overflow-hidden">
               <div className="grid grid-cols-1 md:grid-cols-3 md:gap-5 gap-4">
                 {displayedPhoto.map((photoItem, index) => (
@@ -709,7 +763,7 @@ export default function FullWidthTabs() {
             )}
           </TabPanel>
 
-          <TabPanel value={value} index={6} dir={theme.direction}>
+          <TabPanel value={value} index={7} dir={theme.direction}>
             <div className="container mx-auto flex justify-center items-center overflow-hidden pb-[5%]">
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 lg:gap-8 gap-5">
                 {techStacks.map((stack, index) => (
