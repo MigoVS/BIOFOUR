@@ -250,7 +250,7 @@ export default function FullWidthTabs() {
       ]);
 
       // Process the data with unique IDs to ensure proper image references
-            const karyaData = karyaSnapshot.docs.map((doc) => ({
+      const karyaData = karyaSnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
         Img: doc.data().Img || '',
@@ -499,7 +499,8 @@ export default function FullWidthTabs() {
               },
             }}
           >
-             <Tab
+            {/* PERBAIKAN: Tab Karya dipindah ke posisi pertama */}
+            <Tab
               icon={<Code className="mb-2 w-5 h-5 transition-all duration-300" />}
               label={isMobile ? "Karya" : "Karya"}
               {...a11yProps(0)}
@@ -553,7 +554,8 @@ export default function FullWidthTabs() {
           index={value}
           onChangeIndex={handleChangeIndex}
         >
-           <TabPanel value={value} index={0} dir={theme.direction}>
+          {/* PERBAIKAN: TabPanel Karya dipindah ke index 0 */}
+          <TabPanel value={value} index={0} dir={theme.direction}>
             <div className="container mx-auto flex justify-center items-center overflow-hidden">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-5">
                 {displayedKarya.map((karyaItem, index) => (
@@ -583,6 +585,7 @@ export default function FullWidthTabs() {
             )}
           </TabPanel>
 
+          {/* TabPanel lainnya tetap sama, hanya index yang disesuaikan */}
           <TabPanel value={value} index={1} dir={theme.direction}>
             <div className="container mx-auto flex justify-center items-center overflow-hidden">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-5">
