@@ -553,7 +553,7 @@ export default function FullWidthTabs() {
           index={value}
           onChangeIndex={handleChangeIndex}
         >
-          <TabPanel value={value} index={0} dir={theme.direction}>
+           <TabPanel value={value} index={0} dir={theme.direction}>
             <div className="container mx-auto flex justify-center items-center overflow-hidden">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-5">
                 {displayedKarya.map((karyaItem, index) => (
@@ -576,7 +576,7 @@ export default function FullWidthTabs() {
             {karya.length > initialItems && (
               <div className="mt-6 w-full flex justify-start">
                 <ToggleButton
-                  onClick={() => toggleShowMore('Karya')}
+                  onClick={() => toggleShowMore('karya')}
                   isShowingMore={showAllKarya}
                 />
               </div>
