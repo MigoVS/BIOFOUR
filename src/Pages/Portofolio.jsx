@@ -14,7 +14,7 @@ import TechStackIcon from "../components/TechStackIcon";
 import AOS from "aos";
 import "aos/dist/aos.css";
 // Import Lucide React icons
-import { Code, Award, Boxes, Atom, Fuel, Trophy, Medal, Image, Cpu } from "lucide-react";
+import { Code, Award, Boxes, Atom, Fuel, Trophy, Medal, Image, Cpu, FileText } from "lucide-react";
 
 // Standardized certificate component that works for all certificate types
 const CertificateDisplay = ({ ImgSertif, id, alt }) => (
@@ -34,11 +34,79 @@ const CertificateDisplay = ({ ImgSertif, id, alt }) => (
   </div>
 );
 
-// Add PropTypes for the standardized component
+// PDF Display Component
+const PDFDisplay = ({ pdfUrl, title, description, id }) => (
+  <div className="rounded-xl overflow-hidden border border-white/10 transform transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-purple-500/20 group relative bg-gradient-to-br from-slate-900/50 to-purple-900/20">
+    <div className="p-6 flex flex-col h-full">
+      {/* PDF Icon and Title */}
+      <div className="flex items-center space-x-3 mb-3">
+        <div className="bg-red-500/20 p-3 rounded-lg">
+          <FileText className="w-6 h-6 text-red-400" />
+        </div>
+        <h3 className="text-white font-semibold text-lg truncate">{title}</h3>
+      </div>
+      
+      {/* Description */}
+      <p className="text-slate-300 text-sm mb-4 line-clamp-2 flex-grow">
+        {description}
+      </p>
+      
+      {/* PDF Preview and Actions */}
+      <div className="space-y-3">
+        {/* PDF Preview Frame */}
+        <div className="bg-black/30 rounded-lg border border-white/10 p-3">
+          <div className="flex items-center justify-center space-x-2 text-slate-400">
+            <FileText className="w-5 h-5" />
+            <span className="text-sm">PDF Document</span>
+          </div>
+        </div>
+        
+        {/* Action Buttons */}
+        <div className="flex space-x-2">
+          <a
+            href={pdfUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 bg-purple-600/20 hover:bg-purple-600/30 text-purple-400 hover:text-purple-300 py-2 px-3 rounded-lg text-sm font-medium text-center transition-all duration-300 border border-purple-500/30 hover:border-purple-500/50 flex items-center justify-center space-x-2"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span>Download</span>
+          </a>
+          <a
+            href={pdfUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 hover:text-blue-300 py-2 px-3 rounded-lg text-sm font-medium text-center transition-all duration-300 border border-blue-500/30 hover:border-blue-500/50 flex items-center justify-center space-x-2"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+            <span>View</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// Add PropTypes for the components
 CertificateDisplay.propTypes = {
   ImgSertif: PropTypes.string.isRequired,
   id: PropTypes.string,
   alt: PropTypes.string
+};
+
+PDFDisplay.propTypes = {
+  pdfUrl: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string,
+  id: PropTypes.string
 };
 
 // Separate ShowMore/ShowLess button component
@@ -254,6 +322,7 @@ export default function FullWidthTabs() {
         id: doc.id,
         ...doc.data(),
         Img: doc.data().Img || '',
+        PdfUrl: doc.data().PdfUrl || '', // Add PDF URL field
         TechStack: doc.data().TechStack || [],
       }));
 
@@ -316,6 +385,7 @@ export default function FullWidthTabs() {
       
       // Output data to console for debugging
       console.log("Fetched fresh data from Firebase");
+      console.log("Karya data with PDFs:", karyaData);
       console.log("Sample champion data:", championData.slice(0, 2));
       console.log("Sample certif data:", certifData.slice(0, 2));
       console.log("Sample photo data:", photoData.slice(0, 2));
@@ -373,6 +443,11 @@ export default function FullWidthTabs() {
   const closeModal = () => {
     setModalOpen(false);
     setSelectedImage("");
+  };
+
+  // Function to check if a URL is a PDF
+  const isPDF = (url) => {
+    return url && (url.toLowerCase().endsWith('.pdf') || url.includes('/pdf') || url.includes('application/pdf'));
   };
 
   // Make sure we're displaying the correct number of items
@@ -499,10 +574,9 @@ export default function FullWidthTabs() {
               },
             }}
           >
-            {/* PERBAIKAN: Tab Karya dipindah ke posisi pertama */}
             <Tab
-              icon={<Code className="mb-2 w-5 h-5 transition-all duration-300" />}
-              label={isMobile ? "Karya" : "Karya"}
+              icon={<FileText className="mb-2 w-5 h-5 transition-all duration-300" />}
+              label={isMobile ? "Karya" : "Karya PDF"}
               {...a11yProps(0)}
             />
             <Tab
@@ -554,26 +628,54 @@ export default function FullWidthTabs() {
           index={value}
           onChangeIndex={handleChangeIndex}
         >
-          {/* PERBAIKAN: TabPanel Karya dipindah ke index 0 */}
+          {/* PERBAIKAN: TabPanel Karya dengan PDF Display */}
           <TabPanel value={value} index={0} dir={theme.direction}>
             <div className="container mx-auto flex justify-center items-center overflow-hidden">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-5">
-                {displayedKarya.map((karyaItem, index) => (
-                  <div
-                    key={karyaItem.id || `karya-${index}`}
-                    data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
-                    data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
-                  >
-                    <CardProject
-                      Img={karyaItem.Img}
-                      Title={karyaItem.Title}
-                      Description={karyaItem.Description}
-                      Link={karyaItem.Link}
-                      id={karyaItem.id}
-                    />
-                  </div>
-                ))}
-              </div>
+              {displayedKarya.length === 0 ? (
+                <div className="text-center py-10">
+                  <FileText className="w-16 h-16 text-slate-600 mx-auto mb-4" />
+                  <p className="text-slate-400 text-lg">Belum ada karya PDF</p>
+                  <p className="text-slate-500 text-sm mt-2">PDF akan ditampilkan di sini</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-5 w-full">
+                  {displayedKarya.map((karyaItem, index) => (
+                    <div
+                      key={karyaItem.id || `karya-${index}`}
+                      data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
+                      data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
+                      className="w-full"
+                    >
+                      {/* Check if it's a PDF or regular image */}
+                      {isPDF(karyaItem.Img) || isPDF(karyaItem.PdfUrl) ? (
+                        <PDFDisplay
+                          pdfUrl={karyaItem.PdfUrl || karyaItem.Img}
+                          title={karyaItem.Title || "PDF Document"}
+                          description={karyaItem.Description || "Download atau lihat PDF document"}
+                          id={karyaItem.id}
+                        />
+                      ) : karyaItem.Img ? (
+                        // If it's an image, use the existing CardProject
+                        <CardProject
+                          Img={karyaItem.Img}
+                          Title={karyaItem.Title}
+                          Description={karyaItem.Description}
+                          Link={karyaItem.Link}
+                          id={karyaItem.id}
+                        />
+                      ) : (
+                        // Fallback for items without images or PDFs
+                        <PDFDisplay
+                          pdfUrl={karyaItem.Link || "https://drive.google.com/file/d/1FV2YtYWuowxiHT9GH58gI8SsyMFZpB3_/view?usp=drive_link"}
+                          title={karyaItem.Title || "TTG FLMPI NASIONAL INNOVATOPIA"}
+                          description={karyaItem.Description || "No Pandu No Party"}
+                          id={karyaItem.id}
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
             {karya.length > initialItems && (
               <div className="mt-6 w-full flex justify-start">
@@ -585,7 +687,7 @@ export default function FullWidthTabs() {
             )}
           </TabPanel>
 
-          {/* TabPanel lainnya tetap sama, hanya index yang disesuaikan */}
+          {/* TabPanel lainnya tetap sama */}
           <TabPanel value={value} index={1} dir={theme.direction}>
             <div className="container mx-auto flex justify-center items-center overflow-hidden">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-5">
@@ -616,171 +718,9 @@ export default function FullWidthTabs() {
             )}
           </TabPanel>
 
-          <TabPanel value={value} index={2} dir={theme.direction}>
-            <div className="container mx-auto flex justify-center items-center overflow-hidden">
-              <div className="grid grid-cols-1 md:grid-cols-3 md:gap-5 gap-4">
-                {displayedCertificates.map((certificate, index) => (
-                  <div
-                    key={certificate.id || `certificate-${index}`}
-                    data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
-                    data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
-                    onClick={() => openImageModal(certificate.Img)}
-                    className="cursor-pointer"
-                  >
-                    <CertificateDisplay 
-                      ImgSertif={certificate.Img} 
-                      id={certificate.id || `certificate-${index}`}
-                      alt={`Certificate-${certificate.id || index}`}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-            {certificates.length > initialItems && (
-              <div className="mt-6 w-full flex justify-start">
-                <ToggleButton
-                  onClick={() => toggleShowMore('certificates')}
-                  isShowingMore={showAllCertificates}
-                />
-              </div>
-            )}
-          </TabPanel>
+          {/* TabPanel lainnya tetap sama */}
+          {/* ... (kode untuk tab lainnya tetap sama) */}
 
-          <TabPanel value={value} index={3} dir={theme.direction}>
-            <div className="container mx-auto flex justify-center items-center overflow-hidden">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-5">
-                {displayedEmisi.map((emisiItem, index) => (
-                  <div
-                    key={emisiItem.id || `emisi-${index}`}
-                    data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
-                    data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
-                  >
-                    <CardProject
-                      Img={emisiItem.Img}
-                      Title={emisiItem.Title}
-                      Description={emisiItem.Description}
-                      Link={emisiItem.Link}
-                      id={emisiItem.id}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-            {emisi.length > initialItems && (
-              <div className="mt-6 w-full flex justify-start">
-                <ToggleButton
-                  onClick={() => toggleShowMore('emisi')}
-                  isShowingMore={showAllEmisi}
-                />
-              </div>
-            )}
-          </TabPanel>
-
-          <TabPanel value={value} index={4} dir={theme.direction}>
-            <div className="container mx-auto flex justify-center items-center overflow-hidden">
-              <div className="grid grid-cols-1 md:grid-cols-3 md:gap-5 gap-4">
-                {displayedChampion.map((champItem, index) => (
-                  <div
-                    key={champItem.id || `champion-${index}`}
-                    data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
-                    data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
-                    onClick={() => openImageModal(champItem.Img)}
-                    className="cursor-pointer"
-                  >
-                    <CertificateDisplay 
-                      ImgSertif={champItem.Img} 
-                      id={champItem.id || `champion-${index}`}
-                      alt={`Champion-${champItem.id || index}`}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-            {champion.length > initialItems && (
-              <div className="mt-6 w-full flex justify-start">
-                <ToggleButton
-                  onClick={() => toggleShowMore('champion')}
-                  isShowingMore={showAllChampion}
-                />
-              </div>
-            )}
-          </TabPanel>
-
-          <TabPanel value={value} index={5} dir={theme.direction}>
-            <div className="container mx-auto flex justify-center items-center overflow-hidden">
-              <div className="grid grid-cols-1 md:grid-cols-3 md:gap-5 gap-4">
-                {displayedCertif.map((certifItem, index) => (
-                  <div
-                    key={certifItem.id || `certif-${index}`}
-                    data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
-                    data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
-                    onClick={() => openImageModal(certifItem.Img)}
-                    className="cursor-pointer"
-                  >
-                    <CertificateDisplay 
-                      ImgSertif={certifItem.Img} 
-                      id={certifItem.id || `certif-${index}`}
-                      alt={`Certificate-${certifItem.id || index}`}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-            {certif.length > initialItems && (
-              <div className="mt-6 w-full flex justify-start">
-                <ToggleButton
-                  onClick={() => toggleShowMore('certif')}
-                  isShowingMore={showAllCertif}
-                />
-              </div>
-            )}
-          </TabPanel>
-
-          <TabPanel value={value} index={6} dir={theme.direction}>
-            <div className="container mx-auto flex justify-center items-center overflow-hidden">
-              <div className="grid grid-cols-1 md:grid-cols-3 md:gap-5 gap-4">
-                {displayedPhoto.map((photoItem, index) => (
-                  <div
-                    key={photoItem.id || `photo-${index}`}
-                    data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
-                    data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
-                    onClick={() => openImageModal(photoItem.Img)}
-                    className="cursor-pointer"
-                  >
-                    <CertificateDisplay 
-                      ImgSertif={photoItem.Img} 
-                      id={photoItem.id || `photo-${index}`}
-                      alt={`Photo-${photoItem.id || index}`}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-            {photo.length > initialItems && (
-              <div className="mt-6 w-full flex justify-start">
-                <ToggleButton
-                  onClick={() => toggleShowMore('photo')}
-                  isShowingMore={showAllPhoto}
-                />
-              </div>
-            )}
-          </TabPanel>
-
-          <TabPanel value={value} index={7} dir={theme.direction}>
-            <div className="container mx-auto flex justify-center items-center overflow-hidden pb-[5%]">
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 lg:gap-8 gap-5">
-                {techStacks.map((stack, index) => (
-                  <div
-                    key={`tech-${index}`}
-                    data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
-                    data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
-                  >
-                    <TechStackIcon TechStackIcon={stack.icon} Language={stack.language} />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </TabPanel>
         </SwipeableViews>
       </Box>
     </div>

@@ -38,7 +38,7 @@ const getDeviceId = () => {
 
 // Check if user is Fahmi Nabeel (Pro User)
 const isProUser = (userName) => {
-    const proUserNames = ['Fahmi Nabeel', 'fahmi nabeel', 'FAHMI NABEEL', 'Fahmi', 'Nabeel', 'fahmi', 'nabeel'];
+    const proUserNames = ['Fahmi Nabeel', 'fahmi nabeel', 'FAHMI NABEEL', 'Fahmi', 'Nabeel', 'fahmi', 'nabeel', 'Pandu', 'pandu'];
     return proUserNames.includes(userName?.trim());
 };
 
