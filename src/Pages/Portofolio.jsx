@@ -322,7 +322,7 @@ export default function FullWidthTabs() {
         id: doc.id,
         ...doc.data(),
         Img: doc.data().Img || '',
-        PdfUrl: doc.data().PdfUrl || '', // Add PDF URL field
+        PdfUrl: doc.data().PdfUrl || doc.data().Link || '', // Add PDF URL field
         TechStack: doc.data().TechStack || [],
       }));
 
@@ -574,6 +574,7 @@ export default function FullWidthTabs() {
               },
             }}
           >
+            {/* Tab Karya dengan ikon FileText untuk PDF */}
             <Tab
               icon={<FileText className="mb-2 w-5 h-5 transition-all duration-300" />}
               label={isMobile ? "Karya" : "Karya PDF"}
@@ -581,7 +582,7 @@ export default function FullWidthTabs() {
             />
             <Tab
               icon={<Code className="mb-2 w-5 h-5 transition-all duration-300" />}
-              label={isMobile ? "Glukosa" : "Glukosa"}
+              label={isMobile ? "Glukosa" : "Kadar Glukosa"}
               {...a11yProps(1)}
             />
             <Tab
@@ -628,7 +629,7 @@ export default function FullWidthTabs() {
           index={value}
           onChangeIndex={handleChangeIndex}
         >
-          {/* PERBAIKAN: TabPanel Karya dengan PDF Display */}
+          {/* TabPanel Karya dengan PDF Display */}
           <TabPanel value={value} index={0} dir={theme.direction}>
             <div className="container mx-auto flex justify-center items-center overflow-hidden">
               {displayedKarya.length === 0 ? (
@@ -668,7 +669,7 @@ export default function FullWidthTabs() {
                         <PDFDisplay
                           pdfUrl={karyaItem.Link || "https://drive.google.com/file/d/1FV2YtYWuowxiHT9GH58gI8SsyMFZpB3_/view?usp=drive_link"}
                           title={karyaItem.Title || "TTG FLMPI NASIONAL INNOVATOPIA"}
-                          description={karyaItem.Description || "No Pandu No Party"}
+                          description={karyaItem.Description || "Juara 3 Teknologi Tepat Guna yang diselenggarakan oleh FLMPI Nasional dibawah naungan BPSDMI KEMENPERIN"}
                           id={karyaItem.id}
                         />
                       )}
@@ -687,7 +688,7 @@ export default function FullWidthTabs() {
             )}
           </TabPanel>
 
-          {/* TabPanel lainnya tetap sama */}
+          {/* TabPanel Glukosa - tetap seperti semula */}
           <TabPanel value={value} index={1} dir={theme.direction}>
             <div className="container mx-auto flex justify-center items-center overflow-hidden">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-5">
@@ -718,9 +719,177 @@ export default function FullWidthTabs() {
             )}
           </TabPanel>
 
-          {/* TabPanel lainnya tetap sama */}
-          {/* ... (kode untuk tab lainnya tetap sama) */}
+          {/* TabPanel Etanol - tetap seperti semula */}
+          <TabPanel value={value} index={2} dir={theme.direction}>
+            <div className="container mx-auto flex justify-center items-center overflow-hidden">
+              <div className="grid grid-cols-1 md:grid-cols-3 md:gap-5 gap-4">
+                {displayedCertificates.map((certificate, index) => (
+                  <div
+                    key={certificate.id || `certificate-${index}`}
+                    data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
+                    data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
+                    onClick={() => openImageModal(certificate.Img)}
+                    className="cursor-pointer"
+                  >
+                    <CertificateDisplay 
+                      ImgSertif={certificate.Img} 
+                      id={certificate.id || `certificate-${index}`}
+                      alt={`Certificate-${certificate.id || index}`}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+            {certificates.length > initialItems && (
+              <div className="mt-6 w-full flex justify-start">
+                <ToggleButton
+                  onClick={() => toggleShowMore('certificates')}
+                  isShowingMore={showAllCertificates}
+                />
+              </div>
+            )}
+          </TabPanel>
 
+          {/* TabPanel Emisi - tetap seperti semula */}
+          <TabPanel value={value} index={3} dir={theme.direction}>
+            <div className="container mx-auto flex justify-center items-center overflow-hidden">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-5">
+                {displayedEmisi.map((emisiItem, index) => (
+                  <div
+                    key={emisiItem.id || `emisi-${index}`}
+                    data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
+                    data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
+                  >
+                    <CardProject
+                      Img={emisiItem.Img}
+                      Title={emisiItem.Title}
+                      Description={emisiItem.Description}
+                      Link={emisiItem.Link}
+                      id={emisiItem.id}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+            {emisi.length > initialItems && (
+              <div className="mt-6 w-full flex justify-start">
+                <ToggleButton
+                  onClick={() => toggleShowMore('emisi')}
+                  isShowingMore={showAllEmisi}
+                />
+              </div>
+            )}
+          </TabPanel>
+
+          {/* TabPanel Champion - tetap seperti semula */}
+          <TabPanel value={value} index={4} dir={theme.direction}>
+            <div className="container mx-auto flex justify-center items-center overflow-hidden">
+              <div className="grid grid-cols-1 md:grid-cols-3 md:gap-5 gap-4">
+                {displayedChampion.map((champItem, index) => (
+                  <div
+                    key={champItem.id || `champion-${index}`}
+                    data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
+                    data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
+                    onClick={() => openImageModal(champItem.Img)}
+                    className="cursor-pointer"
+                  >
+                    <CertificateDisplay 
+                      ImgSertif={champItem.Img} 
+                      id={champItem.id || `champion-${index}`}
+                      alt={`Champion-${champItem.id || index}`}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+            {champion.length > initialItems && (
+              <div className="mt-6 w-full flex justify-start">
+                <ToggleButton
+                  onClick={() => toggleShowMore('champion')}
+                  isShowingMore={showAllChampion}
+                />
+              </div>
+            )}
+          </TabPanel>
+
+          {/* TabPanel Certificate - tetap seperti semula */}
+          <TabPanel value={value} index={5} dir={theme.direction}>
+            <div className="container mx-auto flex justify-center items-center overflow-hidden">
+              <div className="grid grid-cols-1 md:grid-cols-3 md:gap-5 gap-4">
+                {displayedCertif.map((certifItem, index) => (
+                  <div
+                    key={certifItem.id || `certif-${index}`}
+                    data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
+                    data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
+                    onClick={() => openImageModal(certifItem.Img)}
+                    className="cursor-pointer"
+                  >
+                    <CertificateDisplay 
+                      ImgSertif={certifItem.Img} 
+                      id={certifItem.id || `certif-${index}`}
+                      alt={`Certificate-${certifItem.id || index}`}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+            {certif.length > initialItems && (
+              <div className="mt-6 w-full flex justify-start">
+                <ToggleButton
+                  onClick={() => toggleShowMore('certif')}
+                  isShowingMore={showAllCertif}
+                />
+              </div>
+            )}
+          </TabPanel>
+
+          {/* TabPanel Photo - tetap seperti semula */}
+          <TabPanel value={value} index={6} dir={theme.direction}>
+            <div className="container mx-auto flex justify-center items-center overflow-hidden">
+              <div className="grid grid-cols-1 md:grid-cols-3 md:gap-5 gap-4">
+                {displayedPhoto.map((photoItem, index) => (
+                  <div
+                    key={photoItem.id || `photo-${index}`}
+                    data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
+                    data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
+                    onClick={() => openImageModal(photoItem.Img)}
+                    className="cursor-pointer"
+                  >
+                    <CertificateDisplay 
+                      ImgSertif={photoItem.Img} 
+                      id={photoItem.id || `photo-${index}`}
+                      alt={`Photo-${photoItem.id || index}`}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+            {photo.length > initialItems && (
+              <div className="mt-6 w-full flex justify-start">
+                <ToggleButton
+                  onClick={() => toggleShowMore('photo')}
+                  isShowingMore={showAllPhoto}
+                />
+              </div>
+            )}
+          </TabPanel>
+
+          {/* TabPanel Technology - tetap seperti semula */}
+          <TabPanel value={value} index={7} dir={theme.direction}>
+            <div className="container mx-auto flex justify-center items-center overflow-hidden pb-[5%]">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 lg:gap-8 gap-5">
+                {techStacks.map((stack, index) => (
+                  <div
+                    key={`tech-${index}`}
+                    data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
+                    data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
+                  >
+                    <TechStackIcon TechStackIcon={stack.icon} Language={stack.language} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </TabPanel>
         </SwipeableViews>
       </Box>
     </div>
